@@ -3,22 +3,40 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		01F5C0372C4F69B00090C5F4 /* JournalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0362C4F69B00090C5F4 /* JournalApp.swift */; };
-		01F5C0392C4F69B00090C5F4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0382C4F69B00090C5F4 /* ContentView.swift */; };
+		01F5C0392C4F69B00090C5F4 /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0382C4F69B00090C5F4 /* JournalView.swift */; };
 		01F5C03B2C4F69B20090C5F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */; };
 		01F5C03E2C4F69B20090C5F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01F5C03D2C4F69B20090C5F4 /* Preview Assets.xcassets */; };
+		01F5C0492C50C2120090C5F4 /* PageOneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0482C50C2120090C5F4 /* PageOneView.swift */; };
+		01F5C04B2C50C2C90090C5F4 /* PageTwoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C04A2C50C2C90090C5F4 /* PageTwoView.swift */; };
+		01F5C04D2C50C2EA0090C5F4 /* PageThreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C04C2C50C2EA0090C5F4 /* PageThreeView.swift */; };
+		01F5C04F2C50F14C0090C5F4 /* JournalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C04E2C50F14C0090C5F4 /* JournalViewModel.swift */; };
+		01F5C05A2C51EA750090C5F4 /* TitilliumWeb-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01F5C0562C51E3D10090C5F4 /* TitilliumWeb-Light.ttf */; };
+		01F5C05C2C51ED780090C5F4 /* Font Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C05B2C51ED780090C5F4 /* Font Extension.swift */; };
+		01F5C05E2C5249420090C5F4 /* JournalModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C05D2C5249420090C5F4 /* JournalModel.swift */; };
+		01F5C0612C5257810090C5F4 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 01F5C0602C5257810090C5F4 /* SQLite */; };
+		01F5C0632C5258140090C5F4 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0622C5258140090C5F4 /* File.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		01F5C0332C4F69B00090C5F4 /* Journal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Journal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01F5C0362C4F69B00090C5F4 /* JournalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalApp.swift; sourceTree = "<group>"; };
-		01F5C0382C4F69B00090C5F4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		01F5C0382C4F69B00090C5F4 /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
 		01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		01F5C03D2C4F69B20090C5F4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		01F5C0482C50C2120090C5F4 /* PageOneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageOneView.swift; sourceTree = "<group>"; };
+		01F5C04A2C50C2C90090C5F4 /* PageTwoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTwoView.swift; sourceTree = "<group>"; };
+		01F5C04C2C50C2EA0090C5F4 /* PageThreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageThreeView.swift; sourceTree = "<group>"; };
+		01F5C04E2C50F14C0090C5F4 /* JournalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalViewModel.swift; sourceTree = "<group>"; };
+		01F5C0562C51E3D10090C5F4 /* TitilliumWeb-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitilliumWeb-Light.ttf"; sourceTree = "<group>"; };
+		01F5C0582C51E6420090C5F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		01F5C05B2C51ED780090C5F4 /* Font Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font Extension.swift"; sourceTree = "<group>"; };
+		01F5C05D2C5249420090C5F4 /* JournalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalModel.swift; sourceTree = "<group>"; };
+		01F5C0622C5258140090C5F4 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01F5C0612C5257810090C5F4 /* SQLite in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,10 +70,19 @@
 		01F5C0352C4F69B00090C5F4 /* Journal */ = {
 			isa = PBXGroup;
 			children = (
+				01F5C0582C51E6420090C5F4 /* Info.plist */,
+				01F5C0562C51E3D10090C5F4 /* TitilliumWeb-Light.ttf */,
+				01F5C04C2C50C2EA0090C5F4 /* PageThreeView.swift */,
 				01F5C0362C4F69B00090C5F4 /* JournalApp.swift */,
-				01F5C0382C4F69B00090C5F4 /* ContentView.swift */,
+				01F5C0382C4F69B00090C5F4 /* JournalView.swift */,
+				01F5C0482C50C2120090C5F4 /* PageOneView.swift */,
+				01F5C04A2C50C2C90090C5F4 /* PageTwoView.swift */,
+				01F5C04E2C50F14C0090C5F4 /* JournalViewModel.swift */,
+				01F5C05D2C5249420090C5F4 /* JournalModel.swift */,
 				01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */,
 				01F5C03C2C4F69B20090C5F4 /* Preview Content */,
+				01F5C05B2C51ED780090C5F4 /* Font Extension.swift */,
+				01F5C0622C5258140090C5F4 /* File.swift */,
 			);
 			path = Journal;
 			sourceTree = "<group>";
@@ -83,6 +111,9 @@
 			dependencies = (
 			);
 			name = Journal;
+			packageProductDependencies = (
+				01F5C0602C5257810090C5F4 /* SQLite */,
+			);
 			productName = Journal;
 			productReference = 01F5C0332C4F69B00090C5F4 /* Journal.app */;
 			productType = "com.apple.product-type.application";
@@ -94,6 +125,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				KnownAssetTags = (
+					New,
+				);
 				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
@@ -103,7 +137,7 @@
 				};
 			};
 			buildConfigurationList = 01F5C02E2C4F69AF0090C5F4 /* Build configuration list for PBXProject "Journal" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -111,6 +145,9 @@
 				Base,
 			);
 			mainGroup = 01F5C02A2C4F69AF0090C5F4;
+			packageReferences = (
+				01F5C05F2C5257810090C5F4 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+			);
 			productRefGroup = 01F5C0342C4F69B00090C5F4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -125,6 +162,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01F5C05A2C51EA750090C5F4 /* TitilliumWeb-Light.ttf in Resources */,
 				01F5C03E2C4F69B20090C5F4 /* Preview Assets.xcassets in Resources */,
 				01F5C03B2C4F69B20090C5F4 /* Assets.xcassets in Resources */,
 			);
@@ -137,8 +175,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01F5C0392C4F69B00090C5F4 /* ContentView.swift in Sources */,
+				01F5C04F2C50F14C0090C5F4 /* JournalViewModel.swift in Sources */,
+				01F5C05E2C5249420090C5F4 /* JournalModel.swift in Sources */,
+				01F5C04B2C50C2C90090C5F4 /* PageTwoView.swift in Sources */,
+				01F5C04D2C50C2EA0090C5F4 /* PageThreeView.swift in Sources */,
+				01F5C0392C4F69B00090C5F4 /* JournalView.swift in Sources */,
 				01F5C0372C4F69B00090C5F4 /* JournalApp.swift in Sources */,
+				01F5C0492C50C2120090C5F4 /* PageOneView.swift in Sources */,
+				01F5C0632C5258140090C5F4 /* File.swift in Sources */,
+				01F5C05C2C51ED780090C5F4 /* Font Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +320,8 @@
 				DEVELOPMENT_TEAM = AM2M44BBVB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Journal/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -304,6 +351,8 @@
 				DEVELOPMENT_TEAM = AM2M44BBVB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Journal/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -344,6 +393,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		01F5C05F2C5257810090C5F4 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		01F5C0602C5257810090C5F4 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01F5C05F2C5257810090C5F4 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 01F5C02B2C4F69AF0090C5F4 /* Project object */;
 }
