@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct JournalApp: App {
@@ -14,6 +15,8 @@ struct JournalApp: App {
         
         WindowGroup {
             JournalView(viewModel: viewModel)
-        }
+                .modelContainer(for: log.self)
+        } // https://qiita.com/dokozon0/items/0c46c432b2e873ceeb04 これをしないとクラッシュするらしい。
+
     }
 }

@@ -9,11 +9,18 @@ import SwiftUI
 
 class JournalViewModel: ObservableObject {
     
+    //@Published private var model = journalModel()
+
     @Published var name = "Bob"
     
+    @Published var username = ""
+    
+    @Published var email = ""
+    
     @Published var password = ""
-
+    
 }
+
 
 
 

@@ -9,42 +9,50 @@ import SwiftUI
 
 struct PageThreeView: View {
     @ObservedObject var viewModel: JournalViewModel
-
     
-    /*init() {
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
-
-        } https://stackoverflow.com/questions/77664511/how-to-change-navigation-title-color-in-swiftui */
+    
+    /* init() {
+      // TODO: I want to be able to change the color.
+        } */
+    //https://stackoverflow.com/questions/77664511/how-to-change-navigation-title-color-in-swiftui
      
     var body: some View {
         
             NavigationStack {
                 
+                
                 ZStack {
-                    Color("Color")
+                    Color("Prim")
                         .ignoresSafeArea()
                 
                 List(settingRows) { settingRow in
                     
                     NavigationLink(settingRow.name, value: settingRow.name)
                         .font(.system(18))
+                        .listRowBackground(Color("Sec"))
+                        .foregroundColor(Color("Prim"))
                     
                 } // List
+                .scrollContentBackground(.hidden)
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationDestination(for: String.self) { category in
                     SettingsView(viewModel: viewModel, category:category)
                     
                 }
-                .listRowBackground(Color.green)
 
             } // ZStack
             .scrollContentBackground(.hidden)
 
         
         } // NavigationStack
+        .onAppear() { // init() didn't work because I didn't know how to initialize viewmodel, so I decided to use onAppear. It's working fine so far.
+            UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.secondary, .font:UIFont.titillium]
+        }
+        .tint(Color("Sec")) // Change Navigation View Back button (arrow) color
         
     } //body
+   
     
     struct settingRow: Identifiable, Hashable {
         
@@ -58,7 +66,7 @@ struct PageThreeView: View {
         settingRow(name: "Profile", icon: "", id:0),
         settingRow(name: "Notification", icon: "", id:1),
         settingRow(name: "Analysis", icon: "", id:2),
-        settingRow(name: "PRO+", icon: "", id:3)
+        settingRow(name: "Help", icon: "", id:3)
     ]
     
     
@@ -75,13 +83,20 @@ struct SettingsView: View {
         if category == "Profile" {
                 
                 ZStack {
-                    Color("Color")
+                    Color("Prim")
                         .ignoresSafeArea()
                 
                 List {
                     
-                    TextField("Username", text: $viewModel.name)
+                    TextField("Name", text: $viewModel.name)
                         .disableAutocorrection(true)
+                    
+                    TextField("Username", text: $viewModel.username)
+                        .disableAutocorrection(true)
+                    
+                    TextField("Email", text: $viewModel.email)
+                        .disableAutocorrection(true)
+                    
                     
                     SecureField("Password", text: $viewModel.password)
                     

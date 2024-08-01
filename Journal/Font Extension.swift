@@ -13,3 +13,17 @@ extension Font {
         }
     // https://stackoverflow.com/questions/75984664/how-to-set-the-default-font-of-swiftui-text
 }
+
+extension UIFont {
+    class var titillium: UIFont {
+        return UIFont(name:"TitilliumWeb-Light", size:UIFont.preferredFont(forTextStyle: .body).pointSize)!
+    } // https://atamo-dev.hatenablog.com/entry/2016/11/15/120634
+    // Don't forget to unwrap.
+    // Don't forget to specify the size. 
+}
+
+extension UIColor {
+    public class var secondary: UIColor {
+        return UIColor(red: 42/255, green: 70/255, blue: 140/255, alpha: 1.0)
+    }
+}

@@ -6,15 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct JournalView: View {
     @ObservedObject var viewModel: JournalViewModel
 
-    
     @State private var sliderVal : Double = 0
     
-    @State var selection = 1
+    @State var selection = 2
     
+
     var body: some View {
         
         TabView(selection: $selection) {
@@ -26,30 +27,32 @@ struct JournalView: View {
                 .tag(1)
                 .badge(1) // ⬅︎ Int
             
-            PageTwoView()
+            PageTwoView(viewModel: viewModel)
                 .tabItem {
                     Image(systemName:"plus.app.fill")
                 }
                 .tag(2)
             
-            PageThreeView(viewModel: viewModel)
+            PageFourView(viewModel: viewModel)
                 .tabItem {
-                    Image(systemName:"chart.xyaxis.line")
+                    Image(systemName:"list.bullet.clipboard.fill")
                 }
-                .tag(3)
+                .tag(4)
         }
         .onAppear() {
             UITabBar.appearance().unselectedItemTintColor = .white
             UITabBar.appearance().backgroundColor = .black
         }
-        .tint(Color("Color"))
+        .tint(Color("Prim"))
     }
     
 }
    
 
-struct JournalView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
         JournalView(viewModel: JournalViewModel())
-    }
+        .modelContainer(for: log.self, inMemory:true)
+    // Someone suggested that if the problem is only within Preview, inMemory: true works.
+    // https://www.hackingwithswift.com/forums/100-days-of-swiftui/day-54-crash-in-preview-of-swiftdata/26510
+    //  https://qiita.com/Puyan/items/117e8a266c34a81c393d
 }
