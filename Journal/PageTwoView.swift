@@ -7,10 +7,11 @@
 
 import SwiftUI
 import SwiftData
+import Foundation
 
 struct PageTwoView: View {
 
-    @State private var stressLevel : Double = 0
+    @State private var stressLevel : Double = 5
     @State private var sleep : Double = 0
     @State private var activity : Double = 0
     @State private var school : Double = 0
@@ -24,7 +25,10 @@ struct PageTwoView: View {
     @Environment(\.modelContext) var context
     @Query var logs: [log]
 
+
+
     var body: some View {
+        
         ZStack {
             
             Color("Prim")
@@ -35,12 +39,26 @@ struct PageTwoView: View {
                 
             // Stress Tracker which you can log as many times as you want each day.
             VStack {
-                Text("Stress Tracker")
+                Text("Stress Tracker") // TODO: include bold font.
                     .font(.system(20))
-                DatePicker("", selection: $date, displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden()
-                    .colorScheme(.dark)
-                    .padding()
+            
+                
+                HStack {
+                    
+                    Text("Reset")
+                        .onTapGesture{
+                            date = Date()
+                        }
+                        .padding()
+                        .underline()
+                    
+
+                    DatePicker("", selection: $date, displayedComponents: [.date, .hourAndMinute])
+                        .labelsHidden()
+                        .colorScheme(.dark)
+                        .padding()
+                
+                }
                 
                 Text("Stress Level: \(stressLevel, specifier:"%.0f")")
                     .padding()
@@ -55,6 +73,8 @@ struct PageTwoView: View {
                 Button("Submit") {
                     let newLog = log(logDate: date, stressLevel: stressLevel)
                     context.insert(newLog)
+                    stressLevel = 5
+                    
                 } // Button
                 .padding()
                 .buttonStyle(.bordered)

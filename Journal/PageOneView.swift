@@ -16,7 +16,7 @@ struct PageOneView: View {
     
     @Environment(\.modelContext) private var context
     @Query var logs: [log]
-    @Query(filter: log.logsForToday()) var logsForToday: [log]
+    @Query(filter: log.dayLog(date:Date.now)) var todaysLogs: [log]
     
     
     @State var index = 0
@@ -123,7 +123,7 @@ struct PageOneView: View {
                                         Divider()
                                             .overlay(Color("Prim"))
                                         
-                                        Text(log.getDayStressAvg(dayStressLogs: logsForToday).isNaN ?  "No Data" : "\(log.getDayStressAvg(dayStressLogs: logs))/10")
+                                        Text(log.getStressAvg(dayStressLogs: todaysLogs).isNaN ?  "No Data" : "\(log.getStressAvg(dayStressLogs: todaysLogs))/10")
                                             .font(.system(27))
                                     }
                                 } // ZStack
@@ -158,7 +158,7 @@ struct PageOneView: View {
                             .tag(0)// LazyVGrid
                         } // ScrollView
                         
-                        ChartView()
+                        StressView()
                             .tag(1)
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -180,6 +180,7 @@ struct PageOneView: View {
     } // body
     
     
+    
     struct Indicator: Identifiable, Hashable {
         
         var name:String
@@ -187,8 +188,7 @@ struct PageOneView: View {
         var id: Int
 
     }
-    
-    
+
     
     var overviewTiles = [
         Indicator(name: "Stress", stat: "", id:0),
@@ -197,116 +197,8 @@ struct PageOneView: View {
         Indicator(name: "Diet", stat: "Poor", id:3),
         Indicator(name: "Work", stat: "Stressed", id:4)
     ]
-}
+} // PageOneView
 
 
-struct ChartView: View {
-    
-    @Environment(\.modelContext) private var context
-    @Query var logs: [log]
-    
-    //var average = logs.lazy.map(\.stressLevel).reduce(0) { $0 + Int($1) } / logs.count
 
-    
-    var body: some View {
-        
-        ScrollView {
-            
-            
-            // CHART FOR TODAY
-            Text("Today")
-            
-            Chart {
-                ForEach(logs) { log in
-                    
-                    LineMark(
-                        x: .value("Date", log.logDate),
-                        y: .value("Stress", log.stressLevel)
-                    )
-                    .interpolationMethod(.catmullRom)
-                    .symbol(.square)
-                    .foregroundStyle(Color("Sec"))
-                    
-                    
-                } // ForEach
-            } // Chart
-            .chartYAxis {
-                AxisMarks(
-                    values: [0, 5, 10]
-                ) {
-                    AxisValueLabel()
-                        .foregroundStyle(Color("Sec")) // change the color for  readability
-                }
-                
-                AxisMarks(
-                    values: [1, 2, 3, 4, 6, 7, 8, 9]
-                ) {
-                    AxisGridLine()
-                        .foregroundStyle(Color("Sec"))
-                }
-            }
-            .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-            .chartXVisibleDomain(length: 86400) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-            .chartXAxis {AxisMarks(values: .automatic) {
-                AxisValueLabel()
-                    .foregroundStyle(Color("Sec"))
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Sec"))
-            }
-            }
-            .frame(width:350, height:300)
-            
-            Text("Today's average: \(log.getDayStressAvg(dayStressLogs: logs))")
-            
-            
-            // CHART FOR WEEK
-            Text("This Week")
-            
-            Chart {
-                ForEach(logs) { log in
-                    
-                    LineMark(
-                        x: .value("Date", log.logDate),
-                        y: .value("Stress", log.stressLevel)
-                    )
-                    .interpolationMethod(.catmullRom)
-                    .symbol(.square)
-                    .foregroundStyle(Color("Sec"))
-                    
-                    
-                } // ForEach
-            } // Chart
-            .chartYAxis {
-                AxisMarks(
-                    values: [0, 5, 10]
-                ) {
-                    AxisValueLabel()
-                        .foregroundStyle(Color("Sec")) // change the color for  readability
-                }
-                
-                AxisMarks(
-                    values: [1, 2, 3, 4, 6, 7, 8, 9]
-                ) {
-                    AxisGridLine()
-                        .foregroundStyle(Color("Sec"))
-                }
-            }
-            .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-            .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-            .chartXAxis {AxisMarks(values: .automatic) {
-                AxisValueLabel()
-                    .foregroundStyle(Color("Sec"))
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Sec"))
-            }
-            }
-            .frame(width:350, height:300)
-            
-        }// ScrollView
-        .foregroundStyle(Color("Sec"))
-        .font(.system(18))
-    }
-}
 

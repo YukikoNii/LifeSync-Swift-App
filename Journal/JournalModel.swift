@@ -21,16 +21,36 @@ class log {
 }
 
 extension log {
-    static func getDayStressAvg (dayStressLogs: [log]) -> Double {
-        let dayStressAvg = dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count)
+    static func getStressAvg (dayStressLogs: [log]) -> Double {
+        var dayStressAvg = dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count)
         return dayStressAvg
     }
     
-    static func logsForToday(date:Date) -> Predicate<log> {
+    static func dayLog(date: Date) -> Predicate<log> {
         
-        return #Predicate<log> { log in
-                    log.logDate > date
-        }
+        var endDate = Calendar.current.startOfDay(for: date)
+        var startDate = Calendar.current.startOfDay(for: date.addingTimeInterval(-86400))
 
+        return #Predicate<log> { log in
+            startDate < log.logDate &&
+            log.logDate < endDate
+        }
     }
+    
+    static func thisWeeksLogs() -> Predicate<log> {
+        
+        let date = Date()
+        let weekAgo = date.addingTimeInterval(-86400*7)
+
+        return #Predicate<log> { log in
+                log.logDate > weekAgo
+        }
+    }
+    
+    static func calculatePercentage(day1: Double, day2: Double) -> String {
+        let division = (day1 / day2) * 100
+        let string = String(format: "%.2f", division)
+        return string
+    }
+        
 }

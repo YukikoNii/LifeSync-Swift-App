@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		01C8B2E62C58E0BD00465831 /* PageFourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8B2E52C58E0BD00465831 /* PageFourView.swift */; };
+		01C8B2E82C5CF35100465831 /* StressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8B2E72C5CF35100465831 /* StressView.swift */; };
 		01F5C0372C4F69B00090C5F4 /* JournalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0362C4F69B00090C5F4 /* JournalApp.swift */; };
 		01F5C0392C4F69B00090C5F4 /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0382C4F69B00090C5F4 /* JournalView.swift */; };
 		01F5C03B2C4F69B20090C5F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		01C8B2E52C58E0BD00465831 /* PageFourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageFourView.swift; sourceTree = "<group>"; };
+		01C8B2E72C5CF35100465831 /* StressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressView.swift; sourceTree = "<group>"; };
 		01F5C0332C4F69B00090C5F4 /* Journal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Journal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01F5C0362C4F69B00090C5F4 /* JournalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalApp.swift; sourceTree = "<group>"; };
 		01F5C0382C4F69B00090C5F4 /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				01F5C0382C4F69B00090C5F4 /* JournalView.swift */,
 				01C8B2E52C58E0BD00465831 /* PageFourView.swift */,
 				01F5C0482C50C2120090C5F4 /* PageOneView.swift */,
+				01C8B2E72C5CF35100465831 /* StressView.swift */,
 				01F5C04A2C50C2C90090C5F4 /* PageTwoView.swift */,
 				01F5C04E2C50F14C0090C5F4 /* JournalViewModel.swift */,
 				01F5C05D2C5249420090C5F4 /* JournalModel.swift */,
@@ -180,6 +183,7 @@
 			files = (
 				01F5C04F2C50F14C0090C5F4 /* JournalViewModel.swift in Sources */,
 				01F5C05E2C5249420090C5F4 /* JournalModel.swift in Sources */,
+				01C8B2E82C5CF35100465831 /* StressView.swift in Sources */,
 				01F5C04B2C50C2C90090C5F4 /* PageTwoView.swift in Sources */,
 				01F5C04D2C50C2EA0090C5F4 /* PageThreeView.swift in Sources */,
 				01C8B2E62C58E0BD00465831 /* PageFourView.swift in Sources */,
