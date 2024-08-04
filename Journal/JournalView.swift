@@ -25,7 +25,7 @@ struct JournalView: View {
                     Image(systemName:"house") // TODO: make images larger
                 }
                 .tag(1)
-                .badge(1) // ⬅︎ Int
+                .badge(1)
             
             PageTwoView(viewModel: viewModel)
                 .tabItem {

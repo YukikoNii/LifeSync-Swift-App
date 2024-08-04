@@ -1,9 +1,4 @@
-//
-//  SwiftUIView.swift
-//  Journal
-//
-//  Created by Yukiko Nii on 2024/07/24.
-//
+
 
 import SwiftUI
 import Charts

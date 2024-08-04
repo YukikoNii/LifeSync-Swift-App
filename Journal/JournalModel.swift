@@ -22,14 +22,14 @@ class log {
 
 extension log {
     static func getStressAvg (dayStressLogs: [log]) -> Double {
-        var dayStressAvg = dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count)
+        let dayStressAvg = dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count)
         return dayStressAvg
     }
     
     static func dayLog(date: Date) -> Predicate<log> {
         
-        var endDate = Calendar.current.startOfDay(for: date)
-        var startDate = Calendar.current.startOfDay(for: date.addingTimeInterval(-86400))
+        let endDate = Calendar.current.startOfDay(for: date.addingTimeInterval(86400))
+        let startDate = Calendar.current.startOfDay(for: date)
 
         return #Predicate<log> { log in
             startDate < log.logDate &&
