@@ -15,7 +15,7 @@ struct JournalApp: App {
         
         WindowGroup {
             JournalView(viewModel: viewModel)
-                .modelContainer(for: log.self)
+                .modelContainer(for: stressLog.self)
         } // https://qiita.com/dokozon0/items/0c46c432b2e873ceeb04 これをしないとクラッシュするらしい。
 
     }

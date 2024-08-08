@@ -11,6 +11,7 @@ struct PageThreeView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     
+    
     /* init() {
       // TODO: I want to be able to change the color.
         } */
@@ -23,23 +24,21 @@ struct PageThreeView: View {
                 
                 ZStack {
                     Color("Prim")
-                        .ignoresSafeArea()
                 
-                List(settingRows) { settingRow in
-                    
-                    NavigationLink(settingRow.name, value: settingRow.name)
+                    List(settingRows, id:\.id) { settingRow in
+                        
+                        NavigationLink(settingRow.name) {
+                            SettingsView(viewModel: viewModel, category: settingRow.name) // For some reason, NavigationDestination didn't work.
+                        }
                         .font(.system(18))
                         .listRowBackground(Color("Sec"))
                         .foregroundColor(Color("Prim"))
+                
                     
                 } // List
                 .scrollContentBackground(.hidden)
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(for: String.self) { category in
-                    SettingsView(viewModel: viewModel, category:category)
-                    
-                }
 
             } // ZStack
             .scrollContentBackground(.hidden)
@@ -47,7 +46,7 @@ struct PageThreeView: View {
         
         } // NavigationStack
         .onAppear() { // init() didn't work because I didn't know how to initialize viewmodel, so I decided to use onAppear. It's working fine so far.
-            UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.secondary, .font:UIFont.titillium]
+                UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.tertiary, .font:UIFont.titillium]
         }
         .tint(Color("Sec")) // Change Navigation View Back button (arrow) color
         
@@ -66,7 +65,7 @@ struct PageThreeView: View {
         settingRow(name: "Profile", icon: "", id:0),
         settingRow(name: "Notification", icon: "", id:1),
         settingRow(name: "Analysis", icon: "", id:2),
-        settingRow(name: "Help", icon: "", id:3)
+        settingRow(name: "Help", icon: "", id:3) // you need to have id and it needs to be hashable, otherwise it navigates back immediately.
     ]
     
     
@@ -81,6 +80,7 @@ struct SettingsView: View {
     var body: some View {
         
         if category == "Profile" {
+            
                 
                 ZStack {
                     Color("Prim")

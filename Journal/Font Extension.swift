@@ -23,7 +23,7 @@ extension UIFont {
 }
 
 extension UIColor {
-    public class var secondary: UIColor {
-        return UIColor(red: 42/255, green: 70/255, blue: 140/255, alpha: 1.0)
+    public class var tertiary: UIColor {
+        return UIColor(red: 43/255, green: 44/255, blue: 42/255, alpha: 1.0)
     }
 }

@@ -9,8 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class log {
-    
+class stressLog {
     var logDate: Date
     var stressLevel: Double
     
@@ -20,29 +19,29 @@ class log {
     }
 }
 
-extension log {
-    static func getStressAvg (dayStressLogs: [log]) -> Double {
+extension stressLog {
+    static func getStressAvg (dayStressLogs: [stressLog]) -> Double {
         let dayStressAvg = dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count)
         return dayStressAvg
     }
     
-    static func dayLog(date: Date) -> Predicate<log> {
+    static func dayLog(date: Date) -> Predicate<stressLog> {
         
         let endDate = Calendar.current.startOfDay(for: date.addingTimeInterval(86400))
         let startDate = Calendar.current.startOfDay(for: date)
 
-        return #Predicate<log> { log in
+        return #Predicate<stressLog> { log in
             startDate < log.logDate &&
             log.logDate < endDate
         }
     }
     
-    static func thisWeeksLogs() -> Predicate<log> {
+    static func thisWeeksLogs() -> Predicate<stressLog> {
         
         let date = Date()
         let weekAgo = date.addingTimeInterval(-86400*7)
 
-        return #Predicate<log> { log in
+        return #Predicate<stressLog> { log in
                 log.logDate > weekAgo
         }
     }
@@ -54,3 +53,26 @@ extension log {
     }
         
 }
+
+@Model
+class day {
+    var logDate: Date
+    var avgStress: Double
+    var sleep: dailyLog // I am not sure if this is right.
+    
+    init(logDate: Date, stressLevel: Double, sleep: dailyLog) {
+            self.logDate = logDate
+            self.avgStress = stressLevel
+            self.sleep = sleep
+        }
+}
+
+@Model
+class dailyLog {
+    var sleep: Double
+    
+    init (sleep: Double) {
+        self.sleep = sleep
+    }
+}
+

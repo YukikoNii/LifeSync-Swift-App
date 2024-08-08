@@ -10,8 +10,8 @@ struct PageOneView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @Environment(\.modelContext) private var context
-    @Query var logs: [log]
-    @Query(filter: log.dayLog(date:Date.now)) var todaysLogs: [log]
+    @Query var logs: [stressLog]
+    @Query(filter: stressLog.dayLog(date:Date.now)) var todaysLogs: [stressLog]
     
     
     @State var index = 0
@@ -118,7 +118,7 @@ struct PageOneView: View {
                                         Divider()
                                             .overlay(Color("Prim"))
                                         
-                                        Text(log.getStressAvg(dayStressLogs: todaysLogs).isNaN ?  "No Data" : "\(log.getStressAvg(dayStressLogs: todaysLogs))/10")
+                                        Text(stressLog.getStressAvg(dayStressLogs: todaysLogs).isNaN ?  "No Data" : "\(stressLog.getStressAvg(dayStressLogs: todaysLogs))/10")
                                             .font(.system(27))
                                     }
                                 } // ZStack
@@ -153,8 +153,9 @@ struct PageOneView: View {
                             .tag(0)// LazyVGrid
                         } // ScrollView
                         
-                        StressView()
+                        StressView(viewModel:viewModel)
                             .tag(1)
+                        
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     
@@ -169,7 +170,9 @@ struct PageOneView: View {
             } // ZStack
         } // Navigation Stack
         .onAppear() { // init() didn't work because I didn't know how to initialize viewmodel, so I decided to use onAppear. It's working fine so far.
-            UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.secondary, .font:UIFont.titillium]
+            UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.tertiary, .font:UIFont.titillium]
+            
+            // TODO: change the color of the back button:  https://stackoverflow.com/questions/59921239/hide-navigation-bar-without-losing-swipe-back-gesture-in-swiftui#_=_
         }
 
     } // body

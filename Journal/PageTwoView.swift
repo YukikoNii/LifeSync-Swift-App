@@ -15,7 +15,8 @@ struct PageTwoView: View {
     @State private var sleep : Double = 0
     @State private var activity : Double = 0
     @State private var school : Double = 0
-    @State private var date = Date()
+    @State private var dateStress = Date()
+    @State private var dateDaily = Date()
 
 
     @State private var journal = ""
@@ -23,7 +24,8 @@ struct PageTwoView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @Environment(\.modelContext) var context
-    @Query var logs: [log]
+    @Query var logs: [stressLog]
+    @Query var test: [dailyLog]
 
 
 
@@ -47,13 +49,13 @@ struct PageTwoView: View {
                     
                     Text("Reset")
                         .onTapGesture{
-                            date = Date()
+                            dateStress = Date()
                         }
                         .padding()
                         .underline()
                     
 
-                    DatePicker("", selection: $date, displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("", selection: $dateStress, displayedComponents: [.date, .hourAndMinute])
                         .labelsHidden()
                         .colorScheme(.dark)
                         .padding()
@@ -71,7 +73,7 @@ struct PageTwoView: View {
                 .tint(Color("Sec"))
                 
                 Button("Submit") {
-                    let newLog = log(logDate: date, stressLevel: stressLevel)
+                    let newLog = stressLog(logDate: dateStress, stressLevel: stressLevel)
                     context.insert(newLog)
                     stressLevel = 5
                     
@@ -96,7 +98,7 @@ struct PageTwoView: View {
                 
                 Text("Daily Log")
                     .font(.system(20))
-                DatePicker("", selection: $date, displayedComponents: [.date])
+                DatePicker("", selection: $dateDaily, displayedComponents: [.date])
                     .labelsHidden()
                     .colorScheme(.dark)
                     .padding()
@@ -150,6 +152,16 @@ struct PageTwoView: View {
                 
                 TextField("Anything else?", text: $journal)
                     .padding()
+                
+                Button("Submit") {
+                    let test = dailyLog(sleep: sleep, logDate: dateDaily)
+                    context.insert(test)
+                    sleep = 8
+                    
+                } // Button
+                .padding()
+                .buttonStyle(.bordered)
+                .tint(.white)
                 
                 
                 
