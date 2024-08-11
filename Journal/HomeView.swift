@@ -53,11 +53,10 @@ struct HomeView: View {
                     } // HStack
                     .frame(maxWidth:.infinity)
                     
-                    Divider()
-                        .overlay(Color("Sec"))
-                    
-                    
-                    ScrollView(.horizontal) {
+
+                   /* ScrollView(.horizontal) {
+                        
+                        
                         HStack {
                             
                             Text("Overview")
@@ -100,10 +99,9 @@ struct HomeView: View {
                                     index = 5
                                 }
                         }
-                    }
+                         
+                    } */
                     
-                    Divider()
-                        .overlay(Color("Sec"))
                     
                     //https://zenn.dev/usk2000/articles/68c4c1ec7944fe
                     
@@ -150,6 +148,9 @@ struct HomeView: View {
                                     .aspectRatio(1, contentMode:.fit)
                                     .clipShape(.rect(cornerRadius: 20))
                                     .foregroundStyle(Color("Prim"))
+                                    .onTapGesture {
+                                        index = indicator.id + 1
+                                    }
                                 }
                             }
                             .tag(0)// LazyVGrid

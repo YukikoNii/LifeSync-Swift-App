@@ -4,9 +4,37 @@ import Charts
 import SwiftData
 import Foundation
 
+struct TestView: View {
+    @State var selectedDay = Date()
+    @State var index = 1
+    @State var changeDate:Double = 0
+    
+    var body: some View {
+        
+        let endDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400*(changeDate+1)))
+        let startDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400*changeDate))
+        
+        VStack {
+            
+            Text("Daily")
+                .font(.system(18))
+                .foregroundStyle(Color("Sec"))
+
+            DatePicker("", selection: $selectedDay, displayedComponents: [.date])
+                .labelsHidden()
+                .colorScheme(.dark)
+                .padding()
+
+            TabView(selection: $index) {
+                StressView(startDate: startDate, endDate: endDate)
+                    .tag(1)
+            }
+        }
+    }
+}
+
 struct StressView: View {
     
-    // I AM STUCK.
     //@ObservedObject  var viewModel: JournalViewModel
 
     @Environment(\.modelContext) private var context
@@ -16,9 +44,6 @@ struct StressView: View {
     @Query(filter: stressLog.dayLog(date: selectedDay), sort: \.logDate) var dayLog: [stressLog] // trying to do dynamic filter; not really working.
     @Query(filter: stressLog.dayLog(date: dayBefore), sort: \.logDate) var dayBeforeLog: [stressLog]
     @Query(sort: \stressLog.logDate) var logs: [stressLog]
-    
-    var endDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400))
-    var startDate = Calendar.current.startOfDay(for: selectedDay)
     
     
     
@@ -39,15 +64,62 @@ struct StressView: View {
         
         ScrollView {
             // CHART FOR TODAY
-            Text("Daily")
-            
-            DatePicker("", selection: StressView.$selectedDay, displayedComponents: [.date])
-                .labelsHidden()
-                .colorScheme(.dark)
-                .padding()
             
             
+            Chart {
             
+                ForEach(pleaseWork) { log in
+                    LineMark(
+                        x: .value("Date", log.logDate),
+                        y: .value("Stress", log.stressLevel)
+                    )
+                    .interpolationMethod(.catmullRom)
+                    .symbol(.square)
+                    .foregroundStyle(Color("Sec"))
+                    .offset(x:10)
+                    
+                } // ForEach
+                
+                
+            } // Chart
+            .chartYAxis {
+                AxisMarks(
+                    values: [0, 5, 10]
+                ) {
+                    AxisValueLabel()
+                        .foregroundStyle(Color("Sec")) // change the color for  readability
+                        .font(.system(10))
+                }
+                
+                AxisMarks(
+                    values: [1, 2, 3, 4, 6, 7, 8, 9]
+                ) {
+                    AxisGridLine()
+                        .foregroundStyle(Color("Sec"))
+                }
+                
+            }
+            .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
+            .chartXVisibleDomain(length: 86400) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
+            .chartXAxis {
+                AxisMarks(values: .stride(by:.hour, count:3)) { // https://zenn.dev/matsuei/articles/812d0476aa573f
+                                
+                    AxisValueLabel(format:.dateTime.hour())
+                    .foregroundStyle(Color("Sec"))
+                    .font(.system(10))
+                
+                AxisGridLine()
+                    .foregroundStyle(Color("Sec"))
+            }
+                AxisMarks(values:.stride(by:.day, count:1)) {
+                    
+                    AxisValueLabel()
+                    .foregroundStyle(Color("Sec"))
+                    .font(.system(10))
+                    .offset(x:-10, y:15)
+                }
+            }
+            .frame(width:350, height:400)
 
             
             Text(stressLog.getStressAvg(dayStressLogs: logs).isNaN ? "": "Today's average: \(stressLog.getStressAvg(dayStressLogs: logs))")
@@ -185,67 +257,6 @@ struct StressView: View {
         
     } // Body
 } // StressView
-
-struct TestView:View {
-    var body: some View {
-        
-        Chart {
-        
-            ForEach(pleaseWork) { log in
-                LineMark(
-                    x: .value("Date", log.logDate),
-                    y: .value("Stress", log.stressLevel)
-                )
-                .interpolationMethod(.catmullRom)
-                .symbol(.square)
-                .foregroundStyle(Color("Sec"))
-                .offset(x:10)
-                
-            } // ForEach
-            
-            
-        } // Chart
-        .chartYAxis {
-            AxisMarks(
-                values: [0, 5, 10]
-            ) {
-                AxisValueLabel()
-                    .foregroundStyle(Color("Sec")) // change the color for  readability
-                    .font(.system(10))
-            }
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 6, 7, 8, 9]
-            ) {
-                AxisGridLine()
-                    .foregroundStyle(Color("Sec"))
-            }
-            
-        }
-        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-        .chartXVisibleDomain(length: 86400) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-        .chartXAxis {
-            AxisMarks(values: .stride(by:.hour, count:3)) { // https://zenn.dev/matsuei/articles/812d0476aa573f
-                            
-                AxisValueLabel(format:.dateTime.hour())
-                .foregroundStyle(Color("Sec"))
-                .font(.system(10))
-            
-            AxisGridLine()
-                .foregroundStyle(Color("Sec"))
-        }
-            AxisMarks(values:.stride(by:.day, count:1)) {
-                
-                AxisValueLabel()
-                .foregroundStyle(Color("Sec"))
-                .font(.system(10))
-                .offset(x:-10, y:15)
-            }
-        }
-        .frame(width:350, height:400)
-    }
-    
-}
 
 
 
