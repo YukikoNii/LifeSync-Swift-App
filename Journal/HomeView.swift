@@ -5,14 +5,16 @@ import Charts
 import SwiftData
 import Foundation
 
-struct PageOneView: View {
-    
+struct HomeView: View {
+        
     @ObservedObject var viewModel: JournalViewModel
     
     @Environment(\.modelContext) private var context
     @Query var logs: [stressLog]
     @Query(filter: stressLog.dayLog(date:Date.now)) var todaysLogs: [stressLog]
     
+    var startDate = Calendar.current.startOfDay(for: Date().addingTimeInterval(86400*0))
+    var endDate = Calendar.current.startOfDay(for: Date().addingTimeInterval(86400*1))
     
     @State var index = 0
 
@@ -32,7 +34,7 @@ struct PageOneView: View {
                     HStack(spacing:0) { // https://programming-sansho.com/swift/swiftui-spacer/
                         
                         NavigationLink {
-                            PageThreeView(viewModel: viewModel)
+                            SettingsView(viewModel: viewModel)
                         } label: {
                             Image(systemName: "gearshape.fill")
                                 .foregroundStyle(Color("Sec"))
@@ -153,9 +155,11 @@ struct PageOneView: View {
                             .tag(0)// LazyVGrid
                         } // ScrollView
                         
-                        StressView(viewModel:viewModel)
-                            .tag(1)
                         
+                    
+                        TestView()
+                            .tag(1)
+
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     

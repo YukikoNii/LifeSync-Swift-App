@@ -20,20 +20,20 @@ struct JournalView: View {
         
         TabView(selection: $selection) {
             
-            PageOneView(viewModel: viewModel)
+            HomeView(viewModel: viewModel)
                 .tabItem {
                     Image(systemName:"house") // TODO: make images larger
                 }
                 .tag(1)
                 .badge(1)
             
-            PageTwoView(viewModel: viewModel)
+            LogView(viewModel: viewModel)
                 .tabItem {
                     Image(systemName:"plus.app.fill")
                 }
                 .tag(2)
             
-            PageFourView(viewModel: viewModel)
+            HistoryView(viewModel: viewModel)
                 .tabItem {
                     Image(systemName:"list.bullet.clipboard.fill")
                 }
@@ -51,7 +51,7 @@ struct JournalView: View {
 
 #Preview {
         JournalView(viewModel: JournalViewModel())
-        .modelContainer(for: [stressLog.self, dailyLog.self], inMemory:true)
+        .modelContainer(for: [stressLog.self, day.self, dailyLog.self], inMemory:true)
     // Someone suggested that if the problem is only within Preview, inMemory: true works.
     // https://www.hackingwithswift.com/forums/100-days-of-swiftui/day-54-crash-in-preview-of-swiftdata/26510
     //  https://qiita.com/Puyan/items/117e8a266c34a81c393d

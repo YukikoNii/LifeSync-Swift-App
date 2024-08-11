@@ -19,6 +19,8 @@ class JournalViewModel: ObservableObject {
     
     @Published var password = ""
     
+    @Published var selectedDay = Date()
+    
 }
 
 

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PageThreeView: View {
+struct SettingsView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     
@@ -28,7 +28,7 @@ struct PageThreeView: View {
                     List(settingRows, id:\.id) { settingRow in
                         
                         NavigationLink(settingRow.name) {
-                            SettingsView(viewModel: viewModel, category: settingRow.name) // For some reason, NavigationDestination didn't work.
+                            SettingsDetailsView(viewModel: viewModel, category: settingRow.name) // For some reason, NavigationDestination didn't work.
                         }
                         .font(.system(18))
                         .listRowBackground(Color("Sec"))
@@ -72,7 +72,7 @@ struct PageThreeView: View {
 
 }
 
-struct SettingsView: View {
+struct SettingsDetailsView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     let category: String

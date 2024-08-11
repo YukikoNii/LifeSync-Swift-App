@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-struct PageFourView: View {
+struct HistoryView: View {
     
     @ObservedObject var viewModel: JournalViewModel
     @Environment(\.modelContext) private var context

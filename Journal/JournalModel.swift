@@ -9,13 +9,16 @@ import Foundation
 import SwiftData
 
 @Model
-class stressLog {
+class stressLog: Identifiable {
+    
     var logDate: Date
     var stressLevel: Double
+    var id: String
     
-    init (logDate: Date, stressLevel: Double) {
+    init (logDate: Date, stressLevel: Double, id: String) {
         self.logDate = logDate
         self.stressLevel = stressLevel
+        self.id = id // Adding so that it conforms to RandomAccessCollection
     }
 }
 
@@ -29,7 +32,7 @@ extension stressLog {
         
         let endDate = Calendar.current.startOfDay(for: date.addingTimeInterval(86400))
         let startDate = Calendar.current.startOfDay(for: date)
-
+        
         return #Predicate<stressLog> { log in
             startDate < log.logDate &&
             log.logDate < endDate
@@ -40,9 +43,9 @@ extension stressLog {
         
         let date = Date()
         let weekAgo = date.addingTimeInterval(-86400*7)
-
+        
         return #Predicate<stressLog> { log in
-                log.logDate > weekAgo
+            log.logDate > weekAgo
         }
     }
     
@@ -51,8 +54,9 @@ extension stressLog {
         let string = String(format: "%.2f", division)
         return string
     }
-        
 }
+    
+
 
 @Model
 class day {
@@ -60,9 +64,9 @@ class day {
     var avgStress: Double
     var sleep: dailyLog // I am not sure if this is right.
     
-    init(logDate: Date, stressLevel: Double, sleep: dailyLog) {
+    init(logDate: Date, avgStress: Double, sleep: dailyLog) {
             self.logDate = logDate
-            self.avgStress = stressLevel
+            self.avgStress = avgStress
             self.sleep = sleep
         }
 }
@@ -70,9 +74,11 @@ class day {
 @Model
 class dailyLog {
     var sleep: Double
+    var logDate: Date
     
-    init (sleep: Double) {
+    init (sleep: Double, logDate: Date) {
         self.sleep = sleep
+        self.logDate = logDate
     }
 }
 

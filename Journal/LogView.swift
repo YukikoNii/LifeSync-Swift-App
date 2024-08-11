@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-struct PageTwoView: View {
+struct LogView: View {
 
     @State private var stressLevel : Double = 5
     @State private var sleep : Double = 0
@@ -24,13 +24,9 @@ struct PageTwoView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @Environment(\.modelContext) var context
-    @Query var logs: [stressLog]
-    @Query var test: [dailyLog]
-
 
 
     var body: some View {
-        
         ZStack {
             
             Color("Prim")
@@ -73,7 +69,7 @@ struct PageTwoView: View {
                 .tint(Color("Sec"))
                 
                 Button("Submit") {
-                    let newLog = stressLog(logDate: dateStress, stressLevel: stressLevel)
+                    let newLog = stressLog(logDate: dateStress, stressLevel: stressLevel, id: UUID().uuidString)
                     context.insert(newLog)
                     stressLevel = 5
                     
@@ -181,4 +177,7 @@ struct PageTwoView: View {
         }
     }
 }
+
+
+
 
