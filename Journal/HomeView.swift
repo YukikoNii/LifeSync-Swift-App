@@ -31,7 +31,7 @@ struct HomeView: View {
                 
                 VStack {
                     
-                    HStack(spacing:0) { // https://programming-sansho.com/swift/swiftui-spacer/
+                    HStack() { // https://programming-sansho.com/swift/swiftui-spacer/
                         
                         NavigationLink {
                             SettingsView(viewModel: viewModel)
@@ -50,13 +50,21 @@ struct HomeView: View {
                         
                         Spacer()
                         
+                        NavigationLink {
+                            SettingsView(viewModel: viewModel)
+                        } label: {
+                            Image(systemName: "tray.fill")
+                                .foregroundStyle(Color("Sec"))
+                        }
+                        
                     } // HStack
                     .frame(maxWidth:.infinity)
                     
-
-                   /* ScrollView(.horizontal) {
-                        
-                        
+                    Divider()
+                        .overlay(Color("Sec"))
+                    
+                    
+                    ScrollView(.horizontal) {
                         HStack {
                             
                             Text("Overview")
@@ -99,9 +107,10 @@ struct HomeView: View {
                                     index = 5
                                 }
                         }
-                         
-                    } */
+                    }
                     
+                    Divider()
+                        .overlay(Color("Sec"))
                     
                     //https://zenn.dev/usk2000/articles/68c4c1ec7944fe
                     
@@ -148,9 +157,6 @@ struct HomeView: View {
                                     .aspectRatio(1, contentMode:.fit)
                                     .clipShape(.rect(cornerRadius: 20))
                                     .foregroundStyle(Color("Prim"))
-                                    .onTapGesture {
-                                        index = indicator.id + 1
-                                    }
                                 }
                             }
                             .tag(0)// LazyVGrid
