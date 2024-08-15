@@ -59,12 +59,12 @@ extension stressLog {
 
 
 @Model
-class day {
+class daySummary {
     var logDate: Date
     var avgStress: Double
-    var sleep: dailyLog // I am not sure if this is right.
+    var sleep: dailyFactorsLog // I am not sure if this is right.
     
-    init(logDate: Date, avgStress: Double, sleep: dailyLog) {
+    init(logDate: Date, avgStress: Double, sleep: dailyFactorsLog) {
             self.logDate = logDate
             self.avgStress = avgStress
             self.sleep = sleep
@@ -72,13 +72,34 @@ class day {
 }
 
 @Model
-class dailyLog {
+class dailyFactorsLog {
     var sleep: Double
+    var activity: Double
+    var diet: Double
+    var work: Double
+    var journal: String
     var logDate: Date
     
-    init (sleep: Double, logDate: Date) {
+    init(sleep: Double, activity: Double, diet: Double, work: Double, journal: String, logDate: Date) {
         self.sleep = sleep
+        self.activity = activity
+        self.diet = diet
+        self.work = work
+        self.journal = journal
         self.logDate = logDate
     }
 }
 
+extension dailyFactorsLog {
+    
+    static func dayLog(date: Date) -> Predicate<dailyFactorsLog> {
+        
+        let endDate = Calendar.current.startOfDay(for: date.addingTimeInterval(86400))
+        let startDate = Calendar.current.startOfDay(for: date)
+        
+        return #Predicate<dailyFactorsLog> { log in
+            startDate < log.logDate &&
+            log.logDate < endDate // TODO: technically, it doesn't have to be a range. (But calendar can't be used in the predicate, so I don't know how else to do it.)
+        }
+    }
+}

@@ -19,7 +19,7 @@ class JournalViewModel: ObservableObject {
     
     @Published var password = ""
     
-    @Published var selectedDay = Date()
+    @Published var selectedDay = Date() // TODO: did i ever use this? 
     
 }
 

@@ -12,7 +12,8 @@ struct SettingsView: View {
     
     
     
-    /* init() {
+    /* init(viewModel: viewModel) {
+    
       // TODO: I want to be able to change the color.
         } */
     //https://stackoverflow.com/questions/77664511/how-to-change-navigation-title-color-in-swiftui
@@ -20,10 +21,9 @@ struct SettingsView: View {
     var body: some View {
         
             NavigationStack {
-                
-                
                 ZStack {
-                    Color("Prim")
+                    Color("Sec")
+                        .ignoresSafeArea()
                 
                     List(settingRows, id:\.id) { settingRow in
                         
@@ -31,24 +31,25 @@ struct SettingsView: View {
                             SettingsDetailsView(viewModel: viewModel, category: settingRow.name) // For some reason, NavigationDestination didn't work.
                         }
                         .font(.system(18))
-                        .listRowBackground(Color("Sec"))
-                        .foregroundColor(Color("Prim"))
+                        .listRowBackground(Color("Prim"))
+                        .foregroundColor(Color("Sec"))
                 
                     
                 } // List
                 .scrollContentBackground(.hidden)
-                .navigationTitle("Settings")
-                .navigationBarTitleDisplayMode(.inline)
+
 
             } // ZStack
             .scrollContentBackground(.hidden)
-
-        
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Settings")
+                        .foregroundColor(Color("Prim"))
+                        .font(.system(18))
+                }
+            }
         } // NavigationStack
-        .onAppear() { // init() didn't work because I didn't know how to initialize viewmodel, so I decided to use onAppear. It's working fine so far.
-                UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.tertiary, .font:UIFont.titillium]
-        }
-        .tint(Color("Sec")) // Change Navigation View Back button (arrow) color
+
         
     } //body
    
@@ -67,9 +68,6 @@ struct SettingsView: View {
         settingRow(name: "Analysis", icon: "", id:2),
         settingRow(name: "Help", icon: "", id:3) // you need to have id and it needs to be hashable, otherwise it navigates back immediately.
     ]
-    
-    
-
 }
 
 struct SettingsDetailsView: View {
@@ -81,9 +79,8 @@ struct SettingsDetailsView: View {
         
         if category == "Profile" {
             
-                
                 ZStack {
-                    Color("Prim")
+                    Color("Sec")
                         .ignoresSafeArea()
                 
                 List {
@@ -101,9 +98,12 @@ struct SettingsDetailsView: View {
                     SecureField("Password", text: $viewModel.password)
                     
                 } // List
-                .navigationTitle("Profile")
+                .navigationBarTitle("Profile")
                 .navigationBarTitleDisplayMode(.inline)
+                .onAppear() { // init() didn't work because I didn't know how to initialize viewmodel, so I decided to use onAppear. It's working fine so far.
+                        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.secondary, .font:UIFont.titillium]
 
+                }
 
             } // ZStack
             .scrollContentBackground(.hidden)

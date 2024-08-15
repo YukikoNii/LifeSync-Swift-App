@@ -27,10 +27,12 @@ struct HistoryView: View {
                         NavigationLink {
                         } label: {
                             Text("\(log.logDate.formatted(date:.abbreviated, time:.shortened))")
+                                .foregroundStyle(Color("Sec"))
                         }
                     }
                     HStack {
-                        Text("Stress Level: \(log.stressLevel)")
+                        Text("Stress Level: \(String(format: "%.2f", log.stressLevel))") // round to 2dp
+                            .foregroundStyle(Color("Sec"))
                     }
                     }
                 .swipeActions(edge: .trailing) {
@@ -44,12 +46,12 @@ struct HistoryView: View {
                     }
                     .tint(.yellow)
                 }
-                .listRowBackground(Color("Sec"))
+                .listRowBackground(Color("Prim"))
             }
                 
         }
         .scrollContentBackground(.hidden)
-        .background(Color("Prim"))
+        .background(Color("Sec"))
         .foregroundStyle(.white)
     }
 }

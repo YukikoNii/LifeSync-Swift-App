@@ -26,4 +26,8 @@ extension UIColor {
     public class var tertiary: UIColor {
         return UIColor(red: 43/255, green: 44/255, blue: 42/255, alpha: 1.0)
     }
+    
+    public class var secondary: UIColor { // Dark blue
+        return UIColor(red: 40/255, green: 67/255, blue: 120/255, alpha: 1.0)
+    }
 }
