@@ -65,7 +65,7 @@ struct SettingsView: View {
     var settingRows = [
         settingRow(name: "Profile", icon: "", id:0),
         settingRow(name: "Notification", icon: "", id:1),
-        settingRow(name: "Analysis", icon: "", id:2),
+        settingRow(name: "Configuration", icon: "", id:2),
         settingRow(name: "Help", icon: "", id:3) // you need to have id and it needs to be hashable, otherwise it navigates back immediately.
     ]
 }

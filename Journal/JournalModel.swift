@@ -13,11 +13,13 @@ class stressLog: Identifiable {
     
     var logDate: Date
     var stressLevel: Double
+    var notes: String
     var id: String
     
-    init (logDate: Date, stressLevel: Double, id: String) {
+    init (logDate: Date, stressLevel: Double, notes:String, id: String) {
         self.logDate = logDate
         self.stressLevel = stressLevel
+        self.notes = notes
         self.id = id // Adding so that it conforms to RandomAccessCollection
     }
 }
