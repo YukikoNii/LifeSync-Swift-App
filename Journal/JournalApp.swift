@@ -32,10 +32,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 
 // Create notification
-public func notification() async {
+public func notification()  {
     do {
         let content = UNMutableNotificationContent()
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false) // runs 5 seconds later if in the background
+        let dateComponent = DateComponents(hour: 8, minute:0)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponent, repeats: false) // https://appdev-room.com/swift-notification-date
         
         content.title = "How are you feeling?"
         content.body = "Open the app to record"
@@ -43,8 +44,9 @@ public func notification() async {
         content.badge = 1 // Badge appears in the home at the top right of the logo
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        try await UNUserNotificationCenter.current().add(request)
-    } catch {
-        print(error)
+        UNUserNotificationCenter.current().add(request)
     }
 }
+
+
+

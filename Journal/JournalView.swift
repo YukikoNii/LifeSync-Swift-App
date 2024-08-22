@@ -10,10 +10,8 @@ import SwiftData
 
 struct JournalView: View {
     @ObservedObject var viewModel: JournalViewModel
-
-    @State private var sliderVal : Double = 0
     
-    @State var selection = 2
+    @State var selection = 1
     
 
     var body: some View {
@@ -25,7 +23,6 @@ struct JournalView: View {
                     Image(systemName:"house") // TODO: make images larger
                 }
                 .tag(1)
-                .badge(1)
             
             LogView(viewModel: viewModel)
                 .tabItem {
@@ -37,11 +34,20 @@ struct JournalView: View {
                 .tabItem {
                     Image(systemName:"list.bullet.clipboard.fill")
                 }
+                .tag(3)
+            
+            SettingsView(viewModel: viewModel)
+                .tabItem {
+                    Image(systemName:"list.bullet.clipboard.fill")
+                }
                 .tag(4)
+            
+            
         }
         .onAppear() {
             UITabBar.appearance().unselectedItemTintColor = .white
-            UITabBar.appearance().backgroundColor = .tertiary
+            //UITabBar.appearance().backgroundColor = .secondary
+
         }
         .tint(Color("Prim"))
     }

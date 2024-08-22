@@ -8,7 +8,7 @@ struct SleepDatePickerView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @State var selectedDay = Date()
-    @State var index = 1
+    @State var index = 0
     @State var changeDate:Double = 0
     
     var body: some View {
@@ -23,9 +23,28 @@ struct SleepDatePickerView: View {
             
             VStack {
                 
-                Text("Daily")
-                    .font(.system(18))
-                    .foregroundStyle(Color("Sec"))
+                HStack {
+
+                    Text("Week")
+                        .padding()
+                        .background(index == 0 ? Color("Var") : Color("Sec"))
+                        .foregroundColor(index == 0 ? Color("Prim") : Color("Prim"))
+                        .font(.system(17))
+                        .clipShape(.rect(cornerRadius:5))
+                        .onTapGesture {
+                            index = 0
+                        }
+                    
+                    Text("Month")
+                        .padding()
+                        .background(index == 1 ? Color("Var") : Color("Sec"))
+                        .foregroundColor(index == 1 ? Color("Prim") : Color("Prim"))
+                        .font(.system(17))
+                        .clipShape(.rect(cornerRadius:5))
+                        .onTapGesture {
+                            index = 1
+                        }
+                }
                 
                 DatePicker("", selection: $selectedDay, displayedComponents: [.date])
                     .labelsHidden()
@@ -34,7 +53,7 @@ struct SleepDatePickerView: View {
                 
                 TabView(selection: $index) { // Using TabView as a work around for Dynamic Query
                     SleepView(startDate: startDate, endDate: endDate)
-                        .tag(1)
+                        .tag(0)
                 }
             } // VStack
         } //ZStack
@@ -75,14 +94,17 @@ struct SleepView: View {
     var body: some View {
         
         //var dailyAverage = log.getStressAvg(dayStressLogs: logs)
-        
+    
         ZStack {
             
             Color("Sec")
                 .ignoresSafeArea()// Background
             
             ScrollView {
-                // CHART FOR TODAY
+                // Chart for week
+                
+                if sleepLogsForThisWeek.count != 0 {
+                    
                 Chart {
                     
                     ForEach(sleepLogsForThisWeek) { log in
@@ -127,7 +149,27 @@ struct SleepView: View {
                         .foregroundStyle(Color("Prim"))
                 }
                 }
-                .frame(width:350, height:400)
+                .padding(30)
+                .background(Color("Var"))
+                .clipShape(.rect(cornerRadius: 20))
+                .frame(width:350, height:350)
+                
+            } else {
+                Text("No Data")
+            }
+            
+                
+                LazyVGrid(columns: [GridItem(), GridItem()]) {
+                    
+                    FactorsAnalysisView(data: sleepLogsForThisWeek, beforeData: sleepLogsForLastWeek, duration: "week")
+                    
+                }// LazyVGrid
+                .padding(10)
+                .background(Color("Var"))
+                .clipShape(.rect(cornerRadius: 15))
+                .frame(width:350)
+                
+        
                 
                 
                 
@@ -136,9 +178,73 @@ struct SleepView: View {
             .font(.system(18))
             
         }//ZStack
+         
+         
         
     } // Body
 } // StressView
+
+struct FactorsAnalysisView : View {
+    let data:[dailyFactorsLog]
+    let beforeData:[dailyFactorsLog]
+    let periodInPast = ["week": "last week", "month": "last month"]
+    let duration: String // I am not sure if this is correct.
+    
+    var body: some View {
+        
+        VStack (alignment: .leading) {
+        
+        Text("Average:")
+            .foregroundStyle(Color("Prim"))
+            .font(.system(18))
+        
+            if !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data).isNaN { // If data available for selected day
+                
+                let avgSleepString = String(format: "%.2f", dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data)) // round to 2dp
+                
+                Text("\(avgSleepString)h")
+                    .foregroundStyle(Color("Prim"))
+                    .font(.systemSemiBold(20))
+            } else {
+                Text("No Data")
+                    .foregroundStyle(Color("Prim"))
+                    .font(.systemSemiBold(20))
+                
+            }
+            
+            
+        }
+        
+        VStack (alignment: .leading) {
+            
+            Text("Trend:")
+                .foregroundStyle(Color("Prim"))
+                .font(.system(18))
+        
+        if !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data).isNaN
+            && !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData).isNaN {  // If data available for both  selected day and day before.
+            
+                if let duration = periodInPast[duration] {
+                    
+                    Text("\(dailyFactorsLog.calculatePercentage(period1: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data), period2: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData))) % compared to \(duration)")
+                        .foregroundStyle(Color("Prim"))
+                        .font(.systemSemiBold(20))
+                    
+                }
+            } else {
+                Text("No Data")
+                    .foregroundStyle(Color("Prim"))
+                    .font(.systemSemiBold(20))
+            }
+            
+        }
+        // TODO: when your stress level is highest
+        
+        
+        
+    }
+}
+
 
 
 
