@@ -8,7 +8,7 @@ struct HistoryView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @Query(sort: \dailyFactorsLog.logDate) var dailyFactorsLogs: [dailyFactorsLog]
-    @State var index = 0
+    @State var page = 0
 
     var body: some View {
         
@@ -20,29 +20,28 @@ struct HistoryView: View {
             VStack {
                 
                 HStack {
-                    Text("Stress Logs")
+                    Text("Stress Log")
                         .padding()
-                        .background(index == 0 ? Color("Var") : Color("Sec"))
-                        .foregroundColor(index == 0 ? Color("Prim") : Color("Prim"))
+                        .background(page == 0 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(page == 0 ? Color("Prim") : Color("Prim"))
                         .font(.system(17))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 0
+                            page = 0
                         }
                     
-                    Text("Daily Logs")
+                    Text("Factors Log")
                         .padding()
-                        .background(index == 1 ? Color("Var") : Color("Sec"))
-                        .foregroundColor(index == 1 ? Color("Prim") : Color("Prim"))
+                        .background(page == 1 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(page == 1 ? Color("Prim") : Color("Prim"))
                         .font(.system(17))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 1
+                            page = 1
                         }
                 }
                 
-                
-                TabView(selection: $index) {
+                TabView(selection: $page) {
                     StressHistoryView(viewModel: viewModel)
                         .tag(0)
 
@@ -78,6 +77,7 @@ struct StressHistoryView: View {
                     }
                     VStack {
                         Text("Stress Level: \(String(format: "%.2f", log.stressLevel))") // round to 2dp
+                        Text("\(String(log.notes))")
                         
                     }
                     .foregroundStyle(Color("Prim"))
@@ -93,13 +93,15 @@ struct StressHistoryView: View {
                     }
                     .tint(Color("Edit"))
                 }
-                .listRowBackground(Color("Var"))
+                .listRowBackground(Color("Tint"))
             }
             
         }
         .scrollContentBackground(.hidden)
         .background(Color("Sec"))
         .foregroundStyle(.white)
+        .toolbarBackground(Color("Sec"), for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
     }
 }
 
@@ -148,13 +150,14 @@ struct FactorsHistoryView: View {
                     }
                     .tint(Color("Edit"))
                 }
-                .listRowBackground(Color("Var"))
+                .listRowBackground(Color("Tint"))
             }
             
         }
         .scrollContentBackground(.hidden)
         .background(Color("Sec"))
         .foregroundStyle(.white)
-        .tag(1)
+        .toolbarBackground(Color("Sec"), for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
     }
 }

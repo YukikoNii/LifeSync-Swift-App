@@ -18,6 +18,8 @@ class JournalViewModel: ObservableObject {
     @Published var email = ""
     
     @Published var password = ""
+    
+    @Published var reminderTime1 = Date.now
         
 }
 

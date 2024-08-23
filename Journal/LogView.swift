@@ -6,61 +6,61 @@ import Foundation
 struct LogView: View {
     @ObservedObject var viewModel: JournalViewModel
     @State var index = 0
-
+    
     var body: some View {
+        
+        ZStack {
             
-            ZStack {
+            Color("Sec")
+                .ignoresSafeArea()
+            
+            VStack {
                 
-                Color("Sec")
-                    .ignoresSafeArea()
+                HStack {
+                    Text("Stress Log")
+                        .padding()
+                        .background(index == 0 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(index == 0 ? Color("Prim") : Color("Prim"))
+                        .font(.system(17))
+                        .clipShape(.rect(cornerRadius:5))
+                        .onTapGesture {
+                            index = 0
+                        }
+                    
+                    Text("Factors Log")
+                        .padding()
+                        .background(index == 1 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(index == 1 ? Color("Prim") : Color("Prim"))
+                        .font(.system(17))
+                        .clipShape(.rect(cornerRadius:5))
+                        .onTapGesture {
+                            index = 1
+                        }
+                }
                 
-                VStack {
-                    
-                    HStack {
-                        Text("Stress Log")
-                            .padding()
-                            .background(index == 0 ? Color("Var") : Color("Sec"))
-                            .foregroundColor(index == 0 ? Color("Prim") : Color("Prim"))
-                            .font(.system(17))
-                            .clipShape(.rect(cornerRadius:5))
-                            .onTapGesture {
-                                index = 0
-                            }
-                        
-                        Text("Factors Log")
-                            .padding()
-                            .background(index == 1 ? Color("Var") : Color("Sec"))
-                            .foregroundColor(index == 1 ? Color("Prim") : Color("Prim"))
-                            .font(.system(17))
-                            .clipShape(.rect(cornerRadius:5))
-                            .onTapGesture {
-                                index = 1
-                            }
-                    }
-                    
-                    
-                    TabView(selection:$index) {
-                        
-                        // Stress Tracker which you can log as many times as you want each day.
-                        StressTrackerView(viewModel: viewModel)
-                            .tag(0)
-                        
-                        // Daily log
-                        DailyLogView()
-                            .tag(1)
-                        
-                    }// TabView
-                } // VStack
                 
-            } // ZStack
-
+                TabView(selection:$index) {
+                    
+                    // Stress Tracker which you can log as many times as you want each day.
+                    StressTrackerView(viewModel: viewModel)
+                        .tag(0)
+                    
+                    // Daily log
+                    DailyLogView()
+                        .tag(1)
+                    
+                }// TabView
+            } // VStack
+            
+        } // ZStack
+        
     }
 }
 
 
 struct StressTrackerView: View {
     @ObservedObject var viewModel: JournalViewModel
-
+    
     @State private var stressLevel : Double = 5
     @State private var stressDate = Date()
     @State private var notes = ""
@@ -73,53 +73,73 @@ struct StressTrackerView: View {
             Color("Sec")
                 .ignoresSafeArea()
             
-            VStack {
-                HStack {
-                    
-                    Button {
-                        stressDate = Date()
-                    } label: {
-                        Text("Reset")
-                    }
-                    .padding()
-                    
-                    
-                    DatePicker("", selection: $stressDate, displayedComponents: [.date, .hourAndMinute])
-                        .labelsHidden()
-                        .colorScheme(.dark)
+            ScrollView {
+                
+                VStack {
+                    HStack {
+                        
+                        Button {
+                            stressDate = Date()
+                        } label: {
+                            Text("Reset")
+                        }
                         .padding()
+                        
+                        
+                        DatePicker("", selection: $stressDate, displayedComponents: [.date, .hourAndMinute])
+                            .labelsHidden()
+                            .padding()
+                        
+                    }
                     
-                }
-                
-                Text("Stress Level: \(stressLevel, specifier:"%.0f")")
+                    Text("Stress Level: \(stressLevel, specifier:"%.0f")")
+                        .padding()
+                    //.frame(maxWidth:.infinity, alignment: .leading)
+                    //https://t32k.me/mol/log/text-align-swiftui/
+                    Slider(value: $stressLevel, in: 0...10, step:1,  minimumValueLabel: Text("Low"),
+                           maximumValueLabel: Text("High"),
+                           label: { EmptyView() })
+                    .padding(.horizontal)
+                    .tint(Color("Prim"))
+                    
+                    Text("Notes")
+                    
+                    TextEditor(text: $notes)
+                        .padding()
+                        .foregroundStyle(Color("Prim"))
+                        .overlay(alignment: .topLeading) {
+                            
+                            if notes.isEmpty { // custom placeholder
+                                Text("How did you feel?")
+                                    .padding(6)
+                                    .foregroundColor(Color(uiColor: .placeholderText)) // src: https://blog.code-candy.com/swiftui_texteditor/
+                            }
+                            
+                        }
+                    
+                    Button("Submit") {
+                        let newLog = stressLog(logDate: stressDate, stressLevel: stressLevel, notes: notes, id: UUID().uuidString)
+                        context.insert(newLog)
+                        stressLevel = 5
+                        
+                    } // Button
                     .padding()
-                //.frame(maxWidth:.infinity, alignment: .leading)
-                //https://t32k.me/mol/log/text-align-swiftui/
-                Slider(value: $stressLevel, in: 0...10, step:1,  minimumValueLabel: Text("Low"),
-                       maximumValueLabel: Text("High"),
-                       label: { EmptyView() })
-                .padding(.horizontal)
-                .tint(Color("Prim"))
-                
-                Button("Submit") {
-                    let newLog = stressLog(logDate: stressDate, stressLevel: stressLevel, notes: notes, id: UUID().uuidString)
-                    context.insert(newLog)
-                    stressLevel = 5
+                    .buttonStyle(.bordered)
+                    .tint(.white)
                     
-                } // Button
+                } //VStack
                 .padding()
-                .buttonStyle(.bordered)
-                .tint(.white)
+                .background(Color("Tint"))
+                .clipShape(.rect(cornerRadius: 20))
+                .font(.system(16))
+                .foregroundStyle(Color("Prim"))
+                .padding(20)
                 
-            }
-            .padding()
-            .background(Color("Var"))
-            .clipShape(.rect(cornerRadius: 20))
-            .font(.system(16))
-            .foregroundStyle(Color("Prim"))
-            .padding(20)
+            }//ScrollView
+            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+            
         }
-        
     }
 }
 
@@ -134,7 +154,7 @@ struct DailyLogView: View { // TODO: only allow one log per day.
     @State private var journal = ""
     
     @Query(filter: stressLog.dayLog(date:Date.now)) var todaysLogs: [stressLog]
-
+    
     var body: some View {
         
         ZStack {
@@ -147,7 +167,6 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     
                     DatePicker("", selection: $dateDaily, displayedComponents: [.date])
                         .labelsHidden()
-                        .colorScheme(.dark)
                         .padding()
                     
                     //https://zenn.dev/joo_hashi/books/ccb8a3799ce7ba/viewer/8ae4e2
@@ -191,14 +210,21 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     
                     Text("Journal")
                     
-                    TextField("Anything else?", text: $journal)
+                    TextEditor( text: $journal)
                         .padding()
                         .foregroundStyle(Color("Prim"))
+                        .overlay(alignment: .topLeading) {
+                            
+                            if journal.isEmpty { // custom placeholder
+                                Text("Type here")
+                                    .padding(6)
+                                    .foregroundColor(Color(uiColor: .placeholderText)) // src: https://blog.code-candy.com/swiftui_texteditor/
+                            }
+                        }
                     
                     
                     Button("Submit") {
                         let dailyFactorsLog = dailyFactorsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: dateDaily)
-                        
                         
                         context.insert(dailyFactorsLog)
                         
@@ -216,12 +242,15 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     
                 } // VStack
                 .padding()
-                .background(Color("Var"))
+                .background(Color("Tint"))
                 .clipShape(.rect(cornerRadius: 20))
                 .font(.system(16))
                 .foregroundStyle(Color("Prim"))
                 .padding(20)
-            }
+                
+            }//scrollview
+            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
         }
     }
 }

@@ -7,12 +7,12 @@ import Foundation
 import UserNotifications
 
 struct HomeView: View {
-        
+    
     @ObservedObject var viewModel: JournalViewModel
-                
+    
     var body: some View {
         
-    //https://www.youtube.com/watch?app=desktop&v=dRdguneAh8M
+        //https://www.youtube.com/watch?app=desktop&v=dRdguneAh8M
         
         NavigationStack {
             
@@ -22,69 +22,11 @@ struct HomeView: View {
                     .ignoresSafeArea()// Background
                 
                 VStack {
-
-                    /*Button {
-                     Task {
-                     await notification()
-                     }
-                     } label: {
-                     Text("Push!")
-                     } */
                     
                     HomeNavBarView(viewModel: viewModel)
                     
                     Divider()
                         .overlay(Color("Prim"))
-                    
-                    /*
-                     ScrollView(.horizontal) {
-                     HStack {
-                     
-                     Text("Overview")
-                     .padding()
-                     .background(index == 0 ? Color("Sec") : Color("Prim"))
-                     .foregroundColor(index == 0 ? Color("Prim") : Color("Sec"))
-                     .font(.system(18))
-                     .clipShape(.rect(cornerRadius:20))
-                     
-                     .onTapGesture {
-                     index = 0
-                     }
-                     
-                     ForEach(overviewTiles, id: \.self) { indicator in
-                     
-                     Text(indicator.name)
-                     .padding()
-                     .background(index == indicator.id + 1 ? Color("Sec") : Color("Prim"))
-                     .foregroundColor(index == indicator.id + 1 ? Color("Prim") : Color("Sec"))
-                     .tint(.black)
-                     .font(.system(18))
-                     .clipShape(.rect(cornerRadius:20))
-                     
-                     .onTapGesture {
-                     
-                     index = indicator.id + 1
-                     }
-                     }
-                     
-                     // TODO: Will probably remove this later.
-                     Text("Analysis")
-                     .padding()
-                     .background(index == 5 ? Color.black : Color("Prim"))
-                     .foregroundColor(.white)
-                     .tint(.black)
-                     .font(.system(18))
-                     .onTapGesture {
-                     
-                     index = 5
-                     }
-                     }
-                     }
-                     
-                     Divider()
-                     .overlay(Color("Sec"))
-                     
-                     */
                     
                     //https://zenn.dev/usk2000/articles/68c4c1ec7944fe
                     
@@ -102,9 +44,26 @@ struct HomeView: View {
                             NavigationLink {
                                 SleepDatePickerView(viewModel: viewModel)
                             } label: {
-                                SleepTileView()
+                                FactorsTile(chosenFactor: "Sleep")
                             }
                             
+                            NavigationLink {
+                                SleepDatePickerView(viewModel: viewModel)
+                            } label: {
+                                FactorsTile(chosenFactor: "Activity")
+                            }
+                            
+                            NavigationLink {
+                                SleepDatePickerView(viewModel: viewModel)
+                            } label: {
+                                FactorsTile(chosenFactor: "Diet")
+                            }
+                            
+                            NavigationLink {
+                                SleepDatePickerView(viewModel: viewModel)
+                            } label: {
+                                FactorsTile(chosenFactor: "Work")
+                            }
                             
                             NavigationLink {
                                 CorrelationAnalysisView(viewModel: viewModel)
@@ -112,33 +71,8 @@ struct HomeView: View {
                                 CorrelationTileView()
                             }
                             
-                            
-                            /*
-                             ForEach(overviewTiles, id: \.self) { indicator in
-                             
-                             ZStack {
-                             // make local variable to avoid repetition
-                             VStack {
-                             Text(indicator.name)
-                             .font(.system(20))
-                             
-                             Divider()
-                             .overlay(Color("Sec"))
-                             
-                             Text(indicator.stat)
-                             .font(.system(27))
-                             }
-                             } // ZStack
-                             .padding(35)
-                             .background(Color("Prim"))
-                             .aspectRatio(1, contentMode:.fit)
-                             .clipShape(.rect(cornerRadius: 20))
-                             .foregroundStyle(Color("Sec"))
-                             }
-                             }
-                             */
-                            // LazyVGrid
                         } // ScrollView
+     
                         
                     } // VStack
                     .foregroundStyle(.white)
@@ -148,36 +82,16 @@ struct HomeView: View {
                 } // ZStack
             } // Navigation Stack
         }
-        .onAppear {
-            notification ()
-        }
-
+        
     } // body
-        
     
-    /*
-    struct Indicator: Identifiable, Hashable {
-        
-        var name:String
-        var stat: String
-        var id = UUID()
-
-    }
-    
-    var overviewTiles = [
-        Indicator(name: "Sleep", stat: "8h 30m"),
-        Indicator(name: "Exercise", stat: "30m"),
-        Indicator(name: "Diet", stat: "Poor"),
-        Indicator(name: "Work", stat: "Stressed"),
-    ]
-     */
 } // PageOneView
 
 
 // Top bar
 struct HomeNavBarView: View {
     @ObservedObject var viewModel: JournalViewModel
-
+    
     var body: some View {
         HStack(spacing:0) { // https://programming-sansho.com/swift/swiftui-spacer/
             
@@ -209,8 +123,8 @@ struct HomeNavBarView: View {
             }
             
             Spacer()
-             
-
+            
+            
             
         } // HStack
         .frame(maxWidth: .infinity)
@@ -219,7 +133,7 @@ struct HomeNavBarView: View {
 
 struct StressTileView: View {
     @Query(filter: stressLog.dayLog(date:Date.now)) var todaysLogs: [stressLog]
-
+    
     var body: some View {
         ZStack {
             // make local variable to avoid repetition
@@ -244,52 +158,81 @@ struct StressTileView: View {
             }
         } // ZStack
         .padding(35)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .aspectRatio(1, contentMode:.fit)
         .clipShape(.rect(cornerRadius: 20))
         .foregroundStyle(Color("Prim"))
     }
 }
 
-struct SleepTileView: View {
-    @Query(filter: dailyFactorsLog.dayLog(date:Date.now)) var todaysLog: [dailyFactorsLog]
 
+struct FactorsTile: View {
+    @Query var todaysLog: [dailyFactorsLog]
+    var chosenFactor: String
+
+    
+    init (chosenFactor: String) {
+        var descriptor: FetchDescriptor<dailyFactorsLog> {
+            var descriptor = FetchDescriptor<dailyFactorsLog>(predicate: dailyFactorsLog.dayLog(date:Date.now))
+            descriptor.fetchLimit = 1
+            return descriptor
+        }
+        
+        _todaysLog = Query(descriptor)
+        self.chosenFactor = chosenFactor
+        
+    }
+    
+    var factorsStats:[String:Double] { // Computed property that summarizes the stat for today
+        if todaysLog.count != 0 {
+            return ["Sleep": todaysLog[0].sleep, "Activity": todaysLog[0].activity, "Diet": todaysLog[0].diet, "Work": todaysLog[0].work]
+        } else {
+            return [:] // returns empty dictionary
+        }
+    }
+    
+    
     var body: some View {
+        
         ZStack {
-            // make local variable to avoid repetition
             VStack {
-                Text("Sleep")
+                Text("\(chosenFactor)")
                     .font(.system(20))
                 
                 Divider()
                     .overlay(Color("Sec"))
                 
-                if todaysLog.count != 0 { // If there is log for today
+                if let stat = factorsStats[chosenFactor] {
                     
-                    ForEach(todaysLog) { log in
+                    if chosenFactor == "Sleep" { // for sleep tile, add "h" after the stat to indicate that it's number of hours.
                         
-                        Text("\(String(format: "%.2f", log.sleep))h")
-                            .font(.system(27))
-                        
-                    }// ForEach
+                        Text("\(String(format: "%.2f", stat))h")
+                    
+                    } else {
+                        Text("\(String(format: "%.2f", stat))") // todaysLogs[0]... are optional, so we need to provide a default value after ??
+                    }
                     
                 } else {
                     Text("No Data")
-                        .font(.system(27))
+                    
                 }
                 
             }
+            .font(.system(27))
+
         } // ZStack
         .padding(35)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .aspectRatio(1, contentMode:.fit)
         .clipShape(.rect(cornerRadius: 20))
         .foregroundStyle(Color("Prim"))
     }
 }
 
-struct CorrelationTileView: View {
 
+
+struct CorrelationTileView: View {
+    
     var body: some View {
         ZStack {
             // make local variable to avoid repetition
@@ -299,14 +242,14 @@ struct CorrelationTileView: View {
                 
                 Divider()
                     .overlay(Color("Sec"))
-            
+                
                 Text("Analysis")
                     .font(.system(27))
                 
             }
         } // ZStack
         .padding(35)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .aspectRatio(1, contentMode:.fit)
         .clipShape(.rect(cornerRadius: 20))
         .foregroundStyle(Color("Prim"))

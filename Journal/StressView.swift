@@ -8,16 +8,18 @@ struct StressDatePickerView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @State var selectedDay = Date()
-    @State var index = 0
+    @State var index = "day"
     @State var changeDate:Double = 0
     
     var body: some View {
         
-        let dayEndDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400*(changeDate+1)))
+        let endDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400*(changeDate+1)))
         let dayStartDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400*changeDate))
         
-        let weekEndDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400*(changeDate+1)))
         let weekStartDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(-86400*7))
+        
+        let monthEndDate = Calendar.current.startOfDay(for: selectedDay)
+        let monthStartDate = Calendar.current.date(byAdding: .month, value: -1, to: monthEndDate)!
         
         
         ZStack {
@@ -29,62 +31,76 @@ struct StressDatePickerView: View {
                 HStack {
                     Text("Day")
                         .padding()
-                        .background(index == 0 ? Color("Var") : Color("Sec"))
-                        .foregroundColor(index == 0 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
+                        .background(index == "day" ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(index == "day" ? Color("Prim") : Color("Prim"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 0
+                            index = "day"
                         }
                     
                     Text("Week")
                         .padding()
-                        .background(index == 1 ? Color("Var") : Color("Sec"))
-                        .foregroundColor(index == 1 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
+                        .background(index == "week" ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(index == "week" ? Color("Prim") : Color("Prim"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 1
+                            index = "week"
                         }
                     
                     Text("Month")
                         .padding()
-                        .background(index == 2 ? Color("Var") : Color("Sec"))
-                        .foregroundColor(index == 2 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
+                        .background(index == "month" ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(index == "month" ? Color("Prim") : Color("Prim"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 2
+                            index = "month"
                         }
+                    
                 }
+                .font(.system(17))
+                
                 
                 HStack {
-                    if index == 1 {
+                    
+                    if index == "month" {
+                        Text(monthStartDate, format: .dateTime.day().month().year())
+                            .foregroundStyle(Color(.white))
+                        Text(" to")
+                            .foregroundStyle(Color(.white))
+                    }
+                    
+                    else if index == "week" {
                         Text(weekStartDate, format: .dateTime.day().month().year())
                             .foregroundStyle(Color(.white))
                         Text(" to")
                             .foregroundStyle(Color(.white))
-                        
                     }
                     
                     DatePicker("", selection: $selectedDay, displayedComponents: [.date])
                         .labelsHidden()
-                        .colorScheme(.dark)
                         .padding()
+                    
                     
                 }
                 
                 TabView(selection: $index) { // Using TabView as a work around for Dynamic Query
-                    DayStressView(startDate: dayStartDate, endDate: dayEndDate)
-                        .tag(0)
+                    DayStressView(startsOn: dayStartDate, endsOn: endDate)
+                        .tag("day")
                     
-                    WeekStressView(startDate: weekStartDate, endDate: weekEndDate)
-                        .tag(1)
+                    WeekStressView(startsOn: weekStartDate, endsOn: endDate)
+                        .tag("week")
+                    
+                    MonthStressView(startsOn: monthStartDate, endsOn: monthEndDate)
+                        .tag("month")
+                    
+                    
                 }
             } // VStack
         } //ZStack
     }
 }
+
+
 
 struct DayStressView: View {
     
@@ -98,7 +114,7 @@ struct DayStressView: View {
     @Query var maxStress: [stressLog]
     
     
-    init(startDate: Date, endDate: Date) {
+    init(startsOn startDate: Date, endsOn endDate: Date) {
         
         let dayBefore = startDate.addingTimeInterval(-86400)
         let predicateDailyLog = #Predicate<stressLog> {
@@ -133,7 +149,6 @@ struct DayStressView: View {
                 .ignoresSafeArea()// Background
             
             ScrollView {
-                // CHART FOR TODAY
                 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
                     if dailyStressLog.count != 0 {
@@ -193,7 +208,7 @@ struct DayStressView: View {
                             }
                         }
                         .padding(30)
-                        .background(Color("Var"))
+                        .background(Color("Tint"))
                         .clipShape(.rect(cornerRadius: 20))
                         .frame(width: 350, height:350)
                         
@@ -206,7 +221,6 @@ struct DayStressView: View {
                     
                     // Data Analysis
                     
-                    
                     LazyVGrid(columns: [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                         
                         AnalysisView(data: dailyStressLog, beforeData: dayBeforeStressLog, maxStress: maxStress, duration: "day")
@@ -214,21 +228,20 @@ struct DayStressView: View {
                         
                     }// LazyVGrid
                     .padding(10)
-                    .background(Color("Var"))
+                    .background(Color("Tint"))
                     .clipShape(.rect(cornerRadius: 15))
                     .frame(width:350) // TODO: I am not sure if this is a right idea
                     
+                    // Average stress level by time of day
                     TimeOfDayBarChart(data: logs)
-                    
                 }
                 
                 
-            }
+            } // scrollview
             .foregroundStyle(Color("Prim"))
             .font(.system(18))
-            
-            
-            
+            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar) // https://sarunw.com/posts/swiftui-tabview-color/ this fixed the problem of blurry tabbar
             
         }//ZStack
         
@@ -240,10 +253,9 @@ struct WeekStressView: View {
     
     @Query var weeklyStressLog: [stressLog]
     @Query var weekBeforeStressLog: [stressLog]
-    
     @Query var maxStress: [stressLog]
     
-    init(startDate: Date, endDate: Date) {
+    init(startsOn startDate: Date, endsOn endDate: Date) {
         
         let dayBefore = startDate.addingTimeInterval(-86400*7)
         let predicateDailyLog = #Predicate<stressLog> {
@@ -319,7 +331,7 @@ struct WeekStressView: View {
                     }
                     }
                     .padding(30)
-                    .background(Color("Var"))
+                    .background(Color("Tint"))
                     .clipShape(.rect(cornerRadius: 20))
                     .frame(width:350, height:350)
                     
@@ -329,23 +341,142 @@ struct WeekStressView: View {
                     
                 }
                 
-                LazyVGrid(columns: [GridItem(), GridItem()]) {
+                LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                     
                     AnalysisView(data: weeklyStressLog, beforeData: weekBeforeStressLog, maxStress: maxStress, duration: "week")
                     
                 }// LazyVGrid
                 .padding(10)
-                .background(Color("Var"))
+                .background(Color("Tint"))
                 .clipShape(.rect(cornerRadius: 15))
                 .frame(width:350)
                 
+                
+                // Average stress by day of the week
                 WeekdayBarChart(data: weeklyStressLog)
+                
+                
+            } // ScrollView
+            .font(.system(18))
+            .foregroundStyle(Color("Prim"))
+            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+            
+        }
+        
+    }
+}
+
+struct MonthStressView: View {
+    
+    @Query var thisMonthStressLog: [stressLog]
+    @Query var lastMonthStressLog: [stressLog]
+    @Query var maxStress: [stressLog]
+    
+    init(startsOn startDate: Date, endsOn endDate: Date) {
+        
+        let monthBefore = Calendar.current.date(byAdding: .month, value: -1, to: startDate)! // TODO: change this later
+        let thisMonthPredicate = #Predicate<stressLog> {
+            startDate < $0.logDate &&
+            $0.logDate < endDate
+        }
+        
+        let lastMonthPredicate = #Predicate<stressLog> {
+            monthBefore < $0.logDate &&
+            $0.logDate < startDate
+            
+        }
+        
+        var descriptor: FetchDescriptor<stressLog> {
+            var descriptor = FetchDescriptor<stressLog>(predicate: thisMonthPredicate, sortBy: [SortDescriptor(\.stressLevel, order: .reverse)])
+            descriptor.fetchLimit = 1
+            return descriptor
+        }
+        
+        _thisMonthStressLog = Query(filter: thisMonthPredicate, sort: \.logDate)
+        _lastMonthStressLog = Query(filter: lastMonthPredicate, sort: \.logDate)
+        _maxStress = Query(descriptor)
+    }
+    
+    var body: some View {
+        
+        ZStack {
+            
+            Color("Sec")
+                .ignoresSafeArea()// Background
+            
+            ScrollView {
+                
+                if thisMonthStressLog.count != 0 {
+                    
+                    Chart {
+                        ForEach(thisMonthStressLog) { log in
+                            
+                            LineMark(
+                                x: .value("Date", log.logDate),
+                                y: .value("Stress", log.stressLevel)
+                            )
+                            .interpolationMethod(.catmullRom)
+                            .symbol(.square)
+                            .foregroundStyle(Color("Prim"))
+                            .offset(x:10)
+                            
+                        } // ForEach
+                    } // Chart
+                    .chartYAxis {
+                        AxisMarks(
+                            values: [0, 5, 10]
+                        ) {
+                            AxisValueLabel()
+                                .foregroundStyle(Color("Prim")) // change the color for  readability
+                        }
+                        
+                        AxisMarks(
+                            values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        ) {
+                            AxisGridLine()
+                                .foregroundStyle(Color("Prim"))
+                        }
+                    }
+                    .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
+                    .chartXVisibleDomain(length: 86400*30) // TODO: change this https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
+                    .chartXAxis {AxisMarks(values: .automatic) {
+                        AxisValueLabel()
+                            .foregroundStyle(Color("Prim"))
+                        
+                        AxisGridLine()
+                            .foregroundStyle(Color("Prim"))
+                    }
+                    }
+                    .padding(30)
+                    .background(Color("Tint"))
+                    .clipShape(.rect(cornerRadius: 20))
+                    .frame(width:350, height:350)
+                    
+                } else {
+                    
+                    Text("No Data")
+                    
+                }
+                
+                LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
+                    
+                    AnalysisView(data: thisMonthStressLog, beforeData: lastMonthStressLog, maxStress: maxStress, duration: "week")
+                    
+                }// LazyVGrid
+                .padding(10)
+                .background(Color("Tint"))
+                .clipShape(.rect(cornerRadius: 15))
+                .frame(width:350)
+                
                 
                 
                 
             } // ScrollView
             .font(.system(18))
             .foregroundStyle(Color("Prim"))
+            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
             
         }
         
@@ -360,8 +491,6 @@ struct AnalysisView : View {
     let maxStress: [stressLog]
     let periodInPast = ["day": "yesterday", "week": "last week", "month": "last month"]
     let duration: String // I am not sure if this is correct.
-    
-    
     
     
     var body: some View {
@@ -395,13 +524,10 @@ struct AnalysisView : View {
                 .font(.system(18))
             
             if !stressLog.getStressAvg(dayStressLogs: data).isNaN
-                && !stressLog.getStressAvg(dayStressLogs: beforeData).isNaN {  // If data available for both  selected day and day before.
+                && !stressLog.getStressAvg(dayStressLogs: beforeData).isNaN {  // If data available for both selected day and day before.
                 
-                if let duration = periodInPast[duration] {
-                    
-                    Text("\(stressLog.calculatePercentage(day1: stressLog.getStressAvg(dayStressLogs: data), day2: stressLog.getStressAvg(dayStressLogs: beforeData))) % compared to \(duration)")
-                    
-                }
+                Text("\(stressLog.calculatePercentage(day1: stressLog.getStressAvg(dayStressLogs: data), day2: stressLog.getStressAvg(dayStressLogs: beforeData))) % compared to \(periodInPast[duration] ?? "yesterday")")
+                
             } else {
                 Text("No Data")
             }
@@ -428,11 +554,11 @@ struct AnalysisView : View {
                         Text("\(maxStressString) at")
                         Text(maxStress[0].logDate, format: .dateTime.hour().minute()) // show the time
                     }
+                    
                 } else if duration == "week" { // if week selected
-                    HStack {
-                        Text("\(maxStressString) on")
-                        Text(maxStress[0].logDate, format: .dateTime.day().month()) // show date
-                    }
+                    Text("\(maxStressString) on")
+                    Text(maxStress[0].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
+                    
                 }
             }
             else {
@@ -455,13 +581,12 @@ struct WeekdayBarChart: View {
     
     var body: some View {
         
-        
-        var weekdayData:[(String, Double)] {
-            Array(zip(weekdayNames, weekdayAvgs))
-        }
-        
         let weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         let weekdayAvgs = stressLog.calcWeekdayAvgs(dayStressLogs: data)
+        
+        var weekdayData:[(String, Double)] { // Create an array
+            Array(zip(weekdayNames, weekdayAvgs))
+        }
         
         
         Text("Average Stress Level by Day of the Week")
@@ -472,7 +597,7 @@ struct WeekdayBarChart: View {
                 y: .value("Stress", tuple.1)
             )
             .foregroundStyle(Color("Prim"))
-
+            
         } // Chart
         .chartXAxis {
             AxisMarks(values: .automatic) { // https://zenn.dev/matsuei/articles/812d0476aa573f
@@ -501,7 +626,7 @@ struct WeekdayBarChart: View {
             
         }
         .padding(30)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         .foregroundStyle(Color("Prim"))
@@ -510,17 +635,17 @@ struct WeekdayBarChart: View {
 }
 
 struct TimeOfDayBarChart: View {
+    
     var data:[stressLog]
     
     var body: some View {
         
+        let timeSpans = ["0-3", "3-6", "6-9", "9-12", "12-15", "15-18", "18-21", "21-24"]
+        let timeOfDayAvgs = stressLog.calcTimeOfDayAvgs(dayStressLogs: data)
         
         var timeOfDayData:[(String, Double)] {
             Array(zip(timeSpans, timeOfDayAvgs))
         }
-        
-        let timeSpans = ["0-3", "3-6", "6-9", "9-12", "12-15", "15-18", "18-21", "21-24"]
-        let timeOfDayAvgs = stressLog.calcTimeOfDayAvgs(dayStressLogs: data)
         
         
         Text("Average Stress Level by Time of the Day")
@@ -531,7 +656,7 @@ struct TimeOfDayBarChart: View {
                 y: .value("Stress", tuple.1)
             )
             .foregroundStyle(Color("Prim"))
-
+            
         } // Chart
         .chartXAxis {
             AxisMarks(values: .automatic) { // https://zenn.dev/matsuei/articles/812d0476aa573f
@@ -560,16 +685,13 @@ struct TimeOfDayBarChart: View {
             
         }
         .padding(30)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         .foregroundStyle(Color("Prim"))
         
     }
 }
-
-
-
 
 
 

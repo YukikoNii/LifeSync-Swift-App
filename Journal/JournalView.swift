@@ -46,7 +46,8 @@ struct JournalView: View {
         }
         .onAppear() {
             UITabBar.appearance().unselectedItemTintColor = .white
-            //UITabBar.appearance().backgroundColor = .secondary
+            //setNotification () // trigger notification
+
 
         }
         .tint(Color("Prim"))

@@ -21,7 +21,11 @@ struct CorrelationAnalysisView: View {
             ScrollView {
                                 
                 CorrelationChartView(daySummaries: daySummaries)
-            }
+                
+            } //scrollview
+            // TODO: if i turn off blur effect, it stops scrolling.
+            
+
 
         } // ZStack
         .font(.system(18))
@@ -95,7 +99,7 @@ struct CorrelationChartView: View {
             
         }
         .padding(30)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         
@@ -157,7 +161,7 @@ struct CorrelationChartView: View {
             
         }
         .padding(30)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         
@@ -220,7 +224,7 @@ struct CorrelationChartView: View {
             
         }
         .padding(30)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         
@@ -283,7 +287,7 @@ struct CorrelationChartView: View {
             
         }
         .padding(30)
-        .background(Color("Var"))
+        .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         

@@ -32,10 +32,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 
 // Create notification
-public func notification()  {
+public func setNotification(hour: Int, minute: Int)  {
+    
     do {
         let content = UNMutableNotificationContent()
-        let dateComponent = DateComponents(hour: 8, minute:0)
+        let dateComponent = DateComponents(hour: hour, minute: minute)
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponent, repeats: false) // https://appdev-room.com/swift-notification-date
         
         content.title = "How are you feeling?"

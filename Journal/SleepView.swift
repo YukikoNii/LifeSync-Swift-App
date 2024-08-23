@@ -8,8 +8,7 @@ struct SleepDatePickerView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @State var selectedDay = Date()
-    @State var index = 0
-    @State var changeDate:Double = 0
+    @State var page = 0
     
     var body: some View {
         
@@ -24,34 +23,34 @@ struct SleepDatePickerView: View {
             VStack {
                 
                 HStack {
-
+                    
                     Text("Week")
                         .padding()
-                        .background(index == 0 ? Color("Var") : Color("Sec"))
-                        .foregroundColor(index == 0 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
+                        .background(page == 0 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(page == 0 ? Color("Prim") : Color("Prim"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 0
+                            page = 0
                         }
                     
                     Text("Month")
                         .padding()
-                        .background(index == 1 ? Color("Var") : Color("Sec"))
-                        .foregroundColor(index == 1 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
+                        .background(page == 1 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(page == 1 ? Color("Prim") : Color("Prim"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 1
+                            page = 1
                         }
                 }
+                .font(.system(17))
+                
                 
                 DatePicker("", selection: $selectedDay, displayedComponents: [.date])
                     .labelsHidden()
-                    .colorScheme(.dark)
                     .padding()
+                    .tint(Color("Sec"))
                 
-                TabView(selection: $index) { // Using TabView as a work around for Dynamic Query
+                TabView(selection: $page) { // Using TabView as a work around for Dynamic Query
                     SleepView(startDate: startDate, endDate: endDate)
                         .tag(0)
                 }
@@ -65,12 +64,9 @@ struct SleepView: View {
     //@ObservedObject var viewModel: JournalViewModel
     // TODO: didn't know how to initalize this, so commented out for now.
     
-    @Query var sleepLogsForThisWeek: [dailyFactorsLog]
-    @Query var sleepLogsForLastWeek: [dailyFactorsLog]
+    @Query var thisWeekSleepLogs: [dailyFactorsLog]
+    @Query var lastWeekSleepLogs: [dailyFactorsLog]
     
-    @State var index = 0
-
-
     init(startDate: Date, endDate: Date) {
         
         let weekBefore = startDate.addingTimeInterval(-86400*7)
@@ -85,101 +81,96 @@ struct SleepView: View {
             $0.logDate < startDate
             
         }
-            
-        _sleepLogsForThisWeek = Query(filter: thisWeekPredicate, sort: \.logDate)
-        _sleepLogsForLastWeek = Query(filter: lastWeekPredicate, sort: \.logDate)
+        
+        _thisWeekSleepLogs = Query(filter: thisWeekPredicate, sort: \.logDate)
+        _lastWeekSleepLogs = Query(filter: lastWeekPredicate, sort: \.logDate)
     }
     
     
     var body: some View {
         
         //var dailyAverage = log.getStressAvg(dayStressLogs: logs)
-    
+        
         ZStack {
             
             Color("Sec")
                 .ignoresSafeArea()// Background
             
             ScrollView {
-                // Chart for week
-                
-                if sleepLogsForThisWeek.count != 0 {
+                if thisWeekSleepLogs.count != 0 { // if data exists for this week
                     
-                Chart {
-                    
-                    ForEach(sleepLogsForThisWeek) { log in
-                        LineMark(
-                            x: .value("Date", log.logDate),
-                            y: .value("Stress", log.sleep)
-                        )
-                        .interpolationMethod(.catmullRom)
-                        .symbol(.square)
-                        .foregroundStyle(Color("Prim"))
-                        .offset(x:10)
+                    Chart {
                         
-                    } // ForEach
-                    
-                    
-                } // Chart
-                .chartYAxis {
-                    
-                    AxisMarks(
-                        values: [0, 5, 10]
-                    ) {
-                        AxisValueLabel()
-                            .foregroundStyle(Color("Prim")) // change the color for  readability
-                            .font(.system(10))
+                        ForEach(thisWeekSleepLogs) { log in
+                            LineMark(
+                                x: .value("Date", log.logDate),
+                                y: .value("Stress", log.sleep)
+                            )
+                            .interpolationMethod(.catmullRom)
+                            .symbol(.square)
+                            .foregroundStyle(Color("Prim"))
+                            .offset(x:10)
+                            
+                        } // ForEach
+                        
+                        
+                    } // Chart
+                    .chartYAxis {
+                        
+                        AxisMarks(
+                            values: [0, 5, 10]
+                        ) {
+                            AxisValueLabel()
+                                .foregroundStyle(Color("Prim")) // change the color for  readability
+                                .font(.system(10))
+                        }
+                        
+                        AxisMarks(
+                            values: [1, 2, 3, 4, 6, 7, 8, 9]
+                        ) {
+                            AxisGridLine()
+                                .foregroundStyle(Color("Prim"))
+                        }
+                        
                     }
-                    
-                    AxisMarks(
-                        values: [1, 2, 3, 4, 6, 7, 8, 9]
-                    ) {
+                    .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
+                    .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
+                    .chartXAxis {AxisMarks(values: .automatic) {
+                        AxisValueLabel()
+                            .foregroundStyle(Color("Prim"))
+                        
                         AxisGridLine()
                             .foregroundStyle(Color("Prim"))
                     }
+                    }
+                    .padding(30)
+                    .background(Color("Tint"))
+                    .clipShape(.rect(cornerRadius: 20))
+                    .frame(width:350, height:350)
                     
-                }
-                .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-                .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-                .chartXAxis {AxisMarks(values: .automatic) {
-                    AxisValueLabel()
-                        .foregroundStyle(Color("Prim"))
+                } else { // if not
                     
-                    AxisGridLine()
-                        .foregroundStyle(Color("Prim"))
+                    Text("No Data")
                 }
-                }
-                .padding(30)
-                .background(Color("Var"))
-                .clipShape(.rect(cornerRadius: 20))
-                .frame(width:350, height:350)
                 
-            } else {
-                Text("No Data")
-            }
-            
-                
-                LazyVGrid(columns: [GridItem(), GridItem()]) {
+                LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                     
-                    FactorsAnalysisView(data: sleepLogsForThisWeek, beforeData: sleepLogsForLastWeek, duration: "week")
+                    FactorsAnalysisView(data: thisWeekSleepLogs, beforeData: lastWeekSleepLogs, duration: "week")
                     
                 }// LazyVGrid
                 .padding(10)
-                .background(Color("Var"))
+                .background(Color("Tint"))
                 .clipShape(.rect(cornerRadius: 15))
                 .frame(width:350)
-                
-        
-                
                 
                 
             }// ScrollView
             .foregroundStyle(Color("Prim"))
             .font(.system(18))
+            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
             
         }//ZStack
-         
-         
         
     } // Body
 } // StressView
@@ -193,11 +184,11 @@ struct FactorsAnalysisView : View {
     var body: some View {
         
         VStack (alignment: .leading) {
-        
-        Text("Average:")
-            .foregroundStyle(Color("Prim"))
-            .font(.system(18))
-        
+            
+            Text("Average:")
+                .foregroundStyle(Color("Prim"))
+                .font(.system(18))
+            
             if !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data).isNaN { // If data available for selected day
                 
                 let avgSleepString = String(format: "%.2f", dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data)) // round to 2dp
@@ -220,17 +211,15 @@ struct FactorsAnalysisView : View {
             Text("Trend:")
                 .foregroundStyle(Color("Prim"))
                 .font(.system(18))
-        
-        if !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data).isNaN
-            && !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData).isNaN {  // If data available for both  selected day and day before.
             
-                if let duration = periodInPast[duration] {
-                    
-                    Text("\(dailyFactorsLog.calculatePercentage(period1: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data), period2: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData))) % compared to \(duration)")
-                        .foregroundStyle(Color("Prim"))
-                        .font(.systemSemiBold(20))
-                    
-                }
+            if !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data).isNaN
+                && !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData).isNaN {  // If data available for both  selected day and day before.
+                
+                
+                Text("\(dailyFactorsLog.calculatePercentage(period1: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data), period2: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData))) % compared to \(periodInPast[duration] ?? "last week")")
+                    .foregroundStyle(Color("Prim"))
+                    .font(.systemSemiBold(20))
+                
             } else {
                 Text("No Data")
                     .foregroundStyle(Color("Prim"))
@@ -238,18 +227,13 @@ struct FactorsAnalysisView : View {
             }
             
         }
+        .foregroundStyle(Color("Prim"))
+        .font(.systemSemiBold(20))
+        .padding(10)
         // TODO: when your stress level is highest
-        
         
         
     }
 }
-
-
-
-
-
-
-
 
 
