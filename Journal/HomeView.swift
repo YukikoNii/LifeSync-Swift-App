@@ -40,29 +40,28 @@ struct HomeView: View {
                                 StressTileView()
                             }
                             
-                            
                             NavigationLink {
                                 SleepDatePickerView(viewModel: viewModel)
                             } label: {
-                                FactorsTile(chosenFactor: "Sleep")
+                                FactorsTileView(chosenFactor: "Sleep")
                             }
                             
                             NavigationLink {
                                 SleepDatePickerView(viewModel: viewModel)
                             } label: {
-                                FactorsTile(chosenFactor: "Activity")
+                                FactorsTileView(chosenFactor: "Activity")
                             }
                             
                             NavigationLink {
                                 SleepDatePickerView(viewModel: viewModel)
                             } label: {
-                                FactorsTile(chosenFactor: "Diet")
+                                FactorsTileView(chosenFactor: "Diet")
                             }
                             
                             NavigationLink {
                                 SleepDatePickerView(viewModel: viewModel)
                             } label: {
-                                FactorsTile(chosenFactor: "Work")
+                                FactorsTileView(chosenFactor: "Work")
                             }
                             
                             NavigationLink {
@@ -72,15 +71,26 @@ struct HomeView: View {
                             }
                             
                         } // ScrollView
-     
+                        
                         
                     } // VStack
                     .foregroundStyle(.white)
                     .padding(15)
                     
-                    
-                } // ZStack
-            } // Navigation Stack
+                } // VStack
+            } // ZStack
+            
+        } //NavigationStack
+        .onAppear() {
+            UITabBar.appearance().unselectedItemTintColor = .white
+            
+            for index in 0...2 { // produce three notifications
+                let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.reminderTimes[index])
+                
+                setNotification(hour: components.hour!, minute: components.minute!) // trigger notification
+                
+            }
+            //https://llcc.hatenablog.com/entry/2017/08/31/230000
         }
         
     } // body
@@ -95,14 +105,6 @@ struct HomeNavBarView: View {
     var body: some View {
         HStack(spacing:0) { // https://programming-sansho.com/swift/swiftui-spacer/
             
-            Spacer()
-            
-            NavigationLink {
-                SettingsView(viewModel: viewModel)
-            } label: {
-                Image(systemName: "gearshape.fill")
-                    .foregroundStyle(Color("Prim"))
-            }
             
             Spacer()
             
@@ -112,18 +114,6 @@ struct HomeNavBarView: View {
                 .foregroundStyle(Color("Prim"))
             
             Spacer()
-            
-            
-            
-            NavigationLink {
-                //SettingsView(viewModel: viewModel)
-            } label: {
-                Image(systemName: "tray.fill")
-                    .foregroundStyle(Color("Prim"))
-            }
-            
-            Spacer()
-            
             
             
         } // HStack
@@ -166,10 +156,10 @@ struct StressTileView: View {
 }
 
 
-struct FactorsTile: View {
+struct FactorsTileView: View {
     @Query var todaysLog: [dailyFactorsLog]
     var chosenFactor: String
-
+    
     
     init (chosenFactor: String) {
         var descriptor: FetchDescriptor<dailyFactorsLog> {
@@ -204,22 +194,17 @@ struct FactorsTile: View {
                 
                 if let stat = factorsStats[chosenFactor] {
                     
-                    if chosenFactor == "Sleep" { // for sleep tile, add "h" after the stat to indicate that it's number of hours.
-                        
-                        Text("\(String(format: "%.2f", stat))h")
-                    
-                    } else {
-                        Text("\(String(format: "%.2f", stat))") // todaysLogs[0]... are optional, so we need to provide a default value after ??
-                    }
+                    Text("\(String(format: "%.2f", stat))") // todaysLogs[0]... are optional, so we need to provide a default value after ??
                     
                 } else {
+                    
                     Text("No Data")
                     
                 }
                 
             }
             .font(.system(27))
-
+            
         } // ZStack
         .padding(35)
         .background(Color("Tint"))
@@ -228,7 +213,6 @@ struct FactorsTile: View {
         .foregroundStyle(Color("Prim"))
     }
 }
-
 
 
 struct CorrelationTileView: View {

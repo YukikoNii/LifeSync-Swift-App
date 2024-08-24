@@ -5,7 +5,7 @@ import Foundation
 
 struct LogView: View {
     @ObservedObject var viewModel: JournalViewModel
-    @State var index = 0
+    @State var page = 0
     
     var body: some View {
         
@@ -16,30 +16,29 @@ struct LogView: View {
             
             VStack {
                 
-                HStack {
+                HStack { // TODO: maybe refactor this
                     Text("Stress Log")
                         .padding()
-                        .background(index == 0 ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(index == 0 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
+                        .background(page == 0 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(page == 0 ? Color("Prim") : Color("Prim"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 0
+                            page = 0
                         }
                     
                     Text("Factors Log")
                         .padding()
-                        .background(index == 1 ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(index == 1 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
+                        .background(page == 1 ? Color("Tint") : Color("Sec"))
+                        .foregroundColor(page == 1 ? Color("Prim") : Color("Prim"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
-                            index = 1
+                            page = 1
                         }
                 }
+                .font(.system(17))
                 
                 
-                TabView(selection:$index) {
+                TabView(selection:$page) {
                     
                     // Stress Tracker which you can log as many times as you want each day.
                     StressTrackerView(viewModel: viewModel)
@@ -50,10 +49,9 @@ struct LogView: View {
                         .tag(1)
                     
                 }// TabView
+                
             } // VStack
-            
         } // ZStack
-        
     }
 }
 
@@ -94,8 +92,8 @@ struct StressTrackerView: View {
                     
                     Text("Stress Level: \(stressLevel, specifier:"%.0f")")
                         .padding()
-                    //.frame(maxWidth:.infinity, alignment: .leading)
                     //https://t32k.me/mol/log/text-align-swiftui/
+                    
                     Slider(value: $stressLevel, in: 0...10, step:1,  minimumValueLabel: Text("Low"),
                            maximumValueLabel: Text("High"),
                            label: { EmptyView() })
@@ -115,7 +113,7 @@ struct StressTrackerView: View {
                                     .foregroundColor(Color(uiColor: .placeholderText)) // src: https://blog.code-candy.com/swiftui_texteditor/
                             }
                             
-                        }
+                    }
                     
                     Button("Submit") {
                         let newLog = stressLog(logDate: stressDate, stressLevel: stressLevel, notes: notes, id: UUID().uuidString)
@@ -140,6 +138,7 @@ struct StressTrackerView: View {
             .toolbarBackground(.visible, for: .tabBar)
             
         }
+        
     }
 }
 
@@ -175,8 +174,8 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     
                     Text("Sleep: \(sleep, specifier:"%.1f") hours")
                         .padding()
-                    Slider(value: $sleep, in: 0...10, step:0.5,  minimumValueLabel: Text("0"),
-                           maximumValueLabel: Text("10h+"),
+                    Slider(value: $sleep, in: 0...10, step:0.5,  minimumValueLabel: Text("Poor"),
+                           maximumValueLabel: Text("Good"),
                            label: { EmptyView() })
                     .padding(.horizontal)
                     .tint(Color("Prim"))
@@ -190,6 +189,7 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     .padding(.horizontal)
                     .tint(Color("Prim"))
                     
+                    
                     Text("Diet: \(diet, specifier:"%.0f")")
                         .padding()
                     Slider(value: $diet, in: 0...10, step:1,  minimumValueLabel: Text("Poor"),
@@ -197,7 +197,6 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                            label: { EmptyView() })
                     .padding(.horizontal)
                     .tint(Color("Prim"))
-                    
                     
                     Text("Work: \(work, specifier:"%.0f")")
                         .padding()
@@ -225,6 +224,8 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     
                     Button("Submit") {
                         let dailyFactorsLog = dailyFactorsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: dateDaily)
+                        
+                        
                         
                         context.insert(dailyFactorsLog)
                         

@@ -147,7 +147,7 @@ extension dailyFactorsLog {
         return daySleepAvg
     }
     
-    static func calculatePercentage(period1: Double, period2: Double) -> String {
+    static func calculatePercentage(top period1: Double, dividedBy period2: Double) -> String {
         let division = (period1 / period2) * 100
         let string = String(format: "%.2f", division)
         return string

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 class JournalViewModel: ObservableObject {
     
@@ -19,8 +20,30 @@ class JournalViewModel: ObservableObject {
     
     @Published var password = ""
     
-    @Published var reminderTime1 = Date.now
+    @Published var reminderTimes = setDefaultReminderTime(numOfReminders: 3)
         
+}
+
+func setDefaultReminderTime(numOfReminders: Int) -> [Date] {
+    
+    let dateComponents: [[String: Int]] = [["hour": 9, "minute": 0], ["hour": 13, "minute": 0], ["hour": 20, "minute": 0]]
+    
+    var dates: [Date] = []
+    
+    
+    for index in 0...(numOfReminders-1) {
+        
+        var components = DateComponents()
+        components.hour = dateComponents[index]["hour"]
+        components.minute = dateComponents[index]["minute"]
+        
+        let date = Calendar.current.date(from: components) ?? .now
+        dates.append(date)
+        
+    }
+    
+    return dates.sorted()
+    
 }
 
 

@@ -13,14 +13,14 @@ struct JournalView: View {
     
     @State var selection = 1
     
-
+    
     var body: some View {
         
         TabView(selection: $selection) {
             
-            HomeView(viewModel: viewModel) 
+            HomeView(viewModel: viewModel)
                 .tabItem {
-                    Image(systemName:"house") // TODO: make images larger
+                    Image(systemName:"house")
                 }
                 .tag(1)
             
@@ -38,26 +38,19 @@ struct JournalView: View {
             
             SettingsView(viewModel: viewModel)
                 .tabItem {
-                    Image(systemName:"list.bullet.clipboard.fill")
+                    Image(systemName:"gear")
                 }
                 .tag(4)
             
-            
-        }
-        .onAppear() {
-            UITabBar.appearance().unselectedItemTintColor = .white
-            //setNotification () // trigger notification
-
-
         }
         .tint(Color("Prim"))
     }
     
 }
-   
+
 
 #Preview {
-        JournalView(viewModel: JournalViewModel())
+    JournalView(viewModel: JournalViewModel())
         .modelContainer(for: [stressLog.self, daySummary.self, dailyFactorsLog.self], inMemory:true)
     // Someone suggested that if the problem is only within Preview, inMemory: true works.
     // https://www.hackingwithswift.com/forums/100-days-of-swiftui/day-54-crash-in-preview-of-swiftdata/26510

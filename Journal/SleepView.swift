@@ -89,8 +89,6 @@ struct SleepView: View {
     
     var body: some View {
         
-        //var dailyAverage = log.getStressAvg(dayStressLogs: logs)
-        
         ZStack {
             
             Color("Sec")
@@ -121,7 +119,7 @@ struct SleepView: View {
                             values: [0, 5, 10]
                         ) {
                             AxisValueLabel()
-                                .foregroundStyle(Color("Prim")) // change the color for  readability
+                                .foregroundStyle(Color("Prim"))
                                 .font(.system(10))
                         }
                         
@@ -205,6 +203,9 @@ struct FactorsAnalysisView : View {
             
             
         }
+        .foregroundStyle(Color("Prim"))
+        .font(.systemSemiBold(20))
+        .padding(10)
         
         VStack (alignment: .leading) {
             
@@ -213,27 +214,26 @@ struct FactorsAnalysisView : View {
                 .font(.system(18))
             
             if !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data).isNaN
-                && !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData).isNaN {  // If data available for both  selected day and day before.
+                && !dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData).isNaN {  // If data available for both selected day and day before.
                 
-                
-                Text("\(dailyFactorsLog.calculatePercentage(period1: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data), period2: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData))) % compared to \(periodInPast[duration] ?? "last week")")
+                Text("\(dailyFactorsLog.calculatePercentage(top: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: data), dividedBy: dailyFactorsLog.getSleepAvg(dailyFactorsLogs: beforeData))) % compared to \(periodInPast[duration] ?? "last week")")
                     .foregroundStyle(Color("Prim"))
-                    .font(.systemSemiBold(20))
                 
             } else {
                 Text("No Data")
                     .foregroundStyle(Color("Prim"))
-                    .font(.systemSemiBold(20))
             }
             
         }
         .foregroundStyle(Color("Prim"))
         .font(.systemSemiBold(20))
         .padding(10)
+        
         // TODO: when your stress level is highest
-        
-        
+
     }
 }
+
+
 
 

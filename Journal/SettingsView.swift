@@ -62,14 +62,17 @@ struct SettingsDetailsView: View {
     
     let category: String
     
-    let frequencies = ["Every week", "Every 2 days", "Every day", "2x/day", "3x/day"]
+    let frequencies = ["Every week", "Every day", "2x/day", "3x/day"]
     
     @State private var selectedFrequency = "3x/day"
     
-    @State private var selectedTime1 = reminderTime1()
     @State private var selectedTime2 = Date()
     @State private var selectedTime3 = Date()
     
+    @State private var time1On = false
+    @State private var time2On = false
+    @State private var time3On = false
+
     
     var body: some View {
         
@@ -111,20 +114,43 @@ struct SettingsDetailsView: View {
                             }
                         }
                         
-                        DatePicker("Reminder Time 1", selection: $selectedTime1, displayedComponents: [.hourAndMinute])
-                        DatePicker("Reminder Time 2", selection: $selectedTime2, displayedComponents: [.hourAndMinute])
-                        DatePicker("Reminder Time 3", selection: $selectedTime3, displayedComponents: [.hourAndMinute])
+                        VStack {
+                            
+                            Toggle("Reminder Time 1", isOn: $time1On)
+                            
+                                                    
+                            DatePicker("", selection: $viewModel.reminderTimes[0], displayedComponents: [.hourAndMinute])
+                                .disabled(!time1On)
+                            
+                        }
                         
+                        VStack {
+                            
+                            Toggle("Reminder Time 2", isOn: $time2On)
+                            
+                                                    
+                            DatePicker("", selection: $viewModel.reminderTimes[1], displayedComponents: [.hourAndMinute])
+                                .disabled(!time2On)
+                            
+                        }
+                        
+                        VStack {
+                            
+                            Toggle("Reminder Time 3", isOn: $time3On)
+                            
+                                                    
+                            DatePicker("", selection: $viewModel.reminderTimes[2], displayedComponents: [.hourAndMinute])
+                                .disabled(!time3On)
+                            
+                        }
+                                            
                         
                     } header: {
                         Text("Stress Logs Reminder")
-                    } footer: {
-                        Text("If the frequency is less than 3x/day, reminder time 1 is used.")
-                            .font(.system(16))
                     }
                     .listRowBackground(Color("Tint"))
                     
-                }
+                } // if category
                 
             } // List
             .scrollContentBackground(.hidden)
@@ -148,14 +174,3 @@ struct SettingsDetailsView: View {
 }
 
 
-
-func reminderTime1() -> Date {
-    
-    var components = DateComponents()
-    components.hour = 8
-    components.minute = 30
-    
-    let date = Calendar.current.date(from: components) ?? .now
-    
-    return date
-}
