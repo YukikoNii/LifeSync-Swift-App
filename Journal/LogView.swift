@@ -102,18 +102,11 @@ struct StressTrackerView: View {
                     
                     Text("Notes")
                     
-                    TextEditor(text: $notes)
+                    TextField("How are you feeling now?", text: $notes)
                         .padding()
                         .foregroundStyle(Color("Prim"))
-                        .overlay(alignment: .topLeading) {
-                            
-                            if notes.isEmpty { // custom placeholder
-                                Text("How did you feel?")
-                                    .padding(6)
-                                    .foregroundColor(Color(uiColor: .placeholderText)) // src: https://blog.code-candy.com/swiftui_texteditor/
-                            }
-                            
-                    }
+                        .font(.system(16))
+                
                     
                     Button("Submit") {
                         let newLog = stressLog(logDate: stressDate, stressLevel: stressLevel, notes: notes, id: UUID().uuidString)
@@ -142,7 +135,7 @@ struct StressTrackerView: View {
     }
 }
 
-struct DailyLogView: View { // TODO: only allow one log per day.
+struct DailyLogView: View {
     @Environment(\.modelContext) var context
     
     @State private var sleep : Double = 0
@@ -172,7 +165,7 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     
                     Divider()
                     
-                    Text("Sleep: \(sleep, specifier:"%.1f") hours")
+                    Text("Sleep: \(sleep, specifier:"%.1f")")
                         .padding()
                     Slider(value: $sleep, in: 0...10, step:0.5,  minimumValueLabel: Text("Poor"),
                            maximumValueLabel: Text("Good"),
@@ -209,37 +202,22 @@ struct DailyLogView: View { // TODO: only allow one log per day.
                     
                     Text("Journal")
                     
-                    TextEditor( text: $journal)
+                    TextField("How was your day?", text: $journal) // It seems that textfield only works in a larger space?? so sticking to textfield.
                         .padding()
                         .foregroundStyle(Color("Prim"))
-                        .overlay(alignment: .topLeading) {
-                            
-                            if journal.isEmpty { // custom placeholder
-                                Text("Type here")
-                                    .padding(6)
-                                    .foregroundColor(Color(uiColor: .placeholderText)) // src: https://blog.code-candy.com/swiftui_texteditor/
-                            }
-                        }
                     
-                    
+
                     Button("Submit") {
                         let dailyFactorsLog = dailyFactorsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: dateDaily)
                         
-                        
-                        
                         context.insert(dailyFactorsLog)
-                        
-                        if !stressLog.getStressAvg(dayStressLogs: todaysLogs).isNaN {
-                            
-                            let daySummary = daySummary(logDate: Date.now, avgStress: stressLog.getStressAvg(dayStressLogs: todaysLogs), sleep: sleep, activity: activity, diet: diet, work: work)
-                            context.insert(daySummary)
-                            
-                        }
                         
                     } // Button
                     .padding()
                     .buttonStyle(.bordered)
                     .tint(.white)
+                    
+            
                     
                 } // VStack
                 .padding()
@@ -255,3 +233,23 @@ struct DailyLogView: View { // TODO: only allow one log per day.
         }
     }
 }
+
+/*
+func createTimer() {
+    let timer = Timer(fireAt: Date.now, interval: 86400, target: self, selector: #selector(createSummaryLog), userInfo: nil, repeats: true)
+    RunLoop.main.add(timer, forMode: .common)
+}
+
+@objc func createSummaryLog(stressLogsForToday: [stressLog], dailyFactorsLogForToday: dailyFactorsLog) {
+    
+    if !stressLog.getStressAvg(dayStressLogs: stressLogsForToday).isNaN {
+        
+        let daySummary = daySummary(logDate: Date.now, avgStress: stressLog.getStressAvg(dayStressLogs: todaysLogs), sleep: sleep, activity: activity, diet: diet, work: work)
+        context.insert(daySummary)
+        
+    }
+}
+ */
+
+
+

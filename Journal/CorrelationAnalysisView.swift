@@ -14,22 +14,25 @@ struct CorrelationAnalysisView: View {
     var body: some View {
         
             
-        ZStack {
-            Color("Sec")
-                .ignoresSafeArea()
-            
-            ScrollView {
-                                
-                CorrelationChartView(daySummaries: daySummaries)
+            ZStack {
+                Color("Sec")
+                    .ignoresSafeArea()
                 
-            } //scrollview
-            // TODO: if i turn off blur effect, it stops scrolling.
+                ScrollView {
+                    
+                    CorrelationChartView(daySummaries: daySummaries)
+                    
+                } //scrollview
+
+
+                // TODO: if i turn off blur effect, it stops scrolling.
+                
+                
+                
+            } // ZStack
+            .font(.system(18))
+            .foregroundStyle(Color("Prim"))
             
-
-
-        } // ZStack
-        .font(.system(18))
-        .foregroundStyle(Color("Prim"))
         
     }
    

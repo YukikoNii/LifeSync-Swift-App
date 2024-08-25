@@ -6,6 +6,7 @@ import SwiftData
 import Foundation
 import UserNotifications
 
+
 struct HomeView: View {
     
     @ObservedObject var viewModel: JournalViewModel
@@ -33,7 +34,6 @@ struct HomeView: View {
                     ScrollView {
                         LazyVGrid(columns:[GridItem(.adaptive(minimum:160))]) {
                             
-                            
                             NavigationLink {
                                 StressDatePickerView(viewModel: viewModel)
                             } label: {
@@ -41,27 +41,27 @@ struct HomeView: View {
                             }
                             
                             NavigationLink {
-                                SleepDatePickerView(viewModel: viewModel)
+                                FactorDatePickerView(viewModel: viewModel, factor: "sleep")
                             } label: {
-                                FactorsTileView(chosenFactor: "Sleep")
+                                FactorsTileView(chosenFactor: "sleep") // lowercase for subscript. 
                             }
                             
                             NavigationLink {
-                                SleepDatePickerView(viewModel: viewModel)
+                                FactorDatePickerView(viewModel: viewModel, factor: "activity")
                             } label: {
-                                FactorsTileView(chosenFactor: "Activity")
+                                FactorsTileView(chosenFactor: "activity")
                             }
                             
                             NavigationLink {
-                                SleepDatePickerView(viewModel: viewModel)
+                                FactorDatePickerView(viewModel: viewModel, factor: "diet")
                             } label: {
-                                FactorsTileView(chosenFactor: "Diet")
+                                FactorsTileView(chosenFactor: "diet")
                             }
                             
                             NavigationLink {
-                                SleepDatePickerView(viewModel: viewModel)
+                                FactorDatePickerView(viewModel: viewModel, factor:  "work")
                             } label: {
-                                FactorsTileView(chosenFactor: "Work")
+                                FactorsTileView(chosenFactor: "work")
                             }
                             
                             NavigationLink {
@@ -85,9 +85,12 @@ struct HomeView: View {
             UITabBar.appearance().unselectedItemTintColor = .white
             
             for index in 0...2 { // produce three notifications
-                let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.reminderTimes[index])
-                
-                setNotification(hour: components.hour!, minute: components.minute!) // trigger notification
+                if viewModel.isStressLogsRemindersOn[index] {
+                    let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.stressLogsReminderTime[index])
+                    
+                    setNotification(hour: components.hour!, minute: components.minute!, identifier: String(index)) // trigger notification
+                                        
+                }
                 
             }
             //https://llcc.hatenablog.com/entry/2017/08/31/230000
@@ -105,10 +108,9 @@ struct HomeNavBarView: View {
     var body: some View {
         HStack(spacing:0) { // https://programming-sansho.com/swift/swiftui-spacer/
             
-            
             Spacer()
             
-            Text("Hello, \(viewModel.name)") // I feel like this is not exactly centered
+            Text("Hello, \(viewModel.name)") 
                 .fontWeight(.heavy)
                 .font(.system(24))
                 .foregroundStyle(Color("Prim"))
@@ -157,31 +159,9 @@ struct StressTileView: View {
 
 
 struct FactorsTileView: View {
-    @Query var todaysLog: [dailyFactorsLog]
+    @Query(filter: dailyFactorsLog.dayLog(date:Date.now)) var todaysLog: [dailyFactorsLog]
     var chosenFactor: String
-    
-    
-    init (chosenFactor: String) {
-        var descriptor: FetchDescriptor<dailyFactorsLog> {
-            var descriptor = FetchDescriptor<dailyFactorsLog>(predicate: dailyFactorsLog.dayLog(date:Date.now))
-            descriptor.fetchLimit = 1
-            return descriptor
-        }
-        
-        _todaysLog = Query(descriptor)
-        self.chosenFactor = chosenFactor
-        
-    }
-    
-    var factorsStats:[String:Double] { // Computed property that summarizes the stat for today
-        if todaysLog.count != 0 {
-            return ["Sleep": todaysLog[0].sleep, "Activity": todaysLog[0].activity, "Diet": todaysLog[0].diet, "Work": todaysLog[0].work]
-        } else {
-            return [:] // returns empty dictionary
-        }
-    }
-    
-    
+
     var body: some View {
         
         ZStack {
@@ -192,9 +172,9 @@ struct FactorsTileView: View {
                 Divider()
                     .overlay(Color("Sec"))
                 
-                if let stat = factorsStats[chosenFactor] {
+                if todaysLog.count != 0 {
                     
-                    Text("\(String(format: "%.2f", stat))") // todaysLogs[0]... are optional, so we need to provide a default value after ??
+                    Text("\(String(format: "%.2f", todaysLog[0][chosenFactor]))") 
                     
                 } else {
                     

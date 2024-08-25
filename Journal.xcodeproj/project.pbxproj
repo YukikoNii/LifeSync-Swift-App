@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		013A55932C5D171000D4DE9B /* StressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013A55922C5D171000D4DE9B /* StressView.swift */; };
-		013A55992C6DD02500D4DE9B /* SleepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013A55982C6DD02500D4DE9B /* SleepView.swift */; };
+		013A55992C6DD02500D4DE9B /* FactorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013A55982C6DD02500D4DE9B /* FactorsView.swift */; };
 		013A559B2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */; };
 		01995B2B2C6F40E40034DECB /* CorrelationAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01995B2A2C6F40E40034DECB /* CorrelationAnalysisView.swift */; };
 		01C8B2E62C58E0BD00465831 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8B2E52C58E0BD00465831 /* HistoryView.swift */; };
@@ -29,7 +29,7 @@
 
 /* Begin PBXFileReference section */
 		013A55922C5D171000D4DE9B /* StressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressView.swift; sourceTree = "<group>"; };
-		013A55982C6DD02500D4DE9B /* SleepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepView.swift; sourceTree = "<group>"; };
+		013A55982C6DD02500D4DE9B /* FactorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactorsView.swift; sourceTree = "<group>"; };
 		013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitilliumWeb-SemiBold.ttf"; sourceTree = "<group>"; };
 		01995B2A2C6F40E40034DECB /* CorrelationAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationAnalysisView.swift; sourceTree = "<group>"; };
 		01C8B2E52C58E0BD00465831 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
@@ -81,7 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */,
-				013A55982C6DD02500D4DE9B /* SleepView.swift */,
+				013A55982C6DD02500D4DE9B /* FactorsView.swift */,
 				01F5C0582C51E6420090C5F4 /* Info.plist */,
 				01F5C0562C51E3D10090C5F4 /* TitilliumWeb-Light.ttf */,
 				01F5C04C2C50C2EA0090C5F4 /* SettingsView.swift */,
@@ -192,7 +192,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01995B2B2C6F40E40034DECB /* CorrelationAnalysisView.swift in Sources */,
-				013A55992C6DD02500D4DE9B /* SleepView.swift in Sources */,
+				013A55992C6DD02500D4DE9B /* FactorsView.swift in Sources */,
 				01F5C04F2C50F14C0090C5F4 /* JournalViewModel.swift in Sources */,
 				01F5C05E2C5249420090C5F4 /* JournalModel.swift in Sources */,
 				01F5C04B2C50C2C90090C5F4 /* LogView.swift in Sources */,

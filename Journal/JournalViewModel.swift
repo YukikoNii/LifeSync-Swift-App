@@ -12,16 +12,22 @@ class JournalViewModel: ObservableObject {
     
     //@Published private var model = journalModel()
 
-    @Published var name = "Bob"
+    @Published var name = "New User"
     
     @Published var username = ""
     
     @Published var email = ""
     
     @Published var password = ""
-    
-    @Published var reminderTimes = setDefaultReminderTime(numOfReminders: 3)
         
+    @Published var stressLogsReminderTime = setDefaultReminderTime(numOfReminders: 3) // TODO: I probably shouldn't have this magic number. 
+    
+    @Published var isStressLogsRemindersOn = [true, false, false]
+    
+    @Published var dailyLogReminderTime = setDefaultReminderTime(numOfReminders: 1)
+    
+    @Published var isDailyLogReminderOn = [true]
+    
 }
 
 func setDefaultReminderTime(numOfReminders: Int) -> [Date] {
@@ -29,7 +35,6 @@ func setDefaultReminderTime(numOfReminders: Int) -> [Date] {
     let dateComponents: [[String: Int]] = [["hour": 9, "minute": 0], ["hour": 13, "minute": 0], ["hour": 20, "minute": 0]]
     
     var dates: [Date] = []
-    
     
     for index in 0...(numOfReminders-1) {
         

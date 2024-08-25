@@ -44,6 +44,15 @@ struct JournalView: View {
             
         }
         .tint(Color("Prim"))
+        
+        /*
+        .onAppear {
+            let standardAppearance = UITabBarAppearance() // create UITabBarAppearance Object
+                standardAppearance.configureWithDefaultBackground()
+                standardAppearance.backgroundColor = UIColor(.red) // customize the color
+                UITabBar.appearance().standardAppearance = standardAppearance // standard appearance applies when scrolling
+        }
+         */ // TODO: This works but I don't really want to use it
     }
     
 }

@@ -17,7 +17,6 @@ struct StressDatePickerView: View {
         let weekStartDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(-86400*7))
         let monthStartDate = Calendar.current.date(byAdding: .month, value: -1, to: endDate)!
         
-        
         ZStack {
             Color("Sec")
                 .ignoresSafeArea()// Background
@@ -114,25 +113,25 @@ struct DayStressView: View {
         
         let dayBefore = startDate.addingTimeInterval(-86400)
         
-        let predicateDailyLog = #Predicate<stressLog> {
+        let todayPredicate = #Predicate<stressLog> {
             startDate < $0.logDate &&
             $0.logDate < endDate
         }
         
-        let predicateDayBefore = #Predicate<stressLog> {
+        let dayBeforePredicate = #Predicate<stressLog> {
             dayBefore < $0.logDate &&
             $0.logDate < startDate
             
         }
         
         var descriptor: FetchDescriptor<stressLog> {
-            var descriptor = FetchDescriptor<stressLog>(predicate: predicateDailyLog, sortBy: [SortDescriptor(\.stressLevel, order: .reverse)])
+            var descriptor = FetchDescriptor<stressLog>(predicate: todayPredicate, sortBy: [SortDescriptor(\.stressLevel, order: .reverse)])
             descriptor.fetchLimit = 1
             return descriptor
         }
         
-        _dailyStressLog = Query(filter: predicateDailyLog, sort: \.logDate)
-        _dayBeforeStressLog = Query(filter: predicateDayBefore, sort: \.logDate)
+        _dailyStressLog = Query(filter: todayPredicate, sort: \.logDate)
+        _dayBeforeStressLog = Query(filter: dayBeforePredicate, sort: \.logDate)
         _maxStress = Query(descriptor)
     }
     
@@ -375,18 +374,20 @@ struct MonthStressView: View {
     @Query var thisMonthStressLog: [stressLog]
     @Query var lastMonthStressLog: [stressLog]
     @Query var maxStress: [stressLog]
+    var numOfDaysInMonth: Int
+    
     
     init(startsOn startDate: Date, endsOn endDate: Date) {
+        let monthBefore = Calendar.current.date(byAdding: .month, value: -1, to: startDate)! 
         
-        let monthBefore = Calendar.current.date(byAdding: .month, value: -1, to: startDate)! // TODO: change this later
         let thisMonthPredicate = #Predicate<stressLog> {
             startDate < $0.logDate &&
-            $0.logDate < endDate
+            $0.logDate <= endDate
         }
         
         let lastMonthPredicate = #Predicate<stressLog> {
             monthBefore < $0.logDate &&
-            $0.logDate < startDate
+            $0.logDate <= startDate
             
         }
         
@@ -399,6 +400,7 @@ struct MonthStressView: View {
         _thisMonthStressLog = Query(filter: thisMonthPredicate, sort: \.logDate)
         _lastMonthStressLog = Query(filter: lastMonthPredicate, sort: \.logDate)
         _maxStress = Query(descriptor)
+        numOfDaysInMonth = Calendar.current.numOfDaysInBetween(from: startDate, to: endDate)
     }
     
     var body: some View {
@@ -442,7 +444,7 @@ struct MonthStressView: View {
                         }
                     }
                     .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-                    .chartXVisibleDomain(length: 86400*30) // TODO: change this https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
+                    .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
                     .chartXAxis {AxisMarks(values: .automatic) {
                         AxisValueLabel()
                             .foregroundStyle(Color("Prim"))
@@ -471,9 +473,6 @@ struct MonthStressView: View {
                 .background(Color("Tint"))
                 .clipShape(.rect(cornerRadius: 15))
                 .frame(width:350)
-                
-                
-                
                 
             } // ScrollView
             .font(.system(18))

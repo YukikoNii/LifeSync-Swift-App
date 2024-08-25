@@ -15,8 +15,6 @@ struct SettingsView: View {
     var settingRows = [
         settingRow(name: "Profile"),
         settingRow(name: "Notification"),
-        settingRow(name: "Configuration"),
-        settingRow(name: "Help")
     ]
     
     //https://stackoverflow.com/questions/77664511/how-to-change-navigation-title-color-in-swiftui
@@ -61,17 +59,7 @@ struct SettingsDetailsView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     let category: String
-    
-    let frequencies = ["Every week", "Every day", "2x/day", "3x/day"]
-    
-    @State private var selectedFrequency = "3x/day"
-    
-    @State private var selectedTime2 = Date()
-    @State private var selectedTime3 = Date()
-    
-    @State private var time1On = false
-    @State private var time2On = false
-    @State private var time3On = false
+
 
     
     var body: some View {
@@ -107,46 +95,57 @@ struct SettingsDetailsView: View {
                     
                     Section {
                         
-                        Picker("Frequency", selection: $selectedFrequency) {
-                            ForEach(frequencies, id:\.self) { frequency in
-                                Text(frequency)
-                                    .font(.system(18))
-                            }
-                        }
-                        
-                        VStack {
+                    
+                        VStack { // TODO: maybe I should use a loop
                             
-                            Toggle("Reminder Time 1", isOn: $time1On)
+                            Toggle("Reminder Time 1", isOn: $viewModel.isStressLogsRemindersOn[0])
                             
                                                     
-                            DatePicker("", selection: $viewModel.reminderTimes[0], displayedComponents: [.hourAndMinute])
-                                .disabled(!time1On)
+                            DatePicker("", selection: $viewModel.stressLogsReminderTime[0], displayedComponents: [.hourAndMinute])
+                                .disabled(!viewModel.isStressLogsRemindersOn[0])
                             
                         }
                         
                         VStack {
                             
-                            Toggle("Reminder Time 2", isOn: $time2On)
+                            Toggle("Reminder Time 2", isOn: $viewModel.isStressLogsRemindersOn[1])
                             
                                                     
-                            DatePicker("", selection: $viewModel.reminderTimes[1], displayedComponents: [.hourAndMinute])
-                                .disabled(!time2On)
+                            DatePicker("", selection: $viewModel.stressLogsReminderTime[1], displayedComponents: [.hourAndMinute])
+                                .disabled(!viewModel.isStressLogsRemindersOn[1])
                             
                         }
                         
                         VStack {
                             
-                            Toggle("Reminder Time 3", isOn: $time3On)
+                            Toggle("Reminder Time 3", isOn: $viewModel.isStressLogsRemindersOn[2])
                             
                                                     
-                            DatePicker("", selection: $viewModel.reminderTimes[2], displayedComponents: [.hourAndMinute])
-                                .disabled(!time3On)
+                            DatePicker("", selection: $viewModel.stressLogsReminderTime[2], displayedComponents: [.hourAndMinute])
+                                .disabled(!viewModel.isStressLogsRemindersOn[2])
+                            
+                        }
+                        
+                    } header: {
+                        Text("Stress Log Reminder")
+                    }
+                    .listRowBackground(Color("Tint"))
+                    
+                    Section {
+                        
+                        VStack {
+                            
+                            Toggle("Reminder Time", isOn: $viewModel.isDailyLogReminderOn[0])
+                            
+                                                    
+                            DatePicker("", selection: $viewModel.dailyLogReminderTime[0], displayedComponents: [.hourAndMinute])
+                                .disabled(!viewModel.isDailyLogReminderOn[0])
                             
                         }
                                             
                         
                     } header: {
-                        Text("Stress Logs Reminder")
+                        Text("Daily Log Reminder")
                     }
                     .listRowBackground(Color("Tint"))
                     

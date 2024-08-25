@@ -75,7 +75,7 @@ struct StressHistoryView: View {
                                 .foregroundStyle(Color("Prim"))
                         }
                     }
-                    VStack {
+                    VStack(alignment: .leading) {
                         Text("Stress Level: \(String(format: "%.2f", log.stressLevel))") // round to 2dp
                         Text("\(String(log.notes))")
                         
@@ -125,8 +125,8 @@ struct FactorsHistoryView: View {
                                 .foregroundStyle(Color("Prim"))
                         }
                     }
-                    VStack {
-                        Text("Sleep: \(String(format: "%.2f", log.sleep))") // round to 2dp
+                    VStack(alignment: .leading) {
+                        Text("Sleep: \(String(format: "%.2f", log.sleep))") // round to 2dp TODO: 
                         
                         Text("Activity: \(String(format: "%.2f", log.activity))")
                         

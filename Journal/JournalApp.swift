@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 
 // Create notification
-public func setNotification(hour: Int, minute: Int)  {
+public func setNotification(hour: Int, minute: Int, identifier: String)  {
     
     do {
         let content = UNMutableNotificationContent()
@@ -44,10 +44,18 @@ public func setNotification(hour: Int, minute: Int)  {
         content.sound = UNNotificationSound.default
         content.badge = 1 // Badge appears in the home at the top right of the logo
         
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        for index in 0...2 {
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(index)])
+        }
+        
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
-    }
+        
+    } // TODO: do I need catch error? (xcode gave me a warning that I don't need it)
 }
+
+// Remove notifications if toggle is off.
+
 
 
 
