@@ -136,7 +136,7 @@ struct StressTileView: View {
                 Divider()
                     .overlay(Color("Sec"))
                 
-                if !stressLog.getStressAvg(dayStressLogs: todaysLogs).isNaN { // If data available for selected day
+                if todaysLogs.count > 0 { // If data available for selected day
                     
                     let avgStressString = String(format: "%.2f", stressLog.getStressAvg(dayStressLogs: todaysLogs))
                     
@@ -172,7 +172,7 @@ struct FactorsTileView: View {
                 Divider()
                     .overlay(Color("Sec"))
                 
-                if todaysLog.count != 0 {
+                if todaysLog.count > 0 {
                     
                     Text("\(String(format: "%.2f", todaysLog[0][chosenFactor]))") 
                     

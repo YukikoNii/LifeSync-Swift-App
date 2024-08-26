@@ -14,7 +14,7 @@ struct FactorDatePickerView: View {
     var body: some View {
         
         let endDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400*1))
-        let weekStartDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(-86400*7))
+        let weekStartDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(-86400*6))
         let monthStartDate = Calendar.current.date(byAdding: .month, value: -1, to: endDate)!
         
         ZStack {
@@ -41,11 +41,10 @@ struct FactorDatePickerView: View {
                         
                     }
                     
-                    DatePicker("", selection: $selectedDay, displayedComponents: [.date])
+                    DatePicker("hello", selection: $selectedDay, displayedComponents: [.date])
                         .labelsHidden()
                         .padding()
                         .tint(Color("Sec"))
-                    
                 }
                 .foregroundStyle(Color("Prim"))
                 .font(.system(18))
@@ -67,6 +66,8 @@ struct WeekView: View {
     //@ObservedObject var viewModel: JournalViewModel
     // TODO: didn't know how to initalize this, so commented out for now.
     var factor: String
+    
+    @Query var allLogs: [dailyFactorsLog]
     
     @Query var thisWeekLogs: [dailyFactorsLog]
     @Query var lastWeekLogs: [dailyFactorsLog]
@@ -100,71 +101,81 @@ struct WeekView: View {
                 .ignoresSafeArea()// Background
             
             ScrollView {
-                if thisWeekLogs.count != 0 { // if data exists for this week
+                
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
                     
-                    Chart {
+                    if thisWeekLogs.count > 0 { // if data exists for this week
                         
-                        ForEach(thisWeekLogs) { log in
-                            LineMark(
-                                x: .value("Date", log.logDate),
-                                y: .value("Stress", log[factor])
-                            )
-                            .interpolationMethod(.catmullRom)
-                            .symbol(.square)
-                            .foregroundStyle(Color("Prim"))
-                            .offset(x:10)
+                        Chart {
                             
-                        } // ForEach
-                        
-                        
-                    } // Chart
-                    .chartYAxis {
-                        
-                        AxisMarks(
-                            values: [0, 5, 10]
-                        ) {
-                            AxisValueLabel()
+                            ForEach(thisWeekLogs) { log in
+                                LineMark(
+                                    x: .value("Date", log.logDate),
+                                    y: .value("Stress", log[factor])
+                                )
+                                .interpolationMethod(.catmullRom)
+                                .symbol(.square)
                                 .foregroundStyle(Color("Prim"))
-                                .font(.system(10))
+                                .offset(x:10)
+                                
+                            } // ForEach
+                            
+                            
+                        } // Chart
+                        .chartYAxis {
+                            
+                            AxisMarks(
+                                values: [0, 5, 10]
+                            ) {
+                                AxisValueLabel()
+                                    .foregroundStyle(Color("Prim"))
+                                    .font(.system(10))
+                            }
+                            
+                            AxisMarks(
+                                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                            ) {
+                                AxisGridLine()
+                                    .foregroundStyle(Color("Prim"))
+                            }
+                            
                         }
-                        
-                        AxisMarks(
-                            values: [1, 2, 3, 4, 6, 7, 8, 9]
-                        ) {
+                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
+                        .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
+                        .chartXAxis {AxisMarks(values: .stride(by:.day, count:1)) {
+                            AxisValueLabel(format: .dateTime.weekday().day())
+                                .foregroundStyle(Color("Prim"))
+                            
                             AxisGridLine()
                                 .foregroundStyle(Color("Prim"))
                         }
+                        }
+                        .padding(30)
+                        .background(Color("Tint"))
+                        .clipShape(.rect(cornerRadius: 20))
+                        .frame(width:350, height:350)
+                        .chartXScale(range: .plotDimension(padding: 10))
+                        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10)) // added this so that the y-axis marks are not reversed even when data is 0.
                         
-                    }
-                    .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-                    .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-                    .chartXAxis {AxisMarks(values: .automatic) {
-                        AxisValueLabel()
-                            .foregroundStyle(Color("Prim"))
                         
-                        AxisGridLine()
-                            .foregroundStyle(Color("Prim"))
+                    } else { // if no data
+                        
+                        Text("No Data")
                     }
-                    }
-                    .padding(30)
+                    
+                    LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
+                        
+                        FactorsAnalysisView(factor: factor, data: thisWeekLogs, beforeData: lastWeekLogs, duration: "week")
+                        
+                    }// LazyVGrid
+                    .padding(10)
                     .background(Color("Tint"))
-                    .clipShape(.rect(cornerRadius: 20))
-                    .frame(width:350, height:350)
+                    .clipShape(.rect(cornerRadius: 15))
+                    .frame(width:350)
                     
-                } else { // if not
+                    FactorWeekdayBarChart(data: allLogs, factor: factor)
                     
-                    Text("No Data")
                 }
-                
-                LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
-                    
-                    FactorsAnalysisView(factor: factor, data: thisWeekLogs, beforeData: lastWeekLogs, duration: "week")
-                    
-                }// LazyVGrid
-                .padding(10)
-                .background(Color("Tint"))
-                .clipShape(.rect(cornerRadius: 15))
-                .frame(width:350)
                 
                 
             }// ScrollView
@@ -184,6 +195,9 @@ struct MonthView: View {
     // TODO: didn't know how to initalize this, so commented out for now.
     
     var factor: String
+    
+    @Query var allLogs: [dailyFactorsLog]
+
     
     @Query var thisMonthLogs: [dailyFactorsLog]
     @Query var lastMonthLogs: [dailyFactorsLog]
@@ -219,71 +233,80 @@ struct MonthView: View {
                 .ignoresSafeArea()// Background
             
             ScrollView {
-                if thisMonthLogs.count != 0 { // if data exists for this week
+                
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
                     
-                    Chart {
+                    if thisMonthLogs.count > 0 { // if data exists for this week
                         
-                        ForEach(thisMonthLogs) { log in
-                            LineMark(
-                                x: .value("Date", log.logDate),
-                                y: .value("Stress", log[factor])
-                            )
-                            .interpolationMethod(.catmullRom)
-                            .symbol(.square)
-                            .foregroundStyle(Color("Prim"))
-                            .offset(x:10)
+                        Chart {
                             
-                        } // ForEach
-                        
-                        
-                    } // Chart
-                    .chartYAxis {
-                        
-                        AxisMarks(
-                            values: [0, 5, 10]
-                        ) {
+                            ForEach(thisMonthLogs) { log in
+                                LineMark(
+                                    x: .value("Date", log.logDate),
+                                    y: .value("Stress", log[factor])
+                                )
+                                .interpolationMethod(.catmullRom)
+                                .symbol(.square)
+                                .foregroundStyle(Color("Prim"))
+                                .offset(x:10)
+                                
+                            } // ForEach
+                            
+                            
+                        } // Chart
+                        .chartYAxis {
+                            
+                            AxisMarks(
+                                values: [0, 5, 10]
+                            ) {
+                                AxisValueLabel()
+                                    .foregroundStyle(Color("Prim"))
+                                    .font(.system(10))
+                            }
+                            
+                            AxisMarks(
+                                values: [1, 2, 3, 4, 6, 7, 8, 9]
+                            ) {
+                                AxisGridLine()
+                                    .foregroundStyle(Color("Prim"))
+                            }
+                            
+                        }
+                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
+                        .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
+                        .chartXAxis {AxisMarks(values: .automatic) {
                             AxisValueLabel()
                                 .foregroundStyle(Color("Prim"))
-                                .font(.system(10))
-                        }
-                        
-                        AxisMarks(
-                            values: [1, 2, 3, 4, 6, 7, 8, 9]
-                        ) {
+                            
                             AxisGridLine()
                                 .foregroundStyle(Color("Prim"))
                         }
+                        }
+                        .padding(30)
+                        .background(Color("Tint"))
+                        .clipShape(.rect(cornerRadius: 20))
+                        .frame(width:350, height:350)
+                        .chartXScale(range: .plotDimension(padding: 10))
+                        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
-                    }
-                    .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-                    .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-                    .chartXAxis {AxisMarks(values: .automatic) {
-                        AxisValueLabel()
-                            .foregroundStyle(Color("Prim"))
+                    } else { // if not
                         
-                        AxisGridLine()
-                            .foregroundStyle(Color("Prim"))
+                        Text("No Data")
                     }
-                    }
-                    .padding(30)
+                    
+                    LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
+                        
+                        FactorsAnalysisView(factor: factor, data: thisMonthLogs, beforeData: lastMonthLogs, duration: "month")
+                        
+                    }// LazyVGrid
+                    .padding(10)
                     .background(Color("Tint"))
-                    .clipShape(.rect(cornerRadius: 20))
-                    .frame(width:350, height:350)
+                    .clipShape(.rect(cornerRadius: 15))
+                    .frame(width:350)
                     
-                } else { // if not
-                    
-                    Text("No Data")
+                    FactorWeekdayBarChart(data: allLogs, factor: factor)
+
                 }
-                
-                LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
-                    
-                    FactorsAnalysisView(factor: factor, data: thisMonthLogs, beforeData: lastMonthLogs, duration: "month")
-                    
-                }// LazyVGrid
-                .padding(10)
-                .background(Color("Tint"))
-                .clipShape(.rect(cornerRadius: 15))
-                .frame(width:350)
                 
                 
             }// ScrollView
@@ -325,11 +348,11 @@ struct FactorsAnalysisView : View {
                 .foregroundStyle(Color("Prim"))
                 .font(.system(18))
             
-            if !dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: "sleep").isNaN { // If data available for selected day
+            if data.count > 0 { // If data available for selected day
                 
-                let avgSleepString = String(format: "%.2f", dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: "sleep")) // round to 2dp
+                let avgSleepString = String(format: "%.2f", dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: factor)) // round to 2dp
                 
-                Text("\(avgSleepString)h")
+                Text("\(avgSleepString)")
                     .foregroundStyle(Color("Prim"))
                     .font(.systemSemiBold(20))
             } else {
@@ -351,10 +374,10 @@ struct FactorsAnalysisView : View {
                 .foregroundStyle(Color("Prim"))
                 .font(.system(18))
             
-            if !dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: "sleep").isNaN
-                && !dailyFactorsLog.getAvg(dailyFactorsLogs: beforeData, factor: "sleep").isNaN {  // If data available for both selected day and day before.
+            if data.count > 0
+                && beforeData.count > 0 {  // If data available for both selected day and day before.
                 
-                Text("\(dailyFactorsLog.calculatePercentage(numerator: dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: "sleep"), dividedBy: dailyFactorsLog.getAvg(dailyFactorsLogs: beforeData, factor: "sleep"))) % compared to \(periodInPast[duration] ?? "last week")")
+                Text("\(dailyFactorsLog.calculatePercentage(numerator: dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: "sleep"), dividedBy: dailyFactorsLog.getAvg(dailyFactorsLogs: beforeData, factor: factor))) % compared to \(periodInPast[duration] ?? "last week")")
                     .foregroundStyle(Color("Prim"))
                 
             } else {
@@ -372,7 +395,7 @@ struct FactorsAnalysisView : View {
             Text("Maximum:")
                 .font(.system(18))
             
-            if maxData.count != 0 {
+            if maxData.count > 0 {
                                 
                 Text("\(String(format: "%.2f", maxData[0][factor])) on")
                 Text(maxData[0].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
@@ -387,6 +410,67 @@ struct FactorsAnalysisView : View {
         
     }
 }
+
+struct FactorWeekdayBarChart: View {
+    var data:[dailyFactorsLog]
+    var factor: String
+    
+    var body: some View {
+        
+        let weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        let weekdayAvgs = dailyFactorsLog.calcWeekdayAvgs(logs: data, factor: factor)
+        
+        var weekdayData:[(String, Double)] { // Create an array
+            Array(zip(weekdayNames, weekdayAvgs))
+        }
+        
+        Text("Average Stress Level by Day of the Week")
+        
+        Chart (weekdayData, id:\.0) { tuple in
+            BarMark(
+                x: .value("Weekday", tuple.0),
+                y: .value("Stress", tuple.1)
+            )
+            .foregroundStyle(Color("Prim"))
+            
+        } // Chart
+        .chartXAxis {
+            AxisMarks(values: .automatic) { // https://zenn.dev/matsuei/articles/812d0476aa573f
+                
+                AxisValueLabel()
+                    .foregroundStyle(Color("Prim"))
+                    .font(.system(10))
+            }
+        }
+        .chartYAxis {
+            
+            AxisMarks(
+                values: [0, 5, 10]
+            ) {
+                AxisValueLabel()
+                    .foregroundStyle(Color("Prim"))
+                    .font(.system(10))
+            }
+            
+            AxisMarks(
+                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            ) {
+                AxisGridLine()
+                    .foregroundStyle(Color("Prim"))
+            }
+            
+        }
+        .padding(30)
+        .background(Color("Tint"))
+        .clipShape(.rect(cornerRadius: 20))
+        .frame(width:350, height:350)
+        .foregroundStyle(Color("Prim"))
+        .chartXScale(range: .plotDimension(padding: 10))
+        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
+        
+    }
+}
+
 
 
 

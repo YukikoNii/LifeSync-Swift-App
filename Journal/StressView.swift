@@ -102,7 +102,7 @@ struct DayStressView: View {
     //@ObservedObject var viewModel: JournalViewModel
     // TODO: didn't know how to initalize this, so commented out for now.
     
-    @Query var logs: [stressLog]
+    @Query var allLogs: [stressLog]
     
     @Query var dailyStressLog: [stressLog]
     @Query var dayBeforeStressLog: [stressLog]
@@ -146,7 +146,7 @@ struct DayStressView: View {
             ScrollView {
                 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
-                    if dailyStressLog.count != 0 {
+                    if dailyStressLog.count > 0 {
                         
                         Chart {
                             
@@ -206,6 +206,8 @@ struct DayStressView: View {
                         .background(Color("Tint"))
                         .clipShape(.rect(cornerRadius: 20))
                         .frame(width: 350, height:350)
+                        .chartXScale(range: .plotDimension(padding: 10))
+                        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
                     } else {
                         
@@ -228,7 +230,7 @@ struct DayStressView: View {
                     .frame(width:350) // TODO: I am not sure if this is a right idea
                     
                     // Average stress level by time of day
-                    TimeOfDayBarChartView(data: logs)
+                    TimeOfDayBarChartView(data: allLogs)
                     
                 } //LazyVGrid
                 
@@ -246,6 +248,9 @@ struct DayStressView: View {
 } // StressView
 
 struct WeekStressView: View {
+    
+    @Query var allLogs: [stressLog]
+
     
     @Query var weeklyStressLog: [stressLog]
     @Query var weekBeforeStressLog: [stressLog]
@@ -287,7 +292,7 @@ struct WeekStressView: View {
                 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
                     
-                    if weeklyStressLog.count != 0 {
+                    if weeklyStressLog.count > 0 {
                         
                         Chart {
                             ForEach(weeklyStressLog) { log in
@@ -332,6 +337,8 @@ struct WeekStressView: View {
                         .background(Color("Tint"))
                         .clipShape(.rect(cornerRadius: 20))
                         .frame(width:350, height:350)
+                        .chartXScale(range: .plotDimension(padding: 10))
+                        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
                     } else {
                         
@@ -353,7 +360,7 @@ struct WeekStressView: View {
                     
                     
                     // Average stress by day of the week
-                    WeekdayBarChart(data: weeklyStressLog)
+                    WeekdayBarChart(data: allLogs)
                     
                 }
                 
@@ -412,67 +419,73 @@ struct MonthStressView: View {
             
             ScrollView {
                 
-                if thisMonthStressLog.count != 0 {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
                     
-                    Chart {
-                        ForEach(thisMonthStressLog) { log in
-                            
-                            LineMark(
-                                x: .value("Date", log.logDate),
-                                y: .value("Stress", log.stressLevel)
-                            )
-                            .interpolationMethod(.catmullRom)
-                            .symbol(.square)
-                            .foregroundStyle(Color("Prim"))
-                            .offset(x:10)
-                            
-                        } // ForEach
-                    } // Chart
-                    .chartYAxis {
-                        AxisMarks(
-                            values: [0, 5, 10]
-                        ) {
-                            AxisValueLabel()
-                                .foregroundStyle(Color("Prim")) // change the color for  readability
-                        }
+                    if thisMonthStressLog.count > 0 {
                         
-                        AxisMarks(
-                            values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                        ) {
+                        Chart {
+                            ForEach(thisMonthStressLog) { log in
+                                
+                                LineMark(
+                                    x: .value("Date", log.logDate),
+                                    y: .value("Stress", log.stressLevel)
+                                )
+                                .interpolationMethod(.catmullRom)
+                                .symbol(.square)
+                                .foregroundStyle(Color("Prim"))
+                                .offset(x:10)
+                                
+                            } // ForEach
+                        } // Chart
+                        .chartYAxis {
+                            AxisMarks(
+                                values: [0, 5, 10]
+                            ) {
+                                AxisValueLabel()
+                                    .foregroundStyle(Color("Prim")) // change the color for  readability
+                            }
+                            
+                            AxisMarks(
+                                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                            ) {
+                                AxisGridLine()
+                                    .foregroundStyle(Color("Prim"))
+                            }
+                        }
+                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
+                        .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
+                        .chartXAxis {AxisMarks(values: .automatic) {
+                            AxisValueLabel()
+                                .foregroundStyle(Color("Prim"))
+                            
                             AxisGridLine()
                                 .foregroundStyle(Color("Prim"))
                         }
-                    }
-                    .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
-                    .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-                    .chartXAxis {AxisMarks(values: .automatic) {
-                        AxisValueLabel()
-                            .foregroundStyle(Color("Prim"))
+                        }
+                        .padding(30)
+                        .background(Color("Tint"))
+                        .clipShape(.rect(cornerRadius: 20))
+                        .frame(width:350, height:350)
+                        .chartXScale(range: .plotDimension(padding: 10))
+                        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
-                        AxisGridLine()
-                            .foregroundStyle(Color("Prim"))
+                    } else {
+                        
+                        Text("No Data")
+                        
                     }
-                    }
-                    .padding(30)
+                    
+                    LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
+                        
+                        AnalysisView(data: thisMonthStressLog, beforeData: lastMonthStressLog, maxStress: maxStress, duration: "week")
+                        
+                    }// LazyVGrid
+                    .padding(10)
                     .background(Color("Tint"))
-                    .clipShape(.rect(cornerRadius: 20))
-                    .frame(width:350, height:350)
-                    
-                } else {
-                    
-                    Text("No Data")
+                    .clipShape(.rect(cornerRadius: 15))
+                    .frame(width:350)
                     
                 }
-                
-                LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
-                    
-                    AnalysisView(data: thisMonthStressLog, beforeData: lastMonthStressLog, maxStress: maxStress, duration: "week")
-                    
-                }// LazyVGrid
-                .padding(10)
-                .background(Color("Tint"))
-                .clipShape(.rect(cornerRadius: 15))
-                .frame(width:350)
                 
             } // ScrollView
             .font(.system(18))
@@ -546,7 +559,7 @@ struct AnalysisView : View {
             Text("Maximum:")
                 .font(.system(18))
             
-            if maxStress.count != 0 {
+            if maxStress.count > 0 {
                 
                 let maxStressString = String(format: "%.2f", maxStress[0].stressLevel)
                 
@@ -571,8 +584,6 @@ struct AnalysisView : View {
         .foregroundStyle(Color("Prim"))
         .font(.systemSemiBold(20))
         .padding(10)
-        
-        
         
     }
 }
@@ -631,6 +642,8 @@ struct WeekdayBarChart: View {
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         .foregroundStyle(Color("Prim"))
+        .chartXScale(range: .plotDimension(padding: 10))
+        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
         
     }
 }
@@ -670,7 +683,7 @@ struct TimeOfDayBarChartView: View {
         .chartYAxis {
             
             AxisMarks(
-                values: [0, 5, 10] // TODO:  When there is no data, the order is reversed. Fix this.
+                values: [0, 5, 10]
             ) {
                 AxisValueLabel()
                     .foregroundStyle(Color("Prim"))
@@ -690,6 +703,8 @@ struct TimeOfDayBarChartView: View {
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
         .foregroundStyle(Color("Prim"))
+        .chartXScale(range: .plotDimension(padding: 10))
+        .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
         
     }
 }

@@ -27,7 +27,7 @@ class stressLog: Identifiable {
 
 extension stressLog {
     static func getStressAvg (dayStressLogs: [stressLog]) -> Double {
-        let dayStressAvg = dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count)
+        let dayStressAvg = dayStressLogs.count > 0 ? dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count) : 0.0
         return dayStressAvg
     }
     
@@ -49,11 +49,12 @@ extension stressLog {
     }
     
     static func calcWeekdayAvgs (dayStressLogs: [stressLog]) -> [Double] {
-        var weekdayAvgs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        var weekdayAvgs = [Double] (repeating: 0.0, count: 7)
         
         for index in 1...7 {
             let weekday = dayStressLogs.filter({ Calendar.current.component(.weekday, from: $0.logDate) == index})
-            let avg = weekday.reduce(0.00) {$0 + $1.stressLevel} / Double(weekday.count)
+            let avg = weekday.count > 0 ? weekday.reduce(0.00) {$0 + $1.stressLevel} / Double(weekday.count) : 0.0
+            // prevent zero division
             weekdayAvgs[index - 1] = avg
         }
         
@@ -66,7 +67,7 @@ extension stressLog {
         for index in 0...7 {
             let timeSpan = dayStressLogs.filter({ 3*index <= Calendar.current.component(.hour, from: $0.logDate) && Calendar.current.component(.hour, from: $0.logDate) <= 3*(index+1)})
             
-            let avg = timeSpan.reduce(0.00) {$0 + $1.stressLevel} / Double(timeSpan.count)
+            let avg = timeSpan.count > 0 ? timeSpan.reduce(0.00) {$0 + $1.stressLevel} / Double(timeSpan.count) : 0.0
             
             timeOfDayAvgs[index] = avg
         }
@@ -174,11 +175,11 @@ extension dailyFactorsLog {
         return string
     }
     
-    static func calcWeekdayAvgs (dayStressLogs: [dailyFactorsLog], factor: String) -> [Double] {
+    static func calcWeekdayAvgs (logs: [dailyFactorsLog], factor: String) -> [Double] {
         var weekdayAvgs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
         for index in 1...7 {
-            let weekday = dayStressLogs.filter({ Calendar.current.component(.weekday, from: $0.logDate) == index})
+            let weekday = logs.filter({ Calendar.current.component(.weekday, from: $0.logDate) == index})
             
             let avg = weekday.reduce(0.00) { $0 + $1[factor] } / Double(weekday.count)
             weekdayAvgs[index - 1] = avg
