@@ -7,7 +7,7 @@ struct HistoryView: View {
     
     @ObservedObject var viewModel: JournalViewModel
     
-    @Query(sort: \dailyFactorsLog.logDate) var dailyFactorsLogs: [dailyFactorsLog]
+    @Query(sort: \metricsLog.logDate) var metricsLogs: [metricsLog]
     @State var page = 0
 
     var body: some View {
@@ -19,34 +19,13 @@ struct HistoryView: View {
             
             VStack {
                 
-                HStack {
-                    Text("Stress Log")
-                        .padding()
-                        .background(page == 0 ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(page == 0 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
-                        .clipShape(.rect(cornerRadius:5))
-                        .onTapGesture {
-                            page = 0
-                        }
-                    
-                    Text("Factors Log")
-                        .padding()
-                        .background(page == 1 ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(page == 1 ? Color("Prim") : Color("Prim"))
-                        .font(.system(17))
-                        .clipShape(.rect(cornerRadius:5))
-                        .onTapGesture {
-                            page = 1
-                        }
-                }
+                LogTypePickerView(page: $page)
                 
                 TabView(selection: $page) {
                     StressHistoryView(viewModel: viewModel)
                         .tag(0)
 
-                    
-                    FactorsHistoryView(viewModel: viewModel)
+                    metricsHistoryView(viewModel: viewModel)
                         .tag(1)
 
                 } // TabView
@@ -71,7 +50,7 @@ struct StressHistoryView: View {
                         
                         NavigationLink {
                         } label: {
-                            Text("\(log.logDate.formatted(date:.abbreviated, time:.shortened))")
+                            Text("\(log.logDate.formatted(date:.complete, time:.shortened))")
                                 .foregroundStyle(Color("Prim"))
                         }
                     }
@@ -88,11 +67,6 @@ struct StressHistoryView: View {
                     }
                     .tint(Color("Delete"))
                 }
-                .swipeActions(edge: .leading) {
-                    Button ("Edit") {
-                    }
-                    .tint(Color("Edit"))
-                }
                 .listRowBackground(Color("Tint"))
             }
             
@@ -105,28 +79,28 @@ struct StressHistoryView: View {
     }
 }
 
-struct FactorsHistoryView: View {
+struct metricsHistoryView: View {
     @Environment(\.modelContext) private var context
 
     
     @ObservedObject var viewModel: JournalViewModel
 
-    @Query(sort: \dailyFactorsLog.logDate) var dailyFactorsLogs: [dailyFactorsLog]
+    @Query(sort: \metricsLog.logDate) var metricsLogs: [metricsLog]
 
     var body: some View {
         List {
-            ForEach(dailyFactorsLogs, id: \.self) { log in
+            ForEach(metricsLogs, id: \.self) { log in
                 VStack (alignment: .leading){
                     HStack {
                         
                         NavigationLink {
                         } label: {
-                            Text("\(log.logDate.formatted(date:.abbreviated, time:.shortened))")
+                            Text("\(log.logDate.formatted(date:.complete, time:.shortened))")
                                 .foregroundStyle(Color("Prim"))
                         }
                     }
                     VStack(alignment: .leading) {
-                        Text("Sleep: \(String(format: "%.2f", log.sleep))") // round to 2dp TODO: 
+                        Text("Sleep: \(String(format: "%.2f", log.sleep))") // round to 2dp 
                         
                         Text("Activity: \(String(format: "%.2f", log.activity))")
                         
@@ -144,11 +118,6 @@ struct FactorsHistoryView: View {
                         context.delete(log)
                     }
                     .tint(Color("Delete"))
-                }
-                .swipeActions(edge: .leading) {
-                    Button ("Edit") {
-                    }
-                    .tint(Color("Edit"))
                 }
                 .listRowBackground(Color("Tint"))
             }

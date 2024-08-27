@@ -60,7 +60,7 @@ struct JournalView: View {
 
 #Preview {
     JournalView(viewModel: JournalViewModel())
-        .modelContainer(for: [stressLog.self, daySummary.self, dailyFactorsLog.self], inMemory:true)
+        .modelContainer(for: [stressLog.self, summaryLog.self, metricsLog.self], inMemory:true)
     // Someone suggested that if the problem is only within Preview, inMemory: true works.
     // https://www.hackingwithswift.com/forums/100-days-of-swiftui/day-54-crash-in-preview-of-swiftdata/26510
     //  https://qiita.com/Puyan/items/117e8a266c34a81c393d

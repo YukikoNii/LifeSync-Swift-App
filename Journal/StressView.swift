@@ -14,7 +14,7 @@ struct StressDatePickerView: View {
         
         let endDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(86400))
         let dayStartDate = Calendar.current.startOfDay(for: selectedDay)
-        let weekStartDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(-86400*7))
+        let weekStartDate = Calendar.current.startOfDay(for: selectedDay.addingTimeInterval(-86400*6))
         let monthStartDate = Calendar.current.date(byAdding: .month, value: -1, to: endDate)!
         
         ZStack {
@@ -106,7 +106,6 @@ struct DayStressView: View {
     
     @Query var dailyStressLog: [stressLog]
     @Query var dayBeforeStressLog: [stressLog]
-    @Query var maxStress: [stressLog]
     
     
     init(startsOn startDate: Date, endsOn endDate: Date) {
@@ -114,25 +113,19 @@ struct DayStressView: View {
         let dayBefore = startDate.addingTimeInterval(-86400)
         
         let todayPredicate = #Predicate<stressLog> {
-            startDate < $0.logDate &&
+            startDate <= $0.logDate &&
             $0.logDate < endDate
         }
         
         let dayBeforePredicate = #Predicate<stressLog> {
-            dayBefore < $0.logDate &&
+            dayBefore <= $0.logDate &&
             $0.logDate < startDate
             
         }
-        
-        var descriptor: FetchDescriptor<stressLog> {
-            var descriptor = FetchDescriptor<stressLog>(predicate: todayPredicate, sortBy: [SortDescriptor(\.stressLevel, order: .reverse)])
-            descriptor.fetchLimit = 1
-            return descriptor
-        }
-        
+    
+    
         _dailyStressLog = Query(filter: todayPredicate, sort: \.logDate)
         _dayBeforeStressLog = Query(filter: dayBeforePredicate, sort: \.logDate)
-        _maxStress = Query(descriptor)
     }
     
     
@@ -155,10 +148,9 @@ struct DayStressView: View {
                                     x: .value("Date", log.logDate),
                                     y: .value("Stress", log.stressLevel)
                                 )
-                                .interpolationMethod(.catmullRom)
+                                .interpolationMethod(.linear)
                                 .symbol(.square)
                                 .foregroundStyle(Color("Prim"))
-                                .offset(x:10)
                                 
                             } // ForEach
                             
@@ -182,7 +174,6 @@ struct DayStressView: View {
                             }
                             
                         }
-                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
                         .chartXVisibleDomain(length: 86400) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
                         .chartXAxis {
                             AxisMarks(values: .stride(by:.hour, count:3)) { // https://zenn.dev/matsuei/articles/812d0476aa573f
@@ -220,7 +211,7 @@ struct DayStressView: View {
                     
                     LazyVGrid(columns: [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                         
-                        AnalysisView(data: dailyStressLog, beforeData: dayBeforeStressLog, maxStress: maxStress, duration: "day")
+                        AnalysisView(data: dailyStressLog, beforeData: dayBeforeStressLog, duration: "day")
                         
                         
                     }// LazyVGrid
@@ -250,35 +241,28 @@ struct DayStressView: View {
 struct WeekStressView: View {
     
     @Query var allLogs: [stressLog]
-
+    
     
     @Query var weeklyStressLog: [stressLog]
     @Query var weekBeforeStressLog: [stressLog]
-    @Query var maxStress: [stressLog]
     
     init(startsOn startDate: Date, endsOn endDate: Date) {
         
         let dayBefore = startDate.addingTimeInterval(-86400*7)
         let predicateDailyLog = #Predicate<stressLog> {
-            startDate < $0.logDate &&
+            startDate <= $0.logDate &&
             $0.logDate < endDate
         }
         
         let predicateDayBefore = #Predicate<stressLog> {
-            dayBefore < $0.logDate &&
+            dayBefore <= $0.logDate &&
             $0.logDate < startDate
             
         }
-        
-        var descriptor: FetchDescriptor<stressLog> {
-            var descriptor = FetchDescriptor<stressLog>(predicate: predicateDailyLog, sortBy: [SortDescriptor(\.stressLevel, order: .reverse)])
-            descriptor.fetchLimit = 1
-            return descriptor
-        }
+    
         
         _weeklyStressLog = Query(filter: predicateDailyLog, sort: \.logDate)
         _weekBeforeStressLog = Query(filter: predicateDayBefore, sort: \.logDate)
-        _maxStress = Query(descriptor)
     }
     
     var body: some View {
@@ -301,10 +285,9 @@ struct WeekStressView: View {
                                     x: .value("Date", log.logDate),
                                     y: .value("Stress", log.stressLevel)
                                 )
-                                .interpolationMethod(.catmullRom)
+                                .interpolationMethod(.linear)
                                 .symbol(.square)
                                 .foregroundStyle(Color("Prim"))
-                                .offset(x:10)
                                 
                             } // ForEach
                         } // Chart
@@ -323,15 +306,20 @@ struct WeekStressView: View {
                                     .foregroundStyle(Color("Prim"))
                             }
                         }
-                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
                         .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-                        .chartXAxis {AxisMarks(values: .automatic) {
-                            AxisValueLabel()
-                                .foregroundStyle(Color("Prim"))
+                        .chartXAxis {
                             
-                            AxisGridLine()
-                                .foregroundStyle(Color("Prim"))
-                        }
+                            AxisMarks(
+                                preset: .aligned, position: .bottom,
+                                values: .stride(by:.day, count:1), content:
+                                    {
+                                        AxisValueLabel(format: .dateTime.weekday().day()) // TODO: it somehow doesn't show the last date, looks like I need to crate chartXAxis values manually
+                                            .foregroundStyle(Color("Prim"))
+                                        
+                                        AxisGridLine()
+                                            .foregroundStyle(Color("Prim"))
+                                    })
+                            
                         }
                         .padding(30)
                         .background(Color("Tint"))
@@ -348,7 +336,7 @@ struct WeekStressView: View {
                     
                     LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                         
-                        AnalysisView(data: weeklyStressLog, beforeData: weekBeforeStressLog, maxStress: maxStress, duration: "week")
+                        AnalysisView(data: weeklyStressLog, beforeData: weekBeforeStressLog, duration: "week")
                         
                     }// LazyVGrid
                     .padding(10)
@@ -380,12 +368,11 @@ struct MonthStressView: View {
     
     @Query var thisMonthStressLog: [stressLog]
     @Query var lastMonthStressLog: [stressLog]
-    @Query var maxStress: [stressLog]
     var numOfDaysInMonth: Int
     
     
     init(startsOn startDate: Date, endsOn endDate: Date) {
-        let monthBefore = Calendar.current.date(byAdding: .month, value: -1, to: startDate)! 
+        let monthBefore = Calendar.current.date(byAdding: .month, value: -1, to: startDate)!
         
         let thisMonthPredicate = #Predicate<stressLog> {
             startDate < $0.logDate &&
@@ -397,16 +384,9 @@ struct MonthStressView: View {
             $0.logDate <= startDate
             
         }
-        
-        var descriptor: FetchDescriptor<stressLog> {
-            var descriptor = FetchDescriptor<stressLog>(predicate: thisMonthPredicate, sortBy: [SortDescriptor(\.stressLevel, order: .reverse)])
-            descriptor.fetchLimit = 1
-            return descriptor
-        }
-        
+
         _thisMonthStressLog = Query(filter: thisMonthPredicate, sort: \.logDate)
         _lastMonthStressLog = Query(filter: lastMonthPredicate, sort: \.logDate)
-        _maxStress = Query(descriptor)
         numOfDaysInMonth = Calendar.current.numOfDaysInBetween(from: startDate, to: endDate)
     }
     
@@ -430,10 +410,9 @@ struct MonthStressView: View {
                                     x: .value("Date", log.logDate),
                                     y: .value("Stress", log.stressLevel)
                                 )
-                                .interpolationMethod(.catmullRom)
+                                .interpolationMethod(.linear)
                                 .symbol(.square)
                                 .foregroundStyle(Color("Prim"))
-                                .offset(x:10)
                                 
                             } // ForEach
                         } // Chart
@@ -452,7 +431,6 @@ struct MonthStressView: View {
                                     .foregroundStyle(Color("Prim"))
                             }
                         }
-                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
                         .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
                         .chartXAxis {AxisMarks(values: .automatic) {
                             AxisValueLabel()
@@ -477,7 +455,7 @@ struct MonthStressView: View {
                     
                     LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                         
-                        AnalysisView(data: thisMonthStressLog, beforeData: lastMonthStressLog, maxStress: maxStress, duration: "week")
+                        AnalysisView(data: thisMonthStressLog, beforeData: lastMonthStressLog, duration: "month")
                         
                     }// LazyVGrid
                     .padding(10)
@@ -503,7 +481,10 @@ struct MonthStressView: View {
 struct AnalysisView : View {
     let data:[stressLog]
     let beforeData:[stressLog]
-    let maxStress: [stressLog]
+    var dataSortedFromLargest: [stressLog] {
+        return data.sorted { $0.stressLevel > $1.stressLevel }
+    }
+    
     let periodInPast = ["day": "yesterday", "week": "last week", "month": "last month"]
     let duration: String // I am not sure if this is correct.
     
@@ -541,7 +522,7 @@ struct AnalysisView : View {
             if !stressLog.getStressAvg(dayStressLogs: data).isNaN
                 && !stressLog.getStressAvg(dayStressLogs: beforeData).isNaN {  // If data available for both selected day and day before.
                 
-                Text("\(stressLog.calculatePercentage(day1: stressLog.getStressAvg(dayStressLogs: data), day2: stressLog.getStressAvg(dayStressLogs: beforeData))) % compared to \(periodInPast[duration] ?? "yesterday")")
+                Text("\(stressLog.calculatePercentage(previous: stressLog.getStressAvg(dayStressLogs: data), current: stressLog.getStressAvg(dayStressLogs: beforeData))) from \(periodInPast[duration] ?? "yesterday")")
                 
             } else {
                 Text("No Data")
@@ -559,24 +540,44 @@ struct AnalysisView : View {
             Text("Maximum:")
                 .font(.system(18))
             
-            if maxStress.count > 0 {
+            if dataSortedFromLargest.count > 0 {
                 
-                let maxStressString = String(format: "%.2f", maxStress[0].stressLevel)
-                
-                if duration == "day" {   // If day selected
+                Text("\(String(format: "%.2f", dataSortedFromLargest[0].stressLevel)) on")
+
+                if duration == "day" {
                     
-                    HStack {
-                        Text("\(maxStressString) at")
-                        Text(maxStress[0].logDate, format: .dateTime.hour().minute()) // show the time
-                    }
+                    Text(dataSortedFromLargest[0].logDate, format: .dateTime.hour().minute()) // show date and weekday
                     
-                } else if duration == "week" { // if week selected
-                    Text("\(maxStressString) on")
-                    Text(maxStress[0].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
-                    
+                } else {
+                    Text(dataSortedFromLargest[0].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
                 }
+                
+            } else {
+                Text("No Data")
             }
-            else {
+            
+        }
+        .foregroundStyle(Color("Prim"))
+        .font(.systemSemiBold(20))
+        .padding(10)
+        
+        VStack(alignment: .leading) {
+            
+            Text("Minimum:")
+                .font(.system(18))
+            
+            if dataSortedFromLargest.count > 0 {
+                
+                Text("\(String(format: "%.2f", dataSortedFromLargest[dataSortedFromLargest.count - 1].stressLevel)) on")
+                
+                if duration == "day" {
+                    Text( dataSortedFromLargest[dataSortedFromLargest.count - 1].logDate, format: .dateTime.hour().minute()) // show hour and minute
+                    
+                } else {
+                    Text( dataSortedFromLargest[dataSortedFromLargest.count - 1].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
+                }
+                
+            } else {
                 Text("No Data")
             }
             

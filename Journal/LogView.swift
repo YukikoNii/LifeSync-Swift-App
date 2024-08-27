@@ -4,9 +4,12 @@ import SwiftData
 import Foundation
 
 struct LogView: View {
+
     @ObservedObject var viewModel: JournalViewModel
     @State var page = 0
+
     
+
     var body: some View {
         
         ZStack {
@@ -16,26 +19,7 @@ struct LogView: View {
             
             VStack {
                 
-                HStack { // TODO: maybe refactor this
-                    Text("Stress Log")
-                        .padding()
-                        .background(page == 0 ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(page == 0 ? Color("Prim") : Color("Prim"))
-                        .clipShape(.rect(cornerRadius:5))
-                        .onTapGesture {
-                            page = 0
-                        }
-                    
-                    Text("Factors Log")
-                        .padding()
-                        .background(page == 1 ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(page == 1 ? Color("Prim") : Color("Prim"))
-                        .clipShape(.rect(cornerRadius:5))
-                        .onTapGesture {
-                            page = 1
-                        }
-                }
-                .font(.system(17))
+                LogTypePickerView(page: $page)
                 
                 
                 TabView(selection:$page) {
@@ -64,6 +48,9 @@ struct StressTrackerView: View {
     @State private var notes = ""
     @Environment(\.modelContext) var context
     
+    @Query var allmetricsLogs: [metricsLog]
+    @Query var allStressLogs: [stressLog]
+
     
     var body: some View {
         
@@ -108,10 +95,13 @@ struct StressTrackerView: View {
                         .font(.system(16))
                 
                     
-                    Button("Submit") {
+                    Button("Log") {
                         let newLog = stressLog(logDate: stressDate, stressLevel: stressLevel, notes: notes, id: UUID().uuidString)
                         context.insert(newLog)
                         stressLevel = 5
+                        
+                        createSummaryLog(metricsLogs: allmetricsLogs, stressLogs: allStressLogs, context: context)
+
                         
                     } // Button
                     .padding()
@@ -142,8 +132,12 @@ struct DailyLogView: View {
     @State private var activity : Double = 0
     @State private var work : Double = 0
     @State private var diet : Double = 0
-    @State private var dateDaily = Date()
+    @State private var metricsLogDate = Date()
     @State private var journal = ""
+    
+    
+    @Query var allmetricsLogs: [metricsLog]
+    @Query var allStressLogs: [stressLog]
     
     @Query(filter: stressLog.dayLog(date:Date.now)) var todaysLogs: [stressLog]
     
@@ -157,7 +151,7 @@ struct DailyLogView: View {
                 
                 VStack {
                     
-                    DatePicker("", selection: $dateDaily, displayedComponents: [.date])
+                    DatePicker("", selection: $metricsLogDate, displayedComponents: [.date])
                         .labelsHidden()
                         .padding()
                     
@@ -207,10 +201,13 @@ struct DailyLogView: View {
                         .foregroundStyle(Color("Prim"))
                     
 
-                    Button("Submit") {
-                        let dailyFactorsLog = dailyFactorsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: dateDaily)
+                    Button("Log") {
+                        let log = metricsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: Calendar.current.startOfDay(for: metricsLogDate))
                         
-                        context.insert(dailyFactorsLog)
+                        context.insert(log)
+                        
+                        createSummaryLog(metricsLogs: allmetricsLogs, stressLogs: allStressLogs, context: context)
+
                         
                     } // Button
                     .padding()
@@ -240,7 +237,7 @@ func createTimer() {
     RunLoop.main.add(timer, forMode: .common)
 }
 
-@objc func createSummaryLog(stressLogsForToday: [stressLog], dailyFactorsLogForToday: dailyFactorsLog) {
+@objc func createSummaryLog(stressLogsForToday: [stressLog], dailyMetricsLogForToday: dailyMetricsLog) {
     
     if !stressLog.getStressAvg(dayStressLogs: stressLogsForToday).isNaN {
         
@@ -253,3 +250,31 @@ func createTimer() {
 
 
 
+
+struct LogTypePickerView: View {
+    
+    @Binding var page: Int
+    
+    var body: some View {
+        HStack { 
+            Text("Stress Log")
+                .padding()
+                .background(page == 0 ? Color("Tint") : Color("Sec"))
+                .foregroundColor(page == 0 ? Color("Prim") : Color("Prim"))
+                .clipShape(.rect(cornerRadius:5))
+                .onTapGesture {
+                    page = 0
+                }
+            
+            Text("Metrics Log")
+                .padding()
+                .background(page == 1 ? Color("Tint") : Color("Sec"))
+                .foregroundColor(page == 1 ? Color("Prim") : Color("Prim"))
+                .clipShape(.rect(cornerRadius:5))
+                .onTapGesture {
+                    page = 1
+                }
+        }
+        .font(.system(17))
+    }
+}

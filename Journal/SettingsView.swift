@@ -59,8 +59,8 @@ struct SettingsDetailsView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     let category: String
-
-
+    
+    
     
     var body: some View {
         
@@ -95,39 +95,41 @@ struct SettingsDetailsView: View {
                     
                     Section {
                         
-                    
-                        VStack { // TODO: maybe I should use a loop
-                            
-                            Toggle("Reminder Time 1", isOn: $viewModel.isStressLogsRemindersOn[0])
-                            
-                                                    
-                            DatePicker("", selection: $viewModel.stressLogsReminderTime[0], displayedComponents: [.hourAndMinute])
-                                .disabled(!viewModel.isStressLogsRemindersOn[0])
-                            
+                        
+                        ForEach(0..<viewModel.numOfStressNotifications, id: \.self) { index in
+                            VStack { // TODO: maybe I should use a loop
+                                
+                                Toggle("Notification Time \(index + 1)", isOn: $viewModel.isStressLogsNotificationsOn[index])
+                                    .onChange(of: viewModel.isStressLogsNotificationsOn[index]) {
+                                        if viewModel.isStressLogsNotificationsOn[index] == true {
+                                            let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.stressLogsNotificationTime[index])
+                                            
+                                            setNotification(hour: components.hour!, minute: components.minute!, identifier: UUID().uuidString) // trigger notification
+                                            
+                                        } else {
+                                            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(index)])
+                                        }
+                                    }
+                                
+                                
+                                DatePicker("", selection: $viewModel.stressLogsNotificationTime[index], displayedComponents: [.hourAndMinute])
+                                    .disabled(!viewModel.isStressLogsNotificationsOn[index])
+                                    .onChange(of: viewModel.stressLogsNotificationTime[index]) {
+                                        let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.stressLogsNotificationTime[index])
+                                        
+                                        setNotification(hour: components.hour!, minute: components.minute!, identifier: String(index)) // trigger notification
+                                    }
+
+                                
+                            }
+                         
+                        
                         }
                         
-                        VStack {
-                            
-                            Toggle("Reminder Time 2", isOn: $viewModel.isStressLogsRemindersOn[1])
-                            
-                                                    
-                            DatePicker("", selection: $viewModel.stressLogsReminderTime[1], displayedComponents: [.hourAndMinute])
-                                .disabled(!viewModel.isStressLogsRemindersOn[1])
-                            
-                        }
                         
-                        VStack {
-                            
-                            Toggle("Reminder Time 3", isOn: $viewModel.isStressLogsRemindersOn[2])
-                            
-                                                    
-                            DatePicker("", selection: $viewModel.stressLogsReminderTime[2], displayedComponents: [.hourAndMinute])
-                                .disabled(!viewModel.isStressLogsRemindersOn[2])
-                            
-                        }
                         
                     } header: {
-                        Text("Stress Log Reminder")
+                        Text("Stress Log Notification")
                     }
                     .listRowBackground(Color("Tint"))
                     
@@ -135,17 +137,31 @@ struct SettingsDetailsView: View {
                         
                         VStack {
                             
-                            Toggle("Reminder Time", isOn: $viewModel.isDailyLogReminderOn[0])
+                            Toggle("Notification Time", isOn: $viewModel.isDailyLogNotificationOn[0])
+                                .onChange(of: viewModel.isDailyLogNotificationOn[0]) {
+                                    if viewModel.isDailyLogNotificationOn[0] == true {
+                                        let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.dailyLogNotificationTime[0])
+                                        
+                                        setNotification(hour: components.hour!, minute: components.minute!, identifier: String(3)) // trigger notification
+                                        
+                                    } else {
+                                        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(3)])
+                                    }
+                                }
                             
-                                                    
-                            DatePicker("", selection: $viewModel.dailyLogReminderTime[0], displayedComponents: [.hourAndMinute])
-                                .disabled(!viewModel.isDailyLogReminderOn[0])
+                            DatePicker("", selection: $viewModel.dailyLogNotificationTime[0], displayedComponents: [.hourAndMinute])
+                                .disabled(!viewModel.isDailyLogNotificationOn[0])
+                                .onChange(of: viewModel.dailyLogNotificationTime[0]) {
+                                    let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.dailyLogNotificationTime[0])
+                                    
+                                    setNotification(hour: components.hour!, minute: components.minute!, identifier: String(3)) // trigger notification
+                                }
                             
                         }
-                                            
+                        
                         
                     } header: {
-                        Text("Daily Log Reminder")
+                        Text("Daily Log Notification")
                     }
                     .listRowBackground(Color("Tint"))
                     
@@ -171,5 +187,8 @@ struct SettingsDetailsView: View {
     }
     
 }
+
+
+
 
 

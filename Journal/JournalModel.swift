@@ -42,10 +42,14 @@ extension stressLog {
         }
     }
     
-    static func calculatePercentage(day1: Double, day2: Double) -> String {
-        let division = (day1 / day2) * 100
-        let string = String(format: "%.2f", division)
-        return string
+    static func calculatePercentage(previous: Double, current: Double) -> String {
+        let difference = current - previous
+        let string = String(format: "%.2f", abs(difference))
+        if difference > 0 {
+            return "increase of " + string
+        } else {
+            return "decrease of " + string
+        }
     }
     
     static func calcWeekdayAvgs (dayStressLogs: [stressLog]) -> [Double] {
@@ -79,10 +83,10 @@ extension stressLog {
 
 
 @Model
-class daySummary {
+class summaryLog {
     var logDate: Date
     var avgStress: Double
-    var sleep: Double // I am not sure if this is right.
+    var sleep: Double
     var activity: Double
     var diet: Double
     var work: Double
@@ -95,24 +99,41 @@ class daySummary {
         self.diet = diet
         self.work = work
     }
+    
+    subscript(key: String) -> Double {
+        switch key {
+        case "sleep":
+            return sleep
+        case "activity":
+            return activity
+        case "diet":
+            return diet
+        case "work":
+            return work
+        default:
+            return 0.0
+        }
+        
+    }
 }
 
-extension daySummary {
+extension summaryLog {
     
-    static func dayLog(date: Date) -> Predicate<daySummary> {
+    static func dayLog(date: Date) -> Predicate<summaryLog> {
         
         let endDate = Calendar.current.startOfDay(for: date.addingTimeInterval(86400))
         let startDate = Calendar.current.startOfDay(for: date)
         
-        return #Predicate<daySummary> { log in
+        return #Predicate<summaryLog> { log in
             startDate < log.logDate &&
             log.logDate < endDate // TODO: technically, it doesn't have to be a range. (But calendar can't be used in the predicate, so I don't know how else to do it.)
         }
     }
+    
 }
 
 @Model
-class dailyFactorsLog {
+class metricsLog {
     var sleep: Double
     var activity: Double
     var diet: Double
@@ -144,44 +165,44 @@ class dailyFactorsLog {
         }
         
     }
-    // syntax: dailyFactorsLog[key] (no need to call a function called subscript
+    // syntax: dailyMetricsLog[key] (no need to call a function called subscript
     // src: ChatGPT
 }
 
-extension dailyFactorsLog {
+extension metricsLog {
     
-    static func dayLog(date: Date) -> Predicate<dailyFactorsLog> {
+    static func dayLog(date: Date) -> Predicate<metricsLog> {
         
         let endDate = Calendar.current.startOfDay(for: date.addingTimeInterval(86400))
         let startDate = Calendar.current.startOfDay(for: date)
         
-        return #Predicate<dailyFactorsLog> { log in
+        return #Predicate<metricsLog> { log in
             startDate < log.logDate &&
-            log.logDate < endDate // TODO: technically, it doesn't have to be a range. (But calendar can't be used in the predicate, so I don't know how else to do it.)
+            log.logDate <= endDate // TODO: technically, it doesn't have to be a range. (But calendar can't be used in the predicate, so I don't know how else to do it.)
         }
     }
     
-    static func getAvg (dailyFactorsLogs: [dailyFactorsLog], factor: String) -> Double {
-            
-        let daySleepAvg = dailyFactorsLogs.reduce(0.00) {$0 + $1[factor]} / Double(dailyFactorsLogs.count)
+    static func getAvg (metricsLogs: [metricsLog], metric: String) -> Double {
+        
+        let daySleepAvg = metricsLogs.reduce(0.00) {$0 + $1[metric]} / Double(metricsLogs.count)
         return daySleepAvg
         
     }
     
     
-    static func calculatePercentage(numerator period1: Double, dividedBy period2: Double) -> String {
-        let division = (period1 / period2) * 100
-        let string = String(format: "%.2f", division)
+    static func calculatePercentage(previous: Double, current: Double) -> String {
+        let difference = current - previous
+        let string = String(format: "%.2f", difference)
         return string
     }
     
-    static func calcWeekdayAvgs (logs: [dailyFactorsLog], factor: String) -> [Double] {
+    static func calcWeekdayAvgs (logs: [metricsLog], metric: String) -> [Double] {
         var weekdayAvgs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
         for index in 1...7 {
             let weekday = logs.filter({ Calendar.current.component(.weekday, from: $0.logDate) == index})
             
-            let avg = weekday.reduce(0.00) { $0 + $1[factor] } / Double(weekday.count)
+            let avg = weekday.reduce(0.00) { $0 + $1[metric] } / Double(weekday.count)
             weekdayAvgs[index - 1] = avg
         }
         
@@ -189,6 +210,28 @@ extension dailyFactorsLog {
     }
     
     
+}
+
+
+
+func createSummaryLog(metricsLogs: [metricsLog], stressLogs: [stressLog], context: ModelContext)  { // you can't use @Environment outside of view, have to inject.
+    
+    for log in metricsLogs {
+        let endDate = Calendar.current.startOfDay(for: log.logDate.addingTimeInterval(86400))
+        let startDate = Calendar.current.startOfDay(for: log.logDate)
+        
+        let stressLogsOfDay = stressLogs.filter { startDate <= $0.logDate &&
+            $0.logDate <= endDate }
+        
+        if stressLogsOfDay.count > 0 {
+            
+            let averageStressOfDay = stressLog.getStressAvg(dayStressLogs: stressLogsOfDay)
+            
+            let testLog = summaryLog(logDate: log.logDate, avgStress: averageStressOfDay, sleep: log.sleep, activity: log.activity, diet: log.diet, work: log.work)
+            
+            context.insert(testLog)
+        }
+    }
 }
 
 

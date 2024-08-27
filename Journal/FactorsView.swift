@@ -4,12 +4,12 @@ import Charts
 import SwiftData
 import Foundation
 
-struct FactorDatePickerView: View {
+struct metricDatePickerView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @State var selectedDay = Date()
     @State var page = "week"
-    var factor: String
+    var metric: String
     
     var body: some View {
         
@@ -41,7 +41,7 @@ struct FactorDatePickerView: View {
                         
                     }
                     
-                    DatePicker("hello", selection: $selectedDay, displayedComponents: [.date])
+                    DatePicker("", selection: $selectedDay, displayedComponents: [.date])
                         .labelsHidden()
                         .padding()
                         .tint(Color("Sec"))
@@ -50,9 +50,9 @@ struct FactorDatePickerView: View {
                 .font(.system(18))
                 
                 TabView(selection: $page) { // Using TabView as a work around for Dynamic Query
-                    WeekView(startsOn: weekStartDate, endsOn: endDate, factor: factor)
+                    WeekView(startsOn: weekStartDate, endsOn: endDate, metric: metric)
                         .tag("week")
-                    MonthView(startsOn: monthStartDate, endsOn: endDate, factor: factor)
+                    MonthView(startsOn: monthStartDate, endsOn: endDate, metric: metric)
                         .tag("month")
                     
                 }
@@ -62,34 +62,33 @@ struct FactorDatePickerView: View {
 }
 
 struct WeekView: View {
-    
     //@ObservedObject var viewModel: JournalViewModel
     // TODO: didn't know how to initalize this, so commented out for now.
-    var factor: String
+    var metric: String
     
-    @Query var allLogs: [dailyFactorsLog]
+    @Query var allLogs: [metricsLog]
     
-    @Query var thisWeekLogs: [dailyFactorsLog]
-    @Query var lastWeekLogs: [dailyFactorsLog]
+    @Query var thisWeekLogs: [metricsLog]
+    @Query var lastWeekLogs: [metricsLog]
     
-    init(startsOn startDate: Date, endsOn endDate: Date, factor: String) {
+    init(startsOn startDate: Date, endsOn endDate: Date, metric: String) {
         
         let weekBefore = startDate.addingTimeInterval(-86400*7)
         
-        let thisWeekPredicate = #Predicate<dailyFactorsLog> {
-            startDate < $0.logDate &&
+        let thisWeekPredicate = #Predicate<metricsLog> {
+            startDate <= $0.logDate &&
             $0.logDate < endDate
         }
         
-        let lastWeekPredicate = #Predicate<dailyFactorsLog> {
-            weekBefore < $0.logDate &&
+        let lastWeekPredicate = #Predicate<metricsLog> {
+            weekBefore <= $0.logDate &&
             $0.logDate < startDate
             
         }
         
         _thisWeekLogs = Query(filter: thisWeekPredicate, sort: \.logDate)
         _lastWeekLogs = Query(filter: lastWeekPredicate, sort: \.logDate)
-        self.factor = factor
+        self.metric = metric
     }
     
     
@@ -111,12 +110,11 @@ struct WeekView: View {
                             ForEach(thisWeekLogs) { log in
                                 LineMark(
                                     x: .value("Date", log.logDate),
-                                    y: .value("Stress", log[factor])
+                                    y: .value("Stress", log[metric])
                                 )
-                                .interpolationMethod(.catmullRom)
+                                .interpolationMethod(.linear)
                                 .symbol(.square)
                                 .foregroundStyle(Color("Prim"))
-                                .offset(x:10)
                                 
                             } // ForEach
                             
@@ -140,15 +138,21 @@ struct WeekView: View {
                             }
                             
                         }
-                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
                         .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-                        .chartXAxis {AxisMarks(values: .stride(by:.day, count:1)) {
-                            AxisValueLabel(format: .dateTime.weekday().day())
-                                .foregroundStyle(Color("Prim"))
+                        .chartXAxis {
                             
-                            AxisGridLine()
-                                .foregroundStyle(Color("Prim"))
-                        }
+                            AxisMarks(
+                                preset: .aligned, position: .bottom, // src: https://stackoverflow.com/questions/78861139/how-to-fix-leading-and-trailing-x-axis-label-truncation-in-swift-chart
+                                values: .stride(by:.day, count:1), content:
+                            {
+                                AxisValueLabel(format: .dateTime.weekday().day()) // TODO: it somehow doesn't show the last date, looks like I need to crate chartXAxis values manually
+                                    .foregroundStyle(Color("Prim"))
+                                
+                                AxisGridLine()
+                                    .foregroundStyle(Color("Prim"))
+                            })
+
+                            
                         }
                         .padding(30)
                         .background(Color("Tint"))
@@ -165,7 +169,7 @@ struct WeekView: View {
                     
                     LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                         
-                        FactorsAnalysisView(factor: factor, data: thisWeekLogs, beforeData: lastWeekLogs, duration: "week")
+                        metricsAnalysisView(metric: metric, data: thisWeekLogs, beforeData: lastWeekLogs, duration: "week")
                         
                     }// LazyVGrid
                     .padding(10)
@@ -173,7 +177,7 @@ struct WeekView: View {
                     .clipShape(.rect(cornerRadius: 15))
                     .frame(width:350)
                     
-                    FactorWeekdayBarChart(data: allLogs, factor: factor)
+                    metricWeekdayBarChart(data: allLogs, metric: metric)
                     
                 }
                 
@@ -194,25 +198,25 @@ struct MonthView: View {
     //@ObservedObject var viewModel: JournalViewModel
     // TODO: didn't know how to initalize this, so commented out for now.
     
-    var factor: String
+    var metric: String
     
-    @Query var allLogs: [dailyFactorsLog]
-
+    @Query var allLogs: [metricsLog]
     
-    @Query var thisMonthLogs: [dailyFactorsLog]
-    @Query var lastMonthLogs: [dailyFactorsLog]
+    
+    @Query var thisMonthLogs: [metricsLog]
+    @Query var lastMonthLogs: [metricsLog]
     var numOfDaysInMonth: Int
-
     
-    init(startsOn startDate: Date, endsOn endDate: Date, factor: String) {
+    
+    init(startsOn startDate: Date, endsOn endDate: Date, metric: String) {
         let monthBefore = Calendar.current.date(byAdding: .month, value: -1, to: startDate)!
-            
-        let thisMonthPredicate = #Predicate<dailyFactorsLog> {
+        
+        let thisMonthPredicate = #Predicate<metricsLog> {
             startDate < $0.logDate &&
             $0.logDate <= endDate
         }
         
-        let lastMonthPredicate = #Predicate<dailyFactorsLog> {
+        let lastMonthPredicate = #Predicate<metricsLog> {
             monthBefore < $0.logDate &&
             $0.logDate <= startDate
             
@@ -221,8 +225,8 @@ struct MonthView: View {
         _thisMonthLogs = Query(filter: thisMonthPredicate, sort: \.logDate)
         _lastMonthLogs = Query(filter: lastMonthPredicate, sort: \.logDate)
         numOfDaysInMonth = Calendar.current.numOfDaysInBetween(from: startDate, to: endDate)
-        self.factor = factor
-
+        self.metric = metric
+        
     }
     
     var body: some View {
@@ -243,9 +247,9 @@ struct MonthView: View {
                             ForEach(thisMonthLogs) { log in
                                 LineMark(
                                     x: .value("Date", log.logDate),
-                                    y: .value("Stress", log[factor])
+                                    y: .value("Stress", log[metric])
                                 )
-                                .interpolationMethod(.catmullRom)
+                                .interpolationMethod(.linear)
                                 .symbol(.square)
                                 .foregroundStyle(Color("Prim"))
                                 .offset(x:10)
@@ -272,7 +276,6 @@ struct MonthView: View {
                             }
                             
                         }
-                        .chartScrollableAxes(.horizontal) // https://swiftwithmajid.com/2023/07/25/mastering-charts-in-swiftui-scrolling/
                         .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
                         .chartXAxis {AxisMarks(values: .automatic) {
                             AxisValueLabel()
@@ -296,7 +299,7 @@ struct MonthView: View {
                     
                     LazyVGrid(columns:  [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                         
-                        FactorsAnalysisView(factor: factor, data: thisMonthLogs, beforeData: lastMonthLogs, duration: "month")
+                        metricsAnalysisView(metric: metric, data: thisMonthLogs, beforeData: lastMonthLogs, duration: "month")
                         
                     }// LazyVGrid
                     .padding(10)
@@ -304,8 +307,8 @@ struct MonthView: View {
                     .clipShape(.rect(cornerRadius: 15))
                     .frame(width:350)
                     
-                    FactorWeekdayBarChart(data: allLogs, factor: factor)
-
+                    metricWeekdayBarChart(data: allLogs, metric: metric)
+                    
                 }
                 
                 
@@ -321,16 +324,16 @@ struct MonthView: View {
 } // StressView
 
 
-struct FactorsAnalysisView : View {
-    let factor: String
-    let data:[dailyFactorsLog]
-    let beforeData:[dailyFactorsLog]
-    var maxData: [dailyFactorsLog] {
-            return data.sorted { $0[factor] > $1[factor]}
+struct metricsAnalysisView : View {
+    let metric: String
+    let data:[metricsLog]
+    let beforeData:[metricsLog]
+    var dataSortedFromLargest: [metricsLog] {
+        return data.sorted { $0[metric] > $1[metric]}
     }
     
-    init(factor: String, data: [dailyFactorsLog], beforeData: [dailyFactorsLog], duration: String) {
-        self.factor = factor
+    init(metric: String, data: [metricsLog], beforeData: [metricsLog], duration: String) {
+        self.metric = metric
         self.data = data
         self.beforeData = beforeData
         self.duration = duration
@@ -350,7 +353,7 @@ struct FactorsAnalysisView : View {
             
             if data.count > 0 { // If data available for selected day
                 
-                let avgSleepString = String(format: "%.2f", dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: factor)) // round to 2dp
+                let avgSleepString = String(format: "%.2f", metricsLog.getAvg(metricsLogs: data, metric: metric)) // round to 2dp
                 
                 Text("\(avgSleepString)")
                     .foregroundStyle(Color("Prim"))
@@ -377,7 +380,7 @@ struct FactorsAnalysisView : View {
             if data.count > 0
                 && beforeData.count > 0 {  // If data available for both selected day and day before.
                 
-                Text("\(dailyFactorsLog.calculatePercentage(numerator: dailyFactorsLog.getAvg(dailyFactorsLogs: data, factor: "sleep"), dividedBy: dailyFactorsLog.getAvg(dailyFactorsLogs: beforeData, factor: factor))) % compared to \(periodInPast[duration] ?? "last week")")
+                Text("\(metricsLog.calculatePercentage(previous: metricsLog.getAvg(metricsLogs: data, metric: "sleep"), current: metricsLog.getAvg(metricsLogs: beforeData, metric: metric))) from \(periodInPast[duration] ?? "last week")")
                     .foregroundStyle(Color("Prim"))
                 
             } else {
@@ -395,10 +398,10 @@ struct FactorsAnalysisView : View {
             Text("Maximum:")
                 .font(.system(18))
             
-            if maxData.count > 0 {
-                                
-                Text("\(String(format: "%.2f", maxData[0][factor])) on")
-                Text(maxData[0].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
+            if dataSortedFromLargest.count > 0 {
+                
+                Text("\(String(format: "%.2f", dataSortedFromLargest[0][metric])) on")
+                Text(dataSortedFromLargest[0].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
                 
             } else {
                 Text("No Data")
@@ -408,23 +411,44 @@ struct FactorsAnalysisView : View {
         .font(.systemSemiBold(20))
         .padding(10)
         
+        
+        VStack(alignment: .leading) {
+            
+            Text("Minimum:")
+                .font(.system(18))
+            
+            if dataSortedFromLargest.count > 0 {
+                
+                Text("\(String(format: "%.2f", dataSortedFromLargest[dataSortedFromLargest.count - 1][metric])) on")
+                Text(dataSortedFromLargest[dataSortedFromLargest.count - 1].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
+                
+            } else {
+                Text("No Data")
+            }
+        }
+        .foregroundStyle(Color("Prim"))
+        .font(.systemSemiBold(20))
+        .padding(10)
+        
+        
+        
     }
 }
 
-struct FactorWeekdayBarChart: View {
-    var data:[dailyFactorsLog]
-    var factor: String
+struct metricWeekdayBarChart: View {
+    var data:[metricsLog]
+    var metric: String
     
     var body: some View {
         
         let weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        let weekdayAvgs = dailyFactorsLog.calcWeekdayAvgs(logs: data, factor: factor)
+        let weekdayAvgs = metricsLog.calcWeekdayAvgs(logs: data, metric: metric)
         
         var weekdayData:[(String, Double)] { // Create an array
             Array(zip(weekdayNames, weekdayAvgs))
         }
         
-        Text("Average Stress Level by Day of the Week")
+        Text("Average \(metric) by day of the week")
         
         Chart (weekdayData, id:\.0) { tuple in
             BarMark(

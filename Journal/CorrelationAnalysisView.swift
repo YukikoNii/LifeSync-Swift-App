@@ -8,363 +8,142 @@ import Foundation
 
 struct CorrelationAnalysisView: View {
     @ObservedObject var viewModel: JournalViewModel
-
-    @Query(filter: daySummary.dayLog(date: Date.now)) var daySummaries: [daySummary]
+    
+    @Query var daySummaries: [summaryLog]
     
     var body: some View {
         
+        
+        ZStack {
+            Color("Sec")
+                .ignoresSafeArea()
             
-            ZStack {
-                Color("Sec")
-                    .ignoresSafeArea()
+            ScrollView {
                 
-                ScrollView {
-                    
-                    CorrelationChartView(daySummaries: daySummaries)
-                    
-                } //scrollview
-
-
-                // TODO: if i turn off blur effect, it stops scrolling.
+                Text("Stress vs Sleep")
                 
+                ChartView(daySummaries: daySummaries, metric: "sleep")
                 
+                Text("Stress vs Activity")
                 
-            } // ZStack
-            .font(.system(18))
-            .foregroundStyle(Color("Prim"))
+                ChartView(daySummaries: daySummaries, metric: "activity")
+                
+                Text("Stress vs Diet")
+                
+                ChartView(daySummaries: daySummaries, metric: "diet")
+                
+                Text("Stress vs Work")
+                
+                ChartView(daySummaries: daySummaries, metric: "work")
+                
+            } //scrollview
             
+            
+            // TODO: if i turn off blur effect, it stops scrolling.
+            
+            
+            
+        } // ZStack
+        .font(.system(18))
+        .foregroundStyle(Color("Prim"))
+        
         
     }
-   
+    
 }
 
-struct CorrelationChartView: View {
-    
-    let daySummaries: [daySummary]
-    
-    var body: some View {
-        
-        Text("Stress vs Sleep")
 
-        ChartView(daySummaries: daySummaries, selectedCategory: "sleep")
-        .chartXAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .chartYAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .padding(30)
-        .background(Color("Tint"))
-        .clipShape(.rect(cornerRadius: 20))
-        .frame(width:350, height:350)
-        
-        Text("Stress vs Activity")
-        
-        ChartView(daySummaries: daySummaries, selectedCategory: "activity")
-        .chartXAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .chartYAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .padding(30)
-        .background(Color("Tint"))
-        .clipShape(.rect(cornerRadius: 20))
-        .frame(width:350, height:350)
-        
-        Text("Stress vs Diet")
-
-        
-        ChartView(daySummaries: daySummaries, selectedCategory: "diet")
-        .chartXAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .chartYAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .padding(30)
-        .background(Color("Tint"))
-        .clipShape(.rect(cornerRadius: 20))
-        .frame(width:350, height:350)
-        
-        Text("Stress vs Work")
-
-        
-        ChartView(daySummaries: daySummaries, selectedCategory: "work")
-        .chartXAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .chartYAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Prim")) // change the color for  readability
-            }
-            
-            
-        }
-        .padding(30)
-        .background(Color("Tint"))
-        .clipShape(.rect(cornerRadius: 20))
-        .frame(width:350, height:350)
-        
-
-    }
-}
 
 struct ChartView: View {
-    let daySummaries: [daySummary]
- 
-    let selectedCategory: String
-
+    
+    let daySummaries: [summaryLog]
+    
+    let metric: String
+    
     var body: some View {
-        if selectedCategory == "activity" {
-            Chart {
-                ForEach(daySummaries) { log in
-                    PointMark(
-                        x: .value("Date", log.avgStress),
-                        y: .value("Stress", log.activity)
-                    )
-                    
-                    .symbol(.square)
-                    .foregroundStyle(Color("Prim"))
-                    
-                } // ForEach
+        Chart {
+            ForEach(daySummaries, id: \.self) { data in
+                PointMark(
+                    x: .value("Date", data.avgStress),
+                    y: .value("Stress", data[metric])
+                )
+                .symbol(.square)
+                .foregroundStyle(Color("Prim"))
+            
+
+                
+            } // ForEach
+        } // Chart
+        .chartXAxisLabel("Average Stress")
+        .chartYAxisLabel("\(metric)")
+        .chartXAxis {
+            
+            AxisMarks(
+                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            )
+            {
+                
+                AxisValueLabel()
+                    .font(.system(10))
+                    .foregroundStyle(Color("Prim")) // change the color for  readability
             }
-        }
-        
-        if selectedCategory == "diet" {
-            Chart {
-                ForEach(daySummaries) { log in
-                    PointMark(
-                        x: .value("Date", log.avgStress),
-                        y: .value("Stress", log.diet)
-                    )
-                    
-                    .symbol(.square)
+            
+            AxisMarks(
+                values: [0, 10]
+            )
+            {
+                
+                AxisGridLine()
                     .foregroundStyle(Color("Prim"))
-                    
-                } // ForEach
+                
+                AxisValueLabel()
+                    .font(.system(10))
+                    .foregroundStyle(Color("Prim")) // change the color for  readability
             }
+            
+            
         }
-        
-        if selectedCategory == "work" {
-            Chart {
-                ForEach(daySummaries) { log in
-                    PointMark(
-                        x: .value("Date", log.avgStress),
-                        y: .value("Stress", log.work)
-                    )
-                    
-                    .symbol(.square)
-                    .foregroundStyle(Color("Prim"))
-                    
-                } // ForEach
-            }
+        .chartYAxis {
+            
+            AxisMarks(preset: .aligned, position: .leading,
+                      values: [ 1, 2, 3, 4, 5, 6, 7, 8, 9], content: {
+                
+                AxisValueLabel()
+                    .font(.system(10))
+                    .foregroundStyle(Color("Prim")) // change the color for  readability
+                
+                
+            })
+            
+            AxisMarks(
+                preset: .aligned, position: .leading,
+                values: [0, 10], content:
+                    {
+                        
+                        AxisGridLine()
+                            .foregroundStyle(Color("Prim"))
+                        
+                        AxisValueLabel()
+                            .font(.system(10))
+                            .foregroundStyle(Color("Prim")) // change the color for  readability
+                    })
+            
         }
-        
-        if selectedCategory == "sleep" {
-            Chart {
-                ForEach(daySummaries) { log in
-                    PointMark(
-                        x: .value("Date", log.avgStress),
-                        y: .value("Stress", log.sleep)
-                    )
-                    
-                    .symbol(.square)
-                    .foregroundStyle(Color("Prim"))
-                    
-                } // ForEach
-            }
-        }
-        
+        .font(.system(10))
+        .foregroundStyle(Color("Prim"))
+        .padding(30)
+        .background(Color("Tint"))
+        .clipShape(.rect(cornerRadius: 20))
+        .frame(width:350, height:350)
         
     }
 }
 
+
+/*
+ {
+ AxisValueLabel()
+ .font(.system(10))
+ .foregroundStyle(Color("Prim")) // change the color for  readability
+ }
+ */

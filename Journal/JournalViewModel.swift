@@ -19,24 +19,27 @@ class JournalViewModel: ObservableObject {
     @Published var email = ""
     
     @Published var password = ""
+    
+    @Published var numOfStressNotifications = 3
         
-    @Published var stressLogsReminderTime = setDefaultReminderTime(numOfReminders: 3) // TODO: I probably shouldn't have this magic number. 
+    @Published var stressLogsNotificationTime = setDefaultNotificationTime(numOfNotifications: 3) // TODO: I probably shouldn't have this magic number. 
     
-    @Published var isStressLogsRemindersOn = [true, false, false]
+    @Published var isStressLogsNotificationsOn = [false, false, false]
     
-    @Published var dailyLogReminderTime = setDefaultReminderTime(numOfReminders: 1)
+    @Published var dailyLogNotificationTime = setDefaultNotificationTime(numOfNotifications: 1)
     
-    @Published var isDailyLogReminderOn = [true]
+    @Published var isDailyLogNotificationOn = [false]
+    
     
 }
 
-func setDefaultReminderTime(numOfReminders: Int) -> [Date] {
+func setDefaultNotificationTime(numOfNotifications: Int) -> [Date] {
     
     let dateComponents: [[String: Int]] = [["hour": 9, "minute": 0], ["hour": 13, "minute": 0], ["hour": 20, "minute": 0]]
     
     var dates: [Date] = []
     
-    for index in 0...(numOfReminders-1) {
+    for index in 0...(numOfNotifications-1) {
         
         var components = DateComponents()
         components.hour = dateComponents[index]["hour"]
@@ -50,7 +53,6 @@ func setDefaultReminderTime(numOfReminders: Int) -> [Date] {
     return dates.sorted()
     
 }
-
 
 
 

@@ -12,7 +12,7 @@ struct JournalApp: App {
         
         WindowGroup {
             JournalView(viewModel: viewModel)
-                .modelContainer(for: [stressLog.self, daySummary.self, dailyFactorsLog.self]) // Adding models
+                .modelContainer(for: [stressLog.self, summaryLog.self, metricsLog.self]) // Adding models
         } // https://qiita.com/dokozon0/items/0c46c432b2e873ceeb04 これをしないとクラッシュするらしい。
 
     }
@@ -44,14 +44,10 @@ public func setNotification(hour: Int, minute: Int, identifier: String)  {
         content.sound = UNNotificationSound.default
         content.badge = 1 // Badge appears in the home at the top right of the logo
         
-        for index in 0...2 {
-            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(index)])
-        }
-        
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
         
-    } // TODO: do I need catch error? (xcode gave me a warning that I don't need it)
+    } 
 }
 
 // Remove notifications if toggle is off.

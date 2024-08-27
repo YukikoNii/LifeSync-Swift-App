@@ -11,6 +11,11 @@ struct HomeView: View {
     
     @ObservedObject var viewModel: JournalViewModel
     
+    @Environment(\.modelContext) private var context
+    
+    @State var isInserted = false
+    
+    
     var body: some View {
         
         //https://www.youtube.com/watch?app=desktop&v=dRdguneAh8M
@@ -41,27 +46,27 @@ struct HomeView: View {
                             }
                             
                             NavigationLink {
-                                FactorDatePickerView(viewModel: viewModel, factor: "sleep")
+                                metricDatePickerView(viewModel: viewModel, metric: "sleep")
                             } label: {
-                                FactorsTileView(chosenFactor: "sleep") // lowercase for subscript. 
+                                metricsTileView(chosenmetric: "sleep") // lowercase for subscript.
                             }
                             
                             NavigationLink {
-                                FactorDatePickerView(viewModel: viewModel, factor: "activity")
+                                metricDatePickerView(viewModel: viewModel, metric: "activity")
                             } label: {
-                                FactorsTileView(chosenFactor: "activity")
+                                metricsTileView(chosenmetric: "activity")
                             }
                             
                             NavigationLink {
-                                FactorDatePickerView(viewModel: viewModel, factor: "diet")
+                                metricDatePickerView(viewModel: viewModel, metric: "diet")
                             } label: {
-                                FactorsTileView(chosenFactor: "diet")
+                                metricsTileView(chosenmetric: "diet")
                             }
                             
                             NavigationLink {
-                                FactorDatePickerView(viewModel: viewModel, factor:  "work")
+                                metricDatePickerView(viewModel: viewModel, metric:  "work")
                             } label: {
-                                FactorsTileView(chosenFactor: "work")
+                                metricsTileView(chosenmetric: "work")
                             }
                             
                             NavigationLink {
@@ -83,22 +88,59 @@ struct HomeView: View {
         } //NavigationStack
         .onAppear() {
             UITabBar.appearance().unselectedItemTintColor = .white
+            //https://llcc.hatenablog.com/entry/2017/08/31/230000
             
-            for index in 0...2 { // produce three notifications
-                if viewModel.isStressLogsRemindersOn[index] {
-                    let components = Calendar.current.dateComponents(in: TimeZone.current, from: viewModel.stressLogsReminderTime[index])
+            // TODO: delete later
+            
+            if isInserted == false {
+                
+                let testLogs = [
+                    stressLog(logDate: Date(), stressLevel: 5, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*1), stressLevel: 7, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*2), stressLevel: 3, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*3), stressLevel: 3, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*4), stressLevel: 8, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*5), stressLevel: 6, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*6), stressLevel: 5, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*7), stressLevel: 1, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*8), stressLevel: 10, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*9), stressLevel: 8, notes: "", id: UUID().uuidString),
+                    stressLog(logDate: Date().addingTimeInterval(-86400*10), stressLevel: 3, notes: "", id: UUID().uuidString),
                     
-                    setNotification(hour: components.hour!, minute: components.minute!, identifier: String(index)) // trigger notification
-                                        
+                ]
+                
+                let date = Date()
+                
+                let testLogs2 = [
+                    metricsLog(sleep: 3, activity: 5, diet: 4, work: 5, journal: "", logDate: date),
+                    metricsLog(sleep: 5, activity: 5, diet: 2, work: 7, journal: "", logDate: date.addingTimeInterval(-86400*1)),
+                    metricsLog(sleep: 7, activity: 3, diet: 5, work: 1, journal: "", logDate: date.addingTimeInterval(-86400*2)),
+                    metricsLog(sleep: 1, activity: 8, diet: 8, work: 4, journal: "", logDate: date.addingTimeInterval(-86400*3)),
+                    metricsLog(sleep: 10, activity: 3, diet: 5, work: 8, journal: "", logDate: date.addingTimeInterval(-86400*4)),
+                    metricsLog(sleep: 4, activity: 3, diet: 2, work: 6, journal: "", logDate: date.addingTimeInterval(-86400*5)),
+                    metricsLog(sleep: 5, activity: 7, diet: 8, work: 4, journal: "", logDate: date.addingTimeInterval(-86400*6)),
+                    metricsLog(sleep: 5, activity: 7, diet: 8, work: 2, journal: "", logDate: date.addingTimeInterval(-86400*7)),
+                    
+                ]
+                
+                for testLog in testLogs2 {
+                    context.insert(testLog)
+                }
+                
+                for testLog in testLogs {
+                    context.insert(testLog)
                 }
                 
             }
-            //https://llcc.hatenablog.com/entry/2017/08/31/230000
+            
+            isInserted = true
+
+            //
         }
         
     } // body
     
-} // PageOneView
+} // HomeView
 
 
 // Top bar
@@ -110,7 +152,7 @@ struct HomeNavBarView: View {
             
             Spacer()
             
-            Text("Hello, \(viewModel.name)") 
+            Text("Hello, \(viewModel.name)")
                 .fontWeight(.heavy)
                 .font(.system(24))
                 .foregroundStyle(Color("Prim"))
@@ -158,15 +200,15 @@ struct StressTileView: View {
 }
 
 
-struct FactorsTileView: View {
-    @Query(filter: dailyFactorsLog.dayLog(date:Date.now)) var todaysLog: [dailyFactorsLog]
-    var chosenFactor: String
-
+struct metricsTileView: View {
+    @Query(filter: metricsLog.dayLog(date:Date.now)) var todaysLog: [metricsLog]
+    var chosenmetric: String
+    
     var body: some View {
         
         ZStack {
             VStack {
-                Text("\(chosenFactor)")
+                Text("\(chosenmetric)")
                     .font(.system(20))
                 
                 Divider()
@@ -174,7 +216,7 @@ struct FactorsTileView: View {
                 
                 if todaysLog.count > 0 {
                     
-                    Text("\(String(format: "%.2f", todaysLog[0][chosenFactor]))") 
+                    Text("\(String(format: "%.2f", todaysLog[0][chosenmetric]))")
                     
                 } else {
                     
