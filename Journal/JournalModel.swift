@@ -84,7 +84,7 @@ extension stressLog {
 
 @Model
 class summaryLog {
-    var logDate: Date
+    @Attribute(.unique) var logDate: Date
     var avgStress: Double
     var sleep: Double
     var activity: Double
@@ -102,13 +102,13 @@ class summaryLog {
     
     subscript(key: String) -> Double {
         switch key {
-        case "sleep":
+        case "Sleep":
             return sleep
-        case "activity":
+        case "Activity":
             return activity
-        case "diet":
+        case "Diet":
             return diet
-        case "work":
+        case "Work":
             return work
         default:
             return 0.0
@@ -126,7 +126,7 @@ extension summaryLog {
         
         return #Predicate<summaryLog> { log in
             startDate < log.logDate &&
-            log.logDate < endDate // TODO: technically, it doesn't have to be a range. (But calendar can't be used in the predicate, so I don't know how else to do it.)
+            log.logDate < endDate
         }
     }
     
@@ -152,13 +152,13 @@ class metricsLog {
     
     subscript(key: String) -> Double {
         switch key {
-        case "sleep":
+        case "Sleep":
             return sleep
-        case "activity":
+        case "Activity":
             return activity
-        case "diet":
+        case "Diet":
             return diet
-        case "work":
+        case "Work":
             return work
         default:
             return 0.0
@@ -178,7 +178,7 @@ extension metricsLog {
         
         return #Predicate<metricsLog> { log in
             startDate < log.logDate &&
-            log.logDate <= endDate // TODO: technically, it doesn't have to be a range. (But calendar can't be used in the predicate, so I don't know how else to do it.)
+            log.logDate <= endDate 
         }
     }
     

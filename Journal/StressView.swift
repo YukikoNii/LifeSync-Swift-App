@@ -18,7 +18,7 @@ struct StressDatePickerView: View {
         let monthStartDate = Calendar.current.date(byAdding: .month, value: -1, to: endDate)!
         
         ZStack {
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()// Background
             
             
@@ -26,8 +26,8 @@ struct StressDatePickerView: View {
                 HStack {
                     Text("Day")
                         .padding()
-                        .background(page == "day" ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(page == "day" ? Color("Prim") : Color("Prim"))
+                        .background(page == "day" ? Color("Tint") : Color("Prim"))
+                        .foregroundColor(page == "day" ? Color("Sec") : Color("Sec"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
                             page = "day"
@@ -35,8 +35,8 @@ struct StressDatePickerView: View {
                     
                     Text("Week")
                         .padding()
-                        .background(page == "week" ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(page == "week" ? Color("Prim") : Color("Prim"))
+                        .background(page == "week" ? Color("Tint") : Color("Prim"))
+                        .foregroundColor(page == "week" ? Color("Sec") : Color("Sec"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
                             page = "week"
@@ -44,8 +44,8 @@ struct StressDatePickerView: View {
                     
                     Text("Month")
                         .padding()
-                        .background(page == "month" ? Color("Tint") : Color("Sec"))
-                        .foregroundColor(page == "month" ? Color("Prim") : Color("Prim"))
+                        .background(page == "month" ? Color("Tint") : Color("Prim"))
+                        .foregroundColor(page == "month" ? Color("Sec") : Color("Sec"))
                         .clipShape(.rect(cornerRadius:5))
                         .onTapGesture {
                             page = "month"
@@ -53,7 +53,6 @@ struct StressDatePickerView: View {
                     
                 }
                 .font(.system(17))
-                
                 
                 HStack {
                     
@@ -74,7 +73,7 @@ struct StressDatePickerView: View {
                         .padding()
                     
                 } //Hstack
-                .foregroundStyle(Color("Prim"))
+                .foregroundStyle(Color("Sec"))
                 .font(.system(18))
                 
                 
@@ -122,8 +121,8 @@ struct DayStressView: View {
             $0.logDate < startDate
             
         }
-    
-    
+        
+        
         _dailyStressLog = Query(filter: todayPredicate, sort: \.logDate)
         _dayBeforeStressLog = Query(filter: dayBeforePredicate, sort: \.logDate)
     }
@@ -133,7 +132,7 @@ struct DayStressView: View {
         
         ZStack {
             
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()// Background
             
             ScrollView {
@@ -150,7 +149,7 @@ struct DayStressView: View {
                                 )
                                 .interpolationMethod(.linear)
                                 .symbol(.square)
-                                .foregroundStyle(Color("Prim"))
+                                .foregroundStyle(Color("Sec"))
                                 
                             } // ForEach
                             
@@ -162,7 +161,7 @@ struct DayStressView: View {
                                 values: [0, 5, 10]
                             ) {
                                 AxisValueLabel()
-                                    .foregroundStyle(Color("Prim")) // change the color for  readability
+                                    .foregroundStyle(Color("Sec")) // change the color for  readability
                                     .font(.system(10))
                             }
                             
@@ -170,7 +169,7 @@ struct DayStressView: View {
                                 values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                             ) {
                                 AxisGridLine()
-                                    .foregroundStyle(Color("Prim"))
+                                    .foregroundStyle(Color("Sec"))
                             }
                             
                         }
@@ -179,16 +178,16 @@ struct DayStressView: View {
                             AxisMarks(values: .stride(by:.hour, count:3)) { // https://zenn.dev/matsuei/articles/812d0476aa573f
                                 
                                 AxisValueLabel(format:.dateTime.hour())
-                                    .foregroundStyle(Color("Prim"))
+                                    .foregroundStyle(Color("Sec"))
                                     .font(.system(10))
                                 
                                 AxisGridLine()
-                                    .foregroundStyle(Color("Prim"))
+                                    .foregroundStyle(Color("Sec"))
                             }
                             AxisMarks(values:.stride(by:.day, count:1)) {
                                 
                                 AxisValueLabel()
-                                    .foregroundStyle(Color("Prim"))
+                                    .foregroundStyle(Color("Sec"))
                                     .font(.system(10))
                                     .offset(x:-10, y:15)
                             }
@@ -206,19 +205,17 @@ struct DayStressView: View {
                             .frame(width: 300)
                     }
                     
-                    
                     // Data Analysis
                     
                     LazyVGrid(columns: [GridItem(alignment: .topLeading), GridItem(alignment: .topLeading)]) {
                         
                         AnalysisView(data: dailyStressLog, beforeData: dayBeforeStressLog, duration: "day")
                         
-                        
                     }// LazyVGrid
                     .padding(10)
                     .background(Color("Tint"))
                     .clipShape(.rect(cornerRadius: 15))
-                    .frame(width:350) // TODO: I am not sure if this is a right idea
+                    .frame(width:350)
                     
                     // Average stress level by time of day
                     TimeOfDayBarChartView(data: allLogs)
@@ -227,9 +224,9 @@ struct DayStressView: View {
                 
                 
             } // scrollview
-            .foregroundStyle(Color("Prim"))
+            .foregroundStyle(Color("Sec"))
             .font(.system(18))
-            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(Color("Prim"), for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar) // https://sarunw.com/posts/swiftui-tabview-color/ this fixed the problem of blurry tabbar
             
         }//ZStack
@@ -259,7 +256,7 @@ struct WeekStressView: View {
             $0.logDate < startDate
             
         }
-    
+        
         
         _weeklyStressLog = Query(filter: predicateDailyLog, sort: \.logDate)
         _weekBeforeStressLog = Query(filter: predicateDayBefore, sort: \.logDate)
@@ -269,7 +266,7 @@ struct WeekStressView: View {
         
         ZStack {
             
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()// Background
             
             ScrollView {
@@ -287,7 +284,7 @@ struct WeekStressView: View {
                                 )
                                 .interpolationMethod(.linear)
                                 .symbol(.square)
-                                .foregroundStyle(Color("Prim"))
+                                .foregroundStyle(Color("Sec"))
                                 
                             } // ForEach
                         } // Chart
@@ -296,14 +293,14 @@ struct WeekStressView: View {
                                 values: [0, 5, 10]
                             ) {
                                 AxisValueLabel()
-                                    .foregroundStyle(Color("Prim")) // change the color for  readability
+                                    .foregroundStyle(Color("Sec")) // change the color for  readability
                             }
                             
                             AxisMarks(
                                 values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                             ) {
                                 AxisGridLine()
-                                    .foregroundStyle(Color("Prim"))
+                                    .foregroundStyle(Color("Sec"))
                             }
                         }
                         .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
@@ -314,10 +311,10 @@ struct WeekStressView: View {
                                 values: .stride(by:.day, count:1), content:
                                     {
                                         AxisValueLabel(format: .dateTime.weekday().day()) // TODO: it somehow doesn't show the last date, looks like I need to crate chartXAxis values manually
-                                            .foregroundStyle(Color("Prim"))
+                                            .foregroundStyle(Color("Sec"))
                                         
                                         AxisGridLine()
-                                            .foregroundStyle(Color("Prim"))
+                                            .foregroundStyle(Color("Sec"))
                                     })
                             
                         }
@@ -355,8 +352,8 @@ struct WeekStressView: View {
                 
             } // ScrollView
             .font(.system(18))
-            .foregroundStyle(Color("Prim"))
-            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .foregroundStyle(Color("Sec"))
+            .toolbarBackground(Color("Prim"), for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
             
         }
@@ -384,7 +381,7 @@ struct MonthStressView: View {
             $0.logDate <= startDate
             
         }
-
+        
         _thisMonthStressLog = Query(filter: thisMonthPredicate, sort: \.logDate)
         _lastMonthStressLog = Query(filter: lastMonthPredicate, sort: \.logDate)
         numOfDaysInMonth = Calendar.current.numOfDaysInBetween(from: startDate, to: endDate)
@@ -394,7 +391,7 @@ struct MonthStressView: View {
         
         ZStack {
             
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()// Background
             
             ScrollView {
@@ -412,7 +409,7 @@ struct MonthStressView: View {
                                 )
                                 .interpolationMethod(.linear)
                                 .symbol(.square)
-                                .foregroundStyle(Color("Prim"))
+                                .foregroundStyle(Color("Sec"))
                                 
                             } // ForEach
                         } // Chart
@@ -421,24 +418,27 @@ struct MonthStressView: View {
                                 values: [0, 5, 10]
                             ) {
                                 AxisValueLabel()
-                                    .foregroundStyle(Color("Prim")) // change the color for  readability
+                                    .foregroundStyle(Color("Sec")) // change the color for  readability
                             }
                             
                             AxisMarks(
                                 values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                             ) {
                                 AxisGridLine()
-                                    .foregroundStyle(Color("Prim"))
+                                    .foregroundStyle(Color("Sec"))
                             }
                         }
                         .chartXVisibleDomain(length: 86400*numOfDaysInMonth) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
-                        .chartXAxis {AxisMarks(values: .automatic) {
-                            AxisValueLabel()
-                                .foregroundStyle(Color("Prim"))
-                            
-                            AxisGridLine()
-                                .foregroundStyle(Color("Prim"))
-                        }
+                        .chartXAxis {AxisMarks(
+                            preset: .aligned, position: .bottom,
+                            values: .stride(by:.day, count:3), content:
+                                {
+                                    AxisValueLabel(format: .dateTime.day().month())
+                                        .foregroundStyle(Color("Sec"))
+                                    
+                                    AxisGridLine()
+                                        .foregroundStyle(Color("Sec"))
+                                })
                         }
                         .padding(30)
                         .background(Color("Tint"))
@@ -467,8 +467,8 @@ struct MonthStressView: View {
                 
             } // ScrollView
             .font(.system(18))
-            .foregroundStyle(Color("Prim"))
-            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .foregroundStyle(Color("Sec"))
+            .toolbarBackground(Color("Prim"), for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
             
         }
@@ -501,7 +501,7 @@ struct AnalysisView : View {
                 let avgStressString = String(format: "%.2f", stressLog.getStressAvg(dayStressLogs: data)) // round to 2dp
                 
                 Text("\(avgStressString)")
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
             } else {
                 Text("No Data")
                 
@@ -510,7 +510,7 @@ struct AnalysisView : View {
             
         }
         .padding(10)
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
         .font(.systemSemiBold(20))
         
         
@@ -530,7 +530,7 @@ struct AnalysisView : View {
             
         }
         .padding(10)
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
         .font(.systemSemiBold(20))
         
         
@@ -543,7 +543,7 @@ struct AnalysisView : View {
             if dataSortedFromLargest.count > 0 {
                 
                 Text("\(String(format: "%.2f", dataSortedFromLargest[0].stressLevel)) on")
-
+                
                 if duration == "day" {
                     
                     Text(dataSortedFromLargest[0].logDate, format: .dateTime.hour().minute()) // show date and weekday
@@ -557,7 +557,7 @@ struct AnalysisView : View {
             }
             
         }
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
         .font(.systemSemiBold(20))
         .padding(10)
         
@@ -582,7 +582,7 @@ struct AnalysisView : View {
             }
             
         }
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
         .font(.systemSemiBold(20))
         .padding(10)
         
@@ -609,14 +609,14 @@ struct WeekdayBarChart: View {
                 x: .value("Weekday", tuple.0),
                 y: .value("Stress", tuple.1)
             )
-            .foregroundStyle(Color("Prim"))
+            .foregroundStyle(Color("Sec"))
             
         } // Chart
         .chartXAxis {
             AxisMarks(values: .automatic) { // https://zenn.dev/matsuei/articles/812d0476aa573f
                 
                 AxisValueLabel()
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
                     .font(.system(10))
             }
         }
@@ -626,7 +626,7 @@ struct WeekdayBarChart: View {
                 values: [0, 5, 10]
             ) {
                 AxisValueLabel()
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
                     .font(.system(10))
             }
             
@@ -634,7 +634,7 @@ struct WeekdayBarChart: View {
                 values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
             ) {
                 AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
             }
             
         }
@@ -642,7 +642,7 @@ struct WeekdayBarChart: View {
         .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
         .chartXScale(range: .plotDimension(padding: 10))
         .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
         
@@ -670,14 +670,14 @@ struct TimeOfDayBarChartView: View {
                 x: .value("Weekday", tuple.0),
                 y: .value("Stress", tuple.1)
             )
-            .foregroundStyle(Color("Prim"))
+            .foregroundStyle(Color("Sec"))
             
         } // Chart
         .chartXAxis {
             AxisMarks(values: .automatic) { // https://zenn.dev/matsuei/articles/812d0476aa573f
                 
                 AxisValueLabel()
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
                     .font(.system(10))
             }
         }
@@ -687,7 +687,7 @@ struct TimeOfDayBarChartView: View {
                 values: [0, 5, 10]
             ) {
                 AxisValueLabel()
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
                     .font(.system(10))
             }
             
@@ -695,7 +695,7 @@ struct TimeOfDayBarChartView: View {
                 values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
             ) {
                 AxisGridLine()
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
             }
             
         }
@@ -703,7 +703,7 @@ struct TimeOfDayBarChartView: View {
         .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
         .chartXScale(range: .plotDimension(padding: 10))
         .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
         

@@ -37,7 +37,7 @@ public func setNotification(hour: Int, minute: Int, identifier: String)  {
     do {
         let content = UNMutableNotificationContent()
         let dateComponent = DateComponents(hour: hour, minute: minute)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponent, repeats: true) // https://appdev-room.com/swift-notification-date TODO: learn how to pause this notification. 
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponent, repeats: true) // https://appdev-room.com/swift-notification-date  
         
         content.title = "How are you feeling?"
         content.body = "Open the app to record"

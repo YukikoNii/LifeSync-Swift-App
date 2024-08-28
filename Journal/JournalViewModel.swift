@@ -30,6 +30,10 @@ class JournalViewModel: ObservableObject {
     
     @Published var isDailyLogNotificationOn = [false]
     
+    @Published var width = 350
+    
+    @Published var metrics = ["Sleep", "Activity", "Diet", "Work"]
+    
     
 }
 

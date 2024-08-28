@@ -23,7 +23,7 @@ struct SettingsView: View {
         NavigationStack {
             
             ZStack {
-                Color("Sec")
+                Color("Prim")
                     .ignoresSafeArea()
                 
                 List(settingRows, id:\.id) { settingRow in
@@ -32,7 +32,7 @@ struct SettingsView: View {
                         SettingsDetailsView(viewModel: viewModel, category: settingRow.name)
                     }
                     .listRowBackground(Color("Tint"))
-                    .foregroundColor(Color("Prim"))
+                    .foregroundColor(Color("Sec"))
                     
                 } // List
                 .scrollContentBackground(.hidden)
@@ -43,7 +43,7 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("Settings")
-                        .foregroundColor(Color("Prim"))
+                        .foregroundColor(Color("Sec"))
                 }
             }
         } // NavigationStack
@@ -65,7 +65,7 @@ struct SettingsDetailsView: View {
     var body: some View {
         
         ZStack {
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()
             
             List {
@@ -97,7 +97,7 @@ struct SettingsDetailsView: View {
                         
                         
                         ForEach(0..<viewModel.numOfStressNotifications, id: \.self) { index in
-                            VStack { // TODO: maybe I should use a loop
+                            VStack {
                                 
                                 Toggle("Notification Time \(index + 1)", isOn: $viewModel.isStressLogsNotificationsOn[index])
                                     .onChange(of: viewModel.isStressLogsNotificationsOn[index]) {
@@ -170,12 +170,12 @@ struct SettingsDetailsView: View {
             } // List
             .scrollContentBackground(.hidden)
             .navigationBarTitleDisplayMode(.inline)
-            .background(Color("Sec"))
-            .foregroundStyle(Color("Prim"))
+            .background(Color("Prim"))
+            .foregroundStyle(Color("Sec"))
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("\(category)")
-                        .foregroundColor(Color("Prim"))
+                        .foregroundColor(Color("Sec"))
                         .font(.system(18))
                 }
             }

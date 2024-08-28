@@ -24,7 +24,7 @@ struct HomeView: View {
             
             ZStack {
                 
-                Color("Sec")
+                Color("Prim")
                     .ignoresSafeArea()// Background
                 
                 VStack {
@@ -32,7 +32,7 @@ struct HomeView: View {
                     HomeNavBarView(viewModel: viewModel)
                     
                     Divider()
-                        .overlay(Color("Prim"))
+                        .overlay(Color("Sec"))
                     
                     //https://zenn.dev/usk2000/articles/68c4c1ec7944fe
                     
@@ -46,27 +46,27 @@ struct HomeView: View {
                             }
                             
                             NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric: "sleep")
+                                metricDatePickerView(viewModel: viewModel, metric: "Sleep")
                             } label: {
-                                metricsTileView(chosenmetric: "sleep") // lowercase for subscript.
+                                metricsTileView(chosenmetric: "Sleep") // lowercase for subscript.
                             }
                             
                             NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric: "activity")
+                                metricDatePickerView(viewModel: viewModel, metric: "Activity")
                             } label: {
-                                metricsTileView(chosenmetric: "activity")
+                                metricsTileView(chosenmetric: "Activity")
                             }
                             
                             NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric: "diet")
+                                metricDatePickerView(viewModel: viewModel, metric: "Diet")
                             } label: {
-                                metricsTileView(chosenmetric: "diet")
+                                metricsTileView(chosenmetric: "Diet")
                             }
                             
                             NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric:  "work")
+                                metricDatePickerView(viewModel: viewModel, metric:  "Work")
                             } label: {
-                                metricsTileView(chosenmetric: "work")
+                                metricsTileView(chosenmetric: "Work")
                             }
                             
                             NavigationLink {
@@ -155,7 +155,7 @@ struct HomeNavBarView: View {
             Text("Hello, \(viewModel.name)")
                 .fontWeight(.heavy)
                 .font(.system(24))
-                .foregroundStyle(Color("Prim"))
+                .foregroundStyle(Color("Sec"))
             
             Spacer()
             
@@ -176,7 +176,7 @@ struct StressTileView: View {
                     .font(.system(20))
                 
                 Divider()
-                    .overlay(Color("Sec"))
+                    .overlay(Color("Prim"))
                 
                 if todaysLogs.count > 0 { // If data available for selected day
                     
@@ -195,7 +195,7 @@ struct StressTileView: View {
         .background(Color("Tint"))
         .aspectRatio(1, contentMode:.fit)
         .clipShape(.rect(cornerRadius: 20))
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
     }
 }
 
@@ -212,7 +212,7 @@ struct metricsTileView: View {
                     .font(.system(20))
                 
                 Divider()
-                    .overlay(Color("Sec"))
+                    .overlay(Color("Prim"))
                 
                 if todaysLog.count > 0 {
                     
@@ -232,7 +232,7 @@ struct metricsTileView: View {
         .background(Color("Tint"))
         .aspectRatio(1, contentMode:.fit)
         .clipShape(.rect(cornerRadius: 20))
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
     }
 }
 
@@ -247,7 +247,7 @@ struct CorrelationTileView: View {
                     .font(.system(20))
                 
                 Divider()
-                    .overlay(Color("Sec"))
+                    .overlay(Color("Prim"))
                 
                 Text("Analysis")
                     .font(.system(27))
@@ -258,7 +258,7 @@ struct CorrelationTileView: View {
         .background(Color("Tint"))
         .aspectRatio(1, contentMode:.fit)
         .clipShape(.rect(cornerRadius: 20))
-        .foregroundStyle(Color("Prim"))
+        .foregroundStyle(Color("Sec"))
     }
 }
 

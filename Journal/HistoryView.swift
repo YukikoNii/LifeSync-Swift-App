@@ -14,7 +14,7 @@ struct HistoryView: View {
         
         ZStack {
             
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()
             
             VStack {
@@ -37,9 +37,10 @@ struct HistoryView: View {
 
 
 struct StressHistoryView: View {
+    @ObservedObject var viewModel: JournalViewModel
+
     @Environment(\.modelContext) private var context
 
-    @ObservedObject var viewModel: JournalViewModel
     @Query(sort: \stressLog.logDate) var stressLogs: [stressLog]
 
     var body: some View {
@@ -51,7 +52,7 @@ struct StressHistoryView: View {
                         NavigationLink {
                         } label: {
                             Text("\(log.logDate.formatted(date:.complete, time:.shortened))")
-                                .foregroundStyle(Color("Prim"))
+                                .foregroundStyle(Color("Sec"))
                         }
                     }
                     VStack(alignment: .leading) {
@@ -59,11 +60,14 @@ struct StressHistoryView: View {
                         Text("\(String(log.notes))")
                         
                     }
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
                 }
                 .swipeActions(edge: .trailing) {
                     Button("Delete", role: .destructive) {
                         context.delete(log)
+                        
+                        //TODO: need to find a way to delete the summaryLog.
+
                     }
                     .tint(Color("Delete"))
                 }
@@ -72,20 +76,21 @@ struct StressHistoryView: View {
             
         }
         .scrollContentBackground(.hidden)
-        .background(Color("Sec"))
+        .background(Color("Prim"))
         .foregroundStyle(.white)
-        .toolbarBackground(Color("Sec"), for: .tabBar)
+        .toolbarBackground(Color("Prim"), for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
     }
 }
 
 struct metricsHistoryView: View {
-    @Environment(\.modelContext) private var context
-
-    
     @ObservedObject var viewModel: JournalViewModel
 
+    @Environment(\.modelContext) private var context
+
     @Query(sort: \metricsLog.logDate) var metricsLogs: [metricsLog]
+    @Query var allmetricsLogs: [metricsLog]
+    @Query var allStressLogs: [stressLog]
 
     var body: some View {
         List {
@@ -96,7 +101,7 @@ struct metricsHistoryView: View {
                         NavigationLink {
                         } label: {
                             Text("\(log.logDate.formatted(date:.complete, time:.shortened))")
-                                .foregroundStyle(Color("Prim"))
+                                .foregroundStyle(Color("Sec"))
                         }
                     }
                     VStack(alignment: .leading) {
@@ -111,11 +116,14 @@ struct metricsHistoryView: View {
                         Text("\(String(log.journal))")
                         
                     }
-                    .foregroundStyle(Color("Prim"))
+                    .foregroundStyle(Color("Sec"))
                 }
                 .swipeActions(edge: .trailing) {
                     Button("Delete", role: .destructive) {
                         context.delete(log)
+                        
+                        createSummaryLog(metricsLogs: allmetricsLogs, stressLogs: allStressLogs, context: context)
+
                     }
                     .tint(Color("Delete"))
                 }
@@ -124,9 +132,9 @@ struct metricsHistoryView: View {
             
         }
         .scrollContentBackground(.hidden)
-        .background(Color("Sec"))
+        .background(Color("Prim"))
         .foregroundStyle(.white)
-        .toolbarBackground(Color("Sec"), for: .tabBar)
+        .toolbarBackground(Color("Prim"), for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
     }
 }

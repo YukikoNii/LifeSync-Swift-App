@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0102689C2C7F3228002E62DF /* Color Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0102689B2C7F3228002E62DF /* Color Extension.swift */; };
+		0102689E2C7F3247002E62DF /* Calendar Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0102689D2C7F3247002E62DF /* Calendar Extension.swift */; };
 		013A55932C5D171000D4DE9B /* StressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013A55922C5D171000D4DE9B /* StressView.swift */; };
 		013A55992C6DD02500D4DE9B /* FactorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013A55982C6DD02500D4DE9B /* FactorsView.swift */; };
 		013A559B2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */; };
@@ -28,6 +30,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0102689B2C7F3228002E62DF /* Color Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color Extension.swift"; sourceTree = "<group>"; };
+		0102689D2C7F3247002E62DF /* Calendar Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Calendar Extension.swift"; sourceTree = "<group>"; };
 		013A55922C5D171000D4DE9B /* StressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressView.swift; sourceTree = "<group>"; };
 		013A55982C6DD02500D4DE9B /* FactorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactorsView.swift; sourceTree = "<group>"; };
 		013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitilliumWeb-SemiBold.ttf"; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 				01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */,
 				01F5C03C2C4F69B20090C5F4 /* Preview Content */,
 				01F5C05B2C51ED780090C5F4 /* Font Extension.swift */,
+				0102689D2C7F3247002E62DF /* Calendar Extension.swift */,
+				0102689B2C7F3228002E62DF /* Color Extension.swift */,
 				01F5C0622C5258140090C5F4 /* File.swift */,
 			);
 			path = Journal;
@@ -199,10 +205,12 @@
 				01F5C04D2C50C2EA0090C5F4 /* SettingsView.swift in Sources */,
 				01C8B2E62C58E0BD00465831 /* HistoryView.swift in Sources */,
 				013A55932C5D171000D4DE9B /* StressView.swift in Sources */,
+				0102689E2C7F3247002E62DF /* Calendar Extension.swift in Sources */,
 				01F5C0392C4F69B00090C5F4 /* JournalView.swift in Sources */,
 				01F5C0372C4F69B00090C5F4 /* JournalApp.swift in Sources */,
 				01F5C0492C50C2120090C5F4 /* HomeView.swift in Sources */,
 				01F5C0632C5258140090C5F4 /* File.swift in Sources */,
+				0102689C2C7F3228002E62DF /* Color Extension.swift in Sources */,
 				01F5C05C2C51ED780090C5F4 /* Font Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,7 +14,7 @@ struct LogView: View {
         
         ZStack {
             
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()
             
             VStack {
@@ -55,7 +55,7 @@ struct StressTrackerView: View {
     var body: some View {
         
         ZStack {
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()
             
             ScrollView {
@@ -85,13 +85,13 @@ struct StressTrackerView: View {
                            maximumValueLabel: Text("High"),
                            label: { EmptyView() })
                     .padding(.horizontal)
-                    .tint(Color("Prim"))
+                    .tint(Color("Sec"))
                     
                     Text("Notes")
                     
                     TextField("How are you feeling now?", text: $notes)
                         .padding()
-                        .foregroundStyle(Color("Prim"))
+                        .foregroundStyle(Color("Sec"))
                         .font(.system(16))
                 
                     
@@ -113,11 +113,11 @@ struct StressTrackerView: View {
                 .background(Color("Tint"))
                 .clipShape(.rect(cornerRadius: 20))
                 .font(.system(16))
-                .foregroundStyle(Color("Prim"))
+                .foregroundStyle(Color("Sec"))
                 .padding(20)
                 
             }//ScrollView
-            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(Color("Prim"), for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
             
         }
@@ -144,7 +144,7 @@ struct DailyLogView: View {
     var body: some View {
         
         ZStack {
-            Color("Sec")
+            Color("Prim")
                 .ignoresSafeArea()
             
             ScrollView {
@@ -165,7 +165,7 @@ struct DailyLogView: View {
                            maximumValueLabel: Text("Good"),
                            label: { EmptyView() })
                     .padding(.horizontal)
-                    .tint(Color("Prim"))
+                    .tint(Color("Sec"))
                     
                     
                     Text("Activity: \(activity, specifier:"%.0f")")
@@ -174,7 +174,7 @@ struct DailyLogView: View {
                            maximumValueLabel: Text("High"),
                            label: { EmptyView() })
                     .padding(.horizontal)
-                    .tint(Color("Prim"))
+                    .tint(Color("Sec"))
                     
                     
                     Text("Diet: \(diet, specifier:"%.0f")")
@@ -183,7 +183,7 @@ struct DailyLogView: View {
                            maximumValueLabel: Text("Good"),
                            label: { EmptyView() })
                     .padding(.horizontal)
-                    .tint(Color("Prim"))
+                    .tint(Color("Sec"))
                     
                     Text("Work: \(work, specifier:"%.0f")")
                         .padding()
@@ -191,14 +191,14 @@ struct DailyLogView: View {
                            maximumValueLabel: Text("High"),
                            label: { EmptyView() })
                     .padding(.horizontal)
-                    .tint(Color("Prim"))
+                    .tint(Color("Sec"))
                     
                     
                     Text("Journal")
                     
                     TextField("How was your day?", text: $journal) // It seems that textfield only works in a larger space?? so sticking to textfield.
                         .padding()
-                        .foregroundStyle(Color("Prim"))
+                        .foregroundStyle(Color("Sec"))
                     
 
                     Button("Log") {
@@ -214,39 +214,22 @@ struct DailyLogView: View {
                     .buttonStyle(.bordered)
                     .tint(.white)
                     
-            
-                    
                 } // VStack
                 .padding()
                 .background(Color("Tint"))
                 .clipShape(.rect(cornerRadius: 20))
                 .font(.system(16))
-                .foregroundStyle(Color("Prim"))
+                .foregroundStyle(Color("Sec"))
                 .padding(20)
                 
             }//scrollview
-            .toolbarBackground(Color("Sec"), for: .tabBar)
+            .toolbarBackground(Color("Prim"), for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
         }
     }
 }
 
-/*
-func createTimer() {
-    let timer = Timer(fireAt: Date.now, interval: 86400, target: self, selector: #selector(createSummaryLog), userInfo: nil, repeats: true)
-    RunLoop.main.add(timer, forMode: .common)
-}
 
-@objc func createSummaryLog(stressLogsForToday: [stressLog], dailyMetricsLogForToday: dailyMetricsLog) {
-    
-    if !stressLog.getStressAvg(dayStressLogs: stressLogsForToday).isNaN {
-        
-        let daySummary = daySummary(logDate: Date.now, avgStress: stressLog.getStressAvg(dayStressLogs: todaysLogs), sleep: sleep, activity: activity, diet: diet, work: work)
-        context.insert(daySummary)
-        
-    }
-}
- */
 
 
 
@@ -259,8 +242,8 @@ struct LogTypePickerView: View {
         HStack { 
             Text("Stress Log")
                 .padding()
-                .background(page == 0 ? Color("Tint") : Color("Sec"))
-                .foregroundColor(page == 0 ? Color("Prim") : Color("Prim"))
+                .background(page == 0 ? Color("Tint") : Color("Prim"))
+                .foregroundColor(page == 0 ? Color("Sec") : Color("Sec"))
                 .clipShape(.rect(cornerRadius:5))
                 .onTapGesture {
                     page = 0
@@ -268,8 +251,8 @@ struct LogTypePickerView: View {
             
             Text("Metrics Log")
                 .padding()
-                .background(page == 1 ? Color("Tint") : Color("Sec"))
-                .foregroundColor(page == 1 ? Color("Prim") : Color("Prim"))
+                .background(page == 1 ? Color("Tint") : Color("Prim"))
+                .foregroundColor(page == 1 ? Color("Sec") : Color("Sec"))
                 .clipShape(.rect(cornerRadius:5))
                 .onTapGesture {
                     page = 1

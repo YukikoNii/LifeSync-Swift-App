@@ -13,7 +13,6 @@ struct JournalView: View {
     
     @State var selection = 1
     
-    
     var body: some View {
         
         TabView(selection: $selection) {
@@ -43,20 +42,26 @@ struct JournalView: View {
                 .tag(4)
             
         }
-        .tint(Color("Prim"))
-        
-        /*
+        .tint(Color("Sec"))
         .onAppear {
-            let standardAppearance = UITabBarAppearance() // create UITabBarAppearance Object
-                standardAppearance.configureWithDefaultBackground()
-                standardAppearance.backgroundColor = UIColor(.red) // customize the color
-                UITabBar.appearance().standardAppearance = standardAppearance // standard appearance applies when scrolling
+
+            let tabBarAppearance = UITabBarAppearance() // create UITabBarAppearance Object
+                tabBarAppearance.configureWithDefaultBackground() // set default color
+                tabBarAppearance.backgroundColor = UIColor(light: .lightPrim, dark: .darkPrim) // customize the color
+                UITabBar.appearance().standardAppearance = tabBarAppearance // standard appearance applies when scrolling
+            
+            // src: https://blog.personal-factory.com/2021/12/29/ios15-transparent-navigationbar-and-tabbar-by-default/
+             
+            tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor(light: .lightShade, dark: .darkTint) // src: https://qiita.com/maeken_0216/items/8e098c669ff9f84b569e
+
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithDefaultBackground()
+            navBarAppearance.backgroundColor = UIColor(light: .lightPrim, dark: .darkPrim) // customize the color
+            UINavigationBar.appearance().standardAppearance = navBarAppearance // standard appearance applies when scrolling
         }
-         */ // TODO: This works but I don't really want to use it
     }
     
 }
-
 
 #Preview {
     JournalView(viewModel: JournalViewModel())
