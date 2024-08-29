@@ -37,7 +37,7 @@
 		013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitilliumWeb-SemiBold.ttf"; sourceTree = "<group>"; };
 		01995B2A2C6F40E40034DECB /* CorrelationAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationAnalysisView.swift; sourceTree = "<group>"; };
 		01C8B2E52C58E0BD00465831 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		01F5C0332C4F69B00090C5F4 /* Journal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Journal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		01F5C0332C4F69B00090C5F4 /* LifeSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01F5C0362C4F69B00090C5F4 /* JournalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalApp.swift; sourceTree = "<group>"; };
 		01F5C0382C4F69B00090C5F4 /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
 		01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -68,7 +68,7 @@
 		01F5C02A2C4F69AF0090C5F4 = {
 			isa = PBXGroup;
 			children = (
-				01F5C0352C4F69B00090C5F4 /* Journal */,
+				01F5C0352C4F69B00090C5F4 /* LifeSync */,
 				01F5C0342C4F69B00090C5F4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -76,12 +76,12 @@
 		01F5C0342C4F69B00090C5F4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				01F5C0332C4F69B00090C5F4 /* Journal.app */,
+				01F5C0332C4F69B00090C5F4 /* LifeSync.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		01F5C0352C4F69B00090C5F4 /* Journal */ = {
+		01F5C0352C4F69B00090C5F4 /* LifeSync */ = {
 			isa = PBXGroup;
 			children = (
 				013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */,
@@ -105,7 +105,7 @@
 				0102689B2C7F3228002E62DF /* Color Extension.swift */,
 				01F5C0622C5258140090C5F4 /* File.swift */,
 			);
-			path = Journal;
+			path = LifeSync;
 			sourceTree = "<group>";
 		};
 		01F5C03C2C4F69B20090C5F4 /* Preview Content */ = {
@@ -119,9 +119,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		01F5C0322C4F69AF0090C5F4 /* Journal */ = {
+		01F5C0322C4F69AF0090C5F4 /* LifeSync */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 01F5C0412C4F69B20090C5F4 /* Build configuration list for PBXNativeTarget "Journal" */;
+			buildConfigurationList = 01F5C0412C4F69B20090C5F4 /* Build configuration list for PBXNativeTarget "LifeSync" */;
 			buildPhases = (
 				01F5C02F2C4F69AF0090C5F4 /* Sources */,
 				01F5C0302C4F69AF0090C5F4 /* Frameworks */,
@@ -131,12 +131,12 @@
 			);
 			dependencies = (
 			);
-			name = Journal;
+			name = LifeSync;
 			packageProductDependencies = (
 				01F5C0602C5257810090C5F4 /* SQLite */,
 			);
 			productName = Journal;
-			productReference = 01F5C0332C4F69B00090C5F4 /* Journal.app */;
+			productReference = 01F5C0332C4F69B00090C5F4 /* LifeSync.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -157,7 +157,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 01F5C02E2C4F69AF0090C5F4 /* Build configuration list for PBXProject "Journal" */;
+			buildConfigurationList = 01F5C02E2C4F69AF0090C5F4 /* Build configuration list for PBXProject "LifeSync" */;
 			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -173,7 +173,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				01F5C0322C4F69AF0090C5F4 /* Journal */,
+				01F5C0322C4F69AF0090C5F4 /* LifeSync */,
 			);
 		};
 /* End PBXProject section */
@@ -275,6 +275,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = LifeSync;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -331,6 +332,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = LifeSync;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
@@ -344,11 +346,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = Journal;
+				DEVELOPMENT_ASSET_PATHS = LifeSync;
 				DEVELOPMENT_TEAM = AM2M44BBVB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Journal/Info.plist;
+				INFOPLIST_FILE = LifeSync/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -360,7 +362,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = yn.Journal;
+				PRODUCT_BUNDLE_IDENTIFIER = yn.LifeSync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -375,11 +377,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = Journal;
+				DEVELOPMENT_ASSET_PATHS = LifeSync;
 				DEVELOPMENT_TEAM = AM2M44BBVB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Journal/Info.plist;
+				INFOPLIST_FILE = LifeSync/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -391,7 +393,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = yn.Journal;
+				PRODUCT_BUNDLE_IDENTIFIER = yn.LifeSync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -402,7 +404,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		01F5C02E2C4F69AF0090C5F4 /* Build configuration list for PBXProject "Journal" */ = {
+		01F5C02E2C4F69AF0090C5F4 /* Build configuration list for PBXProject "LifeSync" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01F5C03F2C4F69B20090C5F4 /* Debug */,
@@ -411,7 +413,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01F5C0412C4F69B20090C5F4 /* Build configuration list for PBXNativeTarget "Journal" */ = {
+		01F5C0412C4F69B20090C5F4 /* Build configuration list for PBXNativeTarget "LifeSync" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01F5C0422C4F69B20090C5F4 /* Debug */,

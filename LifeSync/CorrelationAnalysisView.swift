@@ -28,7 +28,7 @@ struct CorrelationAnalysisView: View {
             } //scrollview
             
         } // ZStack
-        .font(.system(18))
+        .font(.systemSemiBold(18))
         .foregroundStyle(Color("Sec"))
     }
 }
@@ -39,7 +39,7 @@ struct ChartView: View {
     let summaryLogs: [summaryLog]
     let metric: String
     
-    var bestFitLineCoordinates: [String: [Double]]  {
+    var bestFitLineCoordinates: [String:Double]  {
         calculateBestFitLine(logs: summaryLogs, metric: metric)
     }
     
@@ -55,22 +55,21 @@ struct ChartView: View {
             } // ForEach
             
             LineMark(
-                x: .value("Stress", bestFitLineCoordinates["Min"]![0] ), //unwrap Double?
-                y: .value("Metric", bestFitLineCoordinates["Min"]![1] )
+                x: .value("Stress", bestFitLineCoordinates["MinX"]! ), //unwrap Double?
+                y: .value("Metric", bestFitLineCoordinates["MinY"]! )
             )
             .lineStyle(.init(lineWidth: 1))
-            .annotation(position: .overlay) {
-                   Text("r^2 = \(bestFitLineCoordinates["R-Squared"]![0])") // TODO: bring to the foremost layer
+            .annotation(position: .top) {
+                   Text("R² = \(bestFitLineCoordinates["R-Squared"]!)")
             }
 
             
             LineMark(
-                x: .value("Stress", bestFitLineCoordinates["Max"]![0] ),
-                y: .value("Metric", bestFitLineCoordinates["Max"]![1] )
+                x: .value("Stress", bestFitLineCoordinates["MaxX"]!),
+                y: .value("Metric", bestFitLineCoordinates["MaxY"]!)
             )
             .lineStyle(.init(lineWidth: 1))
   
-
 
         } // Chart
         .chartXAxisLabel("Average Stress")
@@ -139,45 +138,7 @@ struct ChartView: View {
 }
 
 
-func calculateBestFitLine(logs: [summaryLog], metric: String) -> [String: [Double]] {
-    let n = Double(logs.count)
-    
-    let xValues = logs.map { $0.avgStress }
-    let yValues = logs.map { $0[metric] }
 
-    let sumX = logs.reduce(0.0) { $0 + $1.avgStress }
-    let sumY = logs.reduce(0.0) { $0 + $1[metric] }
-    
-    let sumXY = logs.reduce(0.0) { $0 + $1.avgStress * $1[metric] }
-    let sumX2 = logs.reduce(0.0) { $0 + pow($1.avgStress, 2) }
-     
-    let slope = ( (sumXY * n - (sumX * sumY))  / ( sumX2 * n - (sumX * sumX)) )
-    
-    let intercept = ( sumY - slope * sumX ) / n
-    
-    let minStress = logs.map { $0.avgStress }.min() ?? 0
-    let maxStress = logs.map { $0.avgStress }.max() ?? 1
-        
-    let yMean = sumY / n
-    
-    let predictedYValues = xValues.map { slope * $0 + intercept }
-    
-    // sst = Total sum of squares
-    let sst = yValues.reduce(0) { $0 + pow($1 - yMean, 2) }
-    
-    // ssr = residual sum of squares
-    let ssr = zip(predictedYValues, yValues).reduce(0.0) { $0 + pow($1.0 - $1.1, 2) }
-
-    let rSquared = 1 - (ssr / sst)
-    
-    let bestFitLineCoordinates: [String: [Double]] = [
-        "Min": [minStress, slope*minStress + intercept],
-        "Max": [maxStress, slope*maxStress + intercept],
-        "R-Squared": [rSquared],
-    ]
-    
-    return bestFitLineCoordinates
-}
 
 
 

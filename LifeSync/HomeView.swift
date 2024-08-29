@@ -15,7 +15,6 @@ struct HomeView: View {
     
     @State var isInserted = false
     
-    
     var body: some View {
         
         //https://www.youtube.com/watch?app=desktop&v=dRdguneAh8M
@@ -45,28 +44,16 @@ struct HomeView: View {
                                 StressTileView()
                             }
                             
-                            NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric: "Sleep")
-                            } label: {
-                                metricsTileView(chosenmetric: "Sleep") // lowercase for subscript.
-                            }
                             
-                            NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric: "Activity")
-                            } label: {
-                                metricsTileView(chosenmetric: "Activity")
-                            }
-                            
-                            NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric: "Diet")
-                            } label: {
-                                metricsTileView(chosenmetric: "Diet")
-                            }
-                            
-                            NavigationLink {
-                                metricDatePickerView(viewModel: viewModel, metric:  "Work")
-                            } label: {
-                                metricsTileView(chosenmetric: "Work")
+                            // Navigationlinks for metrics
+                            ForEach(viewModel.metrics, id:\.self) { metric in
+                                
+                                NavigationLink {
+                                    metricDatePickerView(viewModel: viewModel, metric: metric)
+                                } label: {
+                                    metricsTileView(chosenmetric: metric) // lowercase for subscript.
+                                }
+                                
                             }
                             
                             NavigationLink {
@@ -87,9 +74,6 @@ struct HomeView: View {
             
         } //NavigationStack
         .onAppear() {
-            UITabBar.appearance().unselectedItemTintColor = .white
-            //https://llcc.hatenablog.com/entry/2017/08/31/230000
-            
             // TODO: delete later
             
             if isInserted == false {
@@ -153,8 +137,7 @@ struct HomeNavBarView: View {
             Spacer()
             
             Text("Hello, \(viewModel.name)")
-                .fontWeight(.heavy)
-                .font(.system(24))
+                .font(.systemSemiBold(24))
                 .foregroundStyle(Color("Sec"))
             
             Spacer()
@@ -173,7 +156,7 @@ struct StressTileView: View {
             // make local variable to avoid repetition
             VStack {
                 Text("Stress")
-                    .font(.system(20))
+                    .font(.systemSemiBold(20))
                 
                 Divider()
                     .overlay(Color("Prim"))
@@ -209,8 +192,8 @@ struct metricsTileView: View {
         ZStack {
             VStack {
                 Text("\(chosenmetric)")
-                    .font(.system(20))
-                
+                    .font(.systemSemiBold(20))
+
                 Divider()
                     .overlay(Color("Prim"))
                 
@@ -244,8 +227,8 @@ struct CorrelationTileView: View {
             // make local variable to avoid repetition
             VStack {
                 Text("Correlation")
-                    .font(.system(20))
-                
+                    .font(.systemSemiBold(20))
+
                 Divider()
                     .overlay(Color("Prim"))
                 

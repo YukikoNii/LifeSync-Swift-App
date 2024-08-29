@@ -26,7 +26,7 @@ struct metricDatePickerView: View {
                 
                 TimeSpanPicker(page: $page)
                 
-                
+
                 HStack {
                     
                     if page == "week" {

@@ -34,6 +34,10 @@ class JournalViewModel: ObservableObject {
     
     @Published var metrics = ["Sleep", "Activity", "Diet", "Work"]
     
+    let screenWidth  = UIScreen.main.bounds.width
+    
+    let screenHeight = UIScreen.main.bounds.height
+    
     
 }
 

@@ -58,6 +58,7 @@ struct JournalView: View {
             navBarAppearance.configureWithDefaultBackground()
             navBarAppearance.backgroundColor = UIColor(light: .lightPrim, dark: .darkPrim) // customize the color
             UINavigationBar.appearance().standardAppearance = navBarAppearance // standard appearance applies when scrolling
+            
         }
     }
     

@@ -5,16 +5,10 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var viewModel: JournalViewModel
     
-    struct settingRow: Identifiable {
-        
-        var name:String
-        var id = UUID() // you need to have id
-        
-    }
     
     var settingRows = [
-        settingRow(name: "Profile"),
-        settingRow(name: "Notification"),
+       "Profile",
+       "Notification"
     ]
     
     //https://stackoverflow.com/questions/77664511/how-to-change-navigation-title-color-in-swiftui
@@ -26,10 +20,10 @@ struct SettingsView: View {
                 Color("Prim")
                     .ignoresSafeArea()
                 
-                List(settingRows, id:\.id) { settingRow in
+                List(settingRows, id:\.self) { settingRow in
                     
-                    NavigationLink(settingRow.name) {
-                        SettingsDetailsView(viewModel: viewModel, category: settingRow.name)
+                    NavigationLink(settingRow) {
+                        SettingsDetailsView(viewModel: viewModel, category: settingRow)
                     }
                     .listRowBackground(Color("Tint"))
                     .foregroundColor(Color("Sec"))
@@ -54,13 +48,10 @@ struct SettingsView: View {
 }
 
 
-
 struct SettingsDetailsView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     let category: String
-    
-    
     
     var body: some View {
         
@@ -69,32 +60,30 @@ struct SettingsDetailsView: View {
                 .ignoresSafeArea()
             
             List {
-                if category == "Profile" {
+                switch category {
+                case "Profile":
                     
                     TextField("Name", text: $viewModel.name)
-                        .disableAutocorrection(true)
                         .listRowBackground(Color("Tint"))
+                        .keyboardType(.default) 
                     
                     
                     TextField("Username", text: $viewModel.username)
-                        .disableAutocorrection(true)
                         .listRowBackground(Color("Tint"))
                     
                     
                     TextField("Email", text: $viewModel.email)
-                        .disableAutocorrection(true)
                         .listRowBackground(Color("Tint"))
                     
                     
                     SecureField("Password", text: $viewModel.password)
                         .listRowBackground(Color("Tint"))
                     
-                } // if profile
-                
-                if category == "Notification" {
                     
+                case "Notification":
+                    
+                    // stress log notifications
                     Section {
-                        
                         
                         ForEach(0..<viewModel.numOfStressNotifications, id: \.self) { index in
                             VStack {
@@ -119,11 +108,8 @@ struct SettingsDetailsView: View {
                                         
                                         setNotification(hour: components.hour!, minute: components.minute!, identifier: String(index)) // trigger notification
                                     }
-
-                                
                             }
-                         
-                        
+                            
                         }
                         
                         
@@ -133,6 +119,7 @@ struct SettingsDetailsView: View {
                     }
                     .listRowBackground(Color("Tint"))
                     
+                    // metrics log notifications
                     Section {
                         
                         VStack {
@@ -158,14 +145,16 @@ struct SettingsDetailsView: View {
                                 }
                             
                         }
-                        
-                        
                     } header: {
                         Text("Daily Log Notification")
                     }
                     .listRowBackground(Color("Tint"))
                     
-                } // if category
+                default:
+                    Text("Something went wrong.")
+                    
+                }
+                    
                 
             } // List
             .scrollContentBackground(.hidden)

@@ -8,8 +8,6 @@ struct LogView: View {
     @ObservedObject var viewModel: JournalViewModel
     @State var page = 0
 
-    
-
     var body: some View {
         
         ZStack {
@@ -20,7 +18,6 @@ struct LogView: View {
             VStack {
                 
                 LogTypePickerView(page: $page)
-                
                 
                 TabView(selection:$page) {
                     
@@ -48,7 +45,7 @@ struct StressTrackerView: View {
     @State private var notes = ""
     @Environment(\.modelContext) var context
     
-    @Query var allmetricsLogs: [metricsLog]
+    @Query var allMetricsLogs: [metricsLog]
     @Query var allStressLogs: [stressLog]
 
     
@@ -66,7 +63,7 @@ struct StressTrackerView: View {
                         Button {
                             stressDate = Date()
                         } label: {
-                            Text("Reset")
+                            Image(systemName: "arrow.circlepath")
                         }
                         .padding()
                         
@@ -93,15 +90,17 @@ struct StressTrackerView: View {
                         .padding()
                         .foregroundStyle(Color("Sec"))
                         .font(.system(16))
+                        .keyboardType(.default) 
                 
                     
                     Button("Log") {
                         let newLog = stressLog(logDate: stressDate, stressLevel: stressLevel, notes: notes, id: UUID().uuidString)
+                        
                         context.insert(newLog)
                         stressLevel = 5
                         
-                        createSummaryLog(metricsLogs: allmetricsLogs, stressLogs: allStressLogs, context: context)
-
+                        createSummaryLog(metricsLogs: allMetricsLogs, stressLogs: allStressLogs, context: context)
+                        
                         
                     } // Button
                     .padding()
@@ -136,7 +135,7 @@ struct DailyLogView: View {
     @State private var journal = ""
     
     
-    @Query var allmetricsLogs: [metricsLog]
+    @Query var allMetricsLogs: [metricsLog]
     @Query var allStressLogs: [stressLog]
     
     @Query(filter: stressLog.dayLog(date:Date.now)) var todaysLogs: [stressLog]
@@ -196,18 +195,17 @@ struct DailyLogView: View {
                     
                     Text("Journal")
                     
-                    TextField("How was your day?", text: $journal) // It seems that textfield only works in a larger space?? so sticking to textfield.
+                    TextField("How was your day?", text: $journal) // It seems that textfield only works in a larger space.
                         .padding()
                         .foregroundStyle(Color("Sec"))
                     
 
                     Button("Log") {
-                        let log = metricsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: Calendar.current.startOfDay(for: metricsLogDate))
+                        let log = metricsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: metricsLogDate)
                         
                         context.insert(log)
                         
-                        createSummaryLog(metricsLogs: allmetricsLogs, stressLogs: allStressLogs, context: context)
-
+                        createSummaryLog(metricsLogs: allMetricsLogs, stressLogs: allStressLogs, context: context)
                         
                     } // Button
                     .padding()
@@ -228,9 +226,6 @@ struct DailyLogView: View {
         }
     }
 }
-
-
-
 
 
 

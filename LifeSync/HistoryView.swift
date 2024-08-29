@@ -42,6 +42,11 @@ struct StressHistoryView: View {
     @Environment(\.modelContext) private var context
 
     @Query(sort: \stressLog.logDate) var stressLogs: [stressLog]
+    
+    @Query var allMetricsLogs: [metricsLog]
+    @Query var allStressLogs: [stressLog]
+    @Query var allSummaryLogs: [summaryLog]
+
 
     var body: some View {
         List {
@@ -66,8 +71,27 @@ struct StressHistoryView: View {
                     Button("Delete", role: .destructive) {
                         context.delete(log)
                         
-                        //TODO: need to find a way to delete the summaryLog.
-
+                        let remainingLogsForDay = stressLogs.filter {
+                            Calendar.current.startOfDay(for: log.logDate) <= $0.logDate && $0.logDate <  Calendar.current.startOfDay(for: log.logDate.addingTimeInterval(86400))
+                        } //  stressLogs includes the deleted log, so should check count > 1, not count > 0
+                        
+                        if remainingLogsForDay.count > 0 {
+                            
+                            createSummaryLog(metricsLogs: allMetricsLogs, stressLogs: allStressLogs, context: context)
+                            
+                        } else {
+                            
+                            let summaryLogToBeDeleted: [summaryLog] = allSummaryLogs.filter { Calendar.current.startOfDay(for: log.logDate) <= $0.logDate && $0.logDate <  Calendar.current.startOfDay(for: log.logDate.addingTimeInterval(86400))
+                            }
+                            
+                            if summaryLogToBeDeleted.count > 0 { // if log exists
+                                
+                                context.delete(summaryLogToBeDeleted[0])
+                                
+                            }
+                            
+                        }
+                                                
                     }
                     .tint(Color("Delete"))
                 }
@@ -89,8 +113,8 @@ struct metricsHistoryView: View {
     @Environment(\.modelContext) private var context
 
     @Query(sort: \metricsLog.logDate) var metricsLogs: [metricsLog]
-    @Query var allmetricsLogs: [metricsLog]
-    @Query var allStressLogs: [stressLog]
+    
+    @Query var allSummaryLogs: [summaryLog]
 
     var body: some View {
         List {
@@ -122,7 +146,13 @@ struct metricsHistoryView: View {
                     Button("Delete", role: .destructive) {
                         context.delete(log)
                         
-                        createSummaryLog(metricsLogs: allmetricsLogs, stressLogs: allStressLogs, context: context)
+                        let summaryLogToBeDeleted: [summaryLog] = allSummaryLogs.filter { Calendar.current.startOfDay(for: log.logDate) <= $0.logDate && $0.logDate <  Calendar.current.startOfDay(for: log.logDate.addingTimeInterval(86400))
+                        }
+                        if summaryLogToBeDeleted.count > 0 { // if log exists
+                            
+                            context.delete(summaryLogToBeDeleted[0])
+                            
+                        }
 
                     }
                     .tint(Color("Delete"))

@@ -78,10 +78,10 @@ struct StressDatePickerView: View {
                 
                 
                 TabView(selection: $page) { // Using TabView as a work around for Dynamic Query
-                    DayStressView(startsOn: dayStartDate, endsOn: endDate)
+                    DayStressView(startsOn: dayStartDate, endsOn: endDate, viewModel: viewModel)
                         .tag("day")
                     
-                    WeekStressView(startsOn: weekStartDate, endsOn: endDate)
+                    WeekStressView(startsOn: weekStartDate, endsOn: endDate, viewModel: viewModel)
                         .tag("week")
                     
                     MonthStressView(startsOn: monthStartDate, endsOn: endDate)
@@ -98,8 +98,7 @@ struct StressDatePickerView: View {
 
 struct DayStressView: View {
     
-    //@ObservedObject var viewModel: JournalViewModel
-    // TODO: didn't know how to initalize this, so commented out for now.
+    @ObservedObject var viewModel: JournalViewModel
     
     @Query var allLogs: [stressLog]
     
@@ -107,7 +106,7 @@ struct DayStressView: View {
     @Query var dayBeforeStressLog: [stressLog]
     
     
-    init(startsOn startDate: Date, endsOn endDate: Date) {
+    init(startsOn startDate: Date, endsOn endDate: Date, viewModel: JournalViewModel) {
         
         let dayBefore = startDate.addingTimeInterval(-86400)
         
@@ -122,22 +121,22 @@ struct DayStressView: View {
             
         }
         
-        
+        self.viewModel = viewModel
         _dailyStressLog = Query(filter: todayPredicate, sort: \.logDate)
         _dayBeforeStressLog = Query(filter: dayBeforePredicate, sort: \.logDate)
     }
     
     
     var body: some View {
-        
+                
         ZStack {
             
             Color("Prim")
                 .ignoresSafeArea()// Background
             
             ScrollView {
-                
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
+                                
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: (viewModel.screenWidth/2) - 20))]) {
                     if dailyStressLog.count > 0 {
                         
                         Chart {
@@ -195,8 +194,7 @@ struct DayStressView: View {
                         .padding(30)
                         .background(Color("Tint"))
                         .clipShape(.rect(cornerRadius: 20))
-                        .frame(width: 350, height:350)
-                        .chartXScale(range: .plotDimension(padding: 10))
+                        .frame(width:(viewModel.screenWidth/2) - 20, height: 350)   .chartXScale(range: .plotDimension(padding: 10))
                         .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
                     } else {
@@ -215,7 +213,7 @@ struct DayStressView: View {
                     .padding(10)
                     .background(Color("Tint"))
                     .clipShape(.rect(cornerRadius: 15))
-                    .frame(width:350)
+                    .frame(width:(viewModel.screenWidth/2) - 20)
                     
                     // Average stress level by time of day
                     TimeOfDayBarChartView(data: allLogs)
@@ -236,6 +234,8 @@ struct DayStressView: View {
 } // StressView
 
 struct WeekStressView: View {
+    @ObservedObject var viewModel: JournalViewModel
+
     
     @Query var allLogs: [stressLog]
     
@@ -243,7 +243,7 @@ struct WeekStressView: View {
     @Query var weeklyStressLog: [stressLog]
     @Query var weekBeforeStressLog: [stressLog]
     
-    init(startsOn startDate: Date, endsOn endDate: Date) {
+    init(startsOn startDate: Date, endsOn endDate: Date, viewModel: JournalViewModel) {
         
         let dayBefore = startDate.addingTimeInterval(-86400*7)
         let predicateDailyLog = #Predicate<stressLog> {
@@ -257,7 +257,7 @@ struct WeekStressView: View {
             
         }
         
-        
+        self.viewModel = viewModel
         _weeklyStressLog = Query(filter: predicateDailyLog, sort: \.logDate)
         _weekBeforeStressLog = Query(filter: predicateDayBefore, sort: \.logDate)
     }
@@ -271,7 +271,7 @@ struct WeekStressView: View {
             
             ScrollView {
                 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: (viewModel.screenWidth/2) - 20))]) {
                     
                     if weeklyStressLog.count > 0 {
                         
@@ -321,7 +321,7 @@ struct WeekStressView: View {
                         .padding(30)
                         .background(Color("Tint"))
                         .clipShape(.rect(cornerRadius: 20))
-                        .frame(width:350, height:350)
+                        .frame(width:(viewModel.screenWidth/2) - 20, height:350)
                         .chartXScale(range: .plotDimension(padding: 10))
                         .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
@@ -339,7 +339,7 @@ struct WeekStressView: View {
                     .padding(10)
                     .background(Color("Tint"))
                     .clipShape(.rect(cornerRadius: 15))
-                    .frame(width:350)
+                    .frame(width:(viewModel.screenWidth/2) - 20)
                     
                     
                     
@@ -506,8 +506,6 @@ struct AnalysisView : View {
                 Text("No Data")
                 
             }
-            
-            
         }
         .padding(10)
         .foregroundStyle(Color("Sec"))
@@ -519,8 +517,8 @@ struct AnalysisView : View {
             Text("Trend:")
                 .font(.system(18))
             
-            if !stressLog.getStressAvg(dayStressLogs: data).isNaN
-                && !stressLog.getStressAvg(dayStressLogs: beforeData).isNaN {  // If data available for both selected day and day before.
+            if stressLog.getStressAvg(dayStressLogs: data) >= 0
+                && stressLog.getStressAvg(dayStressLogs: beforeData) >= 0 {  // If data available for both selected day and day before.
                 
                 Text("\(stressLog.calculatePercentage(previous: stressLog.getStressAvg(dayStressLogs: data), current: stressLog.getStressAvg(dayStressLogs: beforeData))) from \(periodInPast[duration] ?? "yesterday")")
                 
@@ -542,13 +540,17 @@ struct AnalysisView : View {
             
             if dataSortedFromLargest.count > 0 {
                 
-                Text("\(String(format: "%.2f", dataSortedFromLargest[0].stressLevel)) on")
+                Text("\(String(format: "%.2f", dataSortedFromLargest[0].stressLevel))")
                 
                 if duration == "day" {
                     
+                    Text(" at ")
                     Text(dataSortedFromLargest[0].logDate, format: .dateTime.hour().minute()) // show date and weekday
                     
                 } else {
+                    
+                    Text(" on ")
+
                     Text(dataSortedFromLargest[0].logDate, format: .dateTime.day().month().weekday()) // show date and weekday
                 }
                 

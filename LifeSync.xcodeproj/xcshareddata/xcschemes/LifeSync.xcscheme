@@ -25,9 +25,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "01F5C0322C4F69AF0090C5F4"
-               BuildableName = "Journal.app"
-               BlueprintName = "Journal"
-               ReferencedContainer = "container:Journal.xcodeproj">
+               BuildableName = "LifeSync.app"
+               BlueprintName = "LifeSync"
+               ReferencedContainer = "container:LifeSync.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -54,9 +54,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "01F5C0322C4F69AF0090C5F4"
-            BuildableName = "Journal.app"
-            BlueprintName = "Journal"
-            ReferencedContainer = "container:Journal.xcodeproj">
+            BuildableName = "LifeSync.app"
+            BlueprintName = "LifeSync"
+            ReferencedContainer = "container:LifeSync.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "01F5C0322C4F69AF0090C5F4"
-            BuildableName = "Journal.app"
-            BlueprintName = "Journal"
-            ReferencedContainer = "container:Journal.xcodeproj">
+            BuildableName = "LifeSync.app"
+            BlueprintName = "LifeSync"
+            ReferencedContainer = "container:LifeSync.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

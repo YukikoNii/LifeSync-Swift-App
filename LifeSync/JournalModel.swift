@@ -27,7 +27,7 @@ class stressLog: Identifiable {
 
 extension stressLog {
     static func getStressAvg (dayStressLogs: [stressLog]) -> Double {
-        let dayStressAvg = dayStressLogs.count > 0 ? dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count) : 0.0
+        let dayStressAvg = dayStressLogs.count > 0 ? dayStressLogs.reduce(0.00) {$0 + $1.stressLevel} / Double(dayStressLogs.count) : -1.0
         return dayStressAvg
     }
     
@@ -66,7 +66,7 @@ extension stressLog {
     }
     
     static func calcTimeOfDayAvgs (dayStressLogs: [stressLog]) -> [Double] {
-        var timeOfDayAvgs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        var timeOfDayAvgs = [Double] (repeating: 0.0, count: 8)
         
         for index in 0...7 {
             let timeSpan = dayStressLogs.filter({ 3*index <= Calendar.current.component(.hour, from: $0.logDate) && Calendar.current.component(.hour, from: $0.logDate) <= 3*(index+1)})
@@ -165,7 +165,7 @@ class metricsLog {
         }
         
     }
-    // syntax: dailyMetricsLog[key] (no need to call a function called subscript
+    // syntax: dailyMetricsLog[key] (no need to call a function called subscript)
     // src: ChatGPT
 }
 
@@ -178,7 +178,7 @@ extension metricsLog {
         
         return #Predicate<metricsLog> { log in
             startDate < log.logDate &&
-            log.logDate <= endDate 
+            log.logDate <= endDate
         }
     }
     
@@ -213,10 +213,10 @@ extension metricsLog {
 }
 
 
-
 func createSummaryLog(metricsLogs: [metricsLog], stressLogs: [stressLog], context: ModelContext)  { // you can't use @Environment outside of view, have to inject.
     
-    for log in metricsLogs {
+    for log in metricsLogs  {
+        
         let endDate = Calendar.current.startOfDay(for: log.logDate.addingTimeInterval(86400))
         let startDate = Calendar.current.startOfDay(for: log.logDate)
         
@@ -231,8 +231,55 @@ func createSummaryLog(metricsLogs: [metricsLog], stressLogs: [stressLog], contex
             
             context.insert(testLog)
         }
+        
     }
 }
+
+func calculateBestFitLine(logs: [summaryLog], metric: String) -> [String: Double] {
+    let n = Double(logs.count)
+    
+    let xValues = logs.map { $0.avgStress }
+    let yValues = logs.map { $0[metric] }
+
+    let sumX = xValues.reduce(0.0, +)
+    let sumY = yValues.reduce(0.0, +)
+    
+    let sumXY = logs.reduce(0.0) { $0 + $1.avgStress * $1[metric] }
+    let sumX2 = logs.reduce(0.0) { $0 + pow($1.avgStress, 2) }
+     
+    let slope = ( (sumXY * n - (sumX * sumY))  / ( sumX2 * n - (sumX * sumX)) )
+    
+    let intercept = ( sumY - slope * sumX ) / n
+    
+    let minX = xValues.min() ?? 0
+    let maxX = xValues.max() ?? 1
+        
+    let yMean = sumY / n
+    
+    let predictedYValues = xValues.map { slope * $0 + intercept }
+    
+    // sst = Total sum of squares
+    let sst = yValues.reduce(0) { $0 + pow($1 - yMean, 2) }
+    
+    // ssr = residual sum of squares
+    let ssr = zip(predictedYValues, yValues).reduce(0.0) { $0 + pow($1.0 - $1.1, 2) }
+
+    let rSquared = 1 - (ssr / sst)
+    
+    let bestFitLineCoordinates: [String: Double] = [
+        "MinX": minX,
+        "MinY": slope*minX + intercept,
+        "MaxX": maxX,
+        "MaxY": slope*maxX + intercept,
+        "R-Squared": rSquared,
+    ]
+    
+    // src: chatGPT
+    
+    return bestFitLineCoordinates
+}
+
+
 
 
 
