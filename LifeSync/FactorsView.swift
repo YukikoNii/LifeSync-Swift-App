@@ -26,7 +26,6 @@ struct metricDatePickerView: View {
                 
                 TimeSpanPicker(page: $page)
                 
-
                 HStack {
                     
                     if page == "week" {
@@ -43,11 +42,10 @@ struct metricDatePickerView: View {
                     
                     DatePicker("", selection: $selectedDay, displayedComponents: [.date])
                         .labelsHidden()
-                        .padding()
-                        .tint(Color("Prim"))
+
                 }
                 .foregroundStyle(Color("Sec"))
-                .font(.system(18))
+                .font(.system(17))
                 
                 TabView(selection: $page) { // Using TabView as a work around for Dynamic Query
                     WeekView(startsOn: weekStartDate, endsOn: endDate, metric: metric)
@@ -56,6 +54,9 @@ struct metricDatePickerView: View {
                         .tag("month")
                     
                 }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+
+                              
             } // VStack
         } //ZStack
     }
@@ -101,7 +102,7 @@ struct WeekView: View {
             
             ScrollView {
                 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 350))]) {
                     
                     if thisWeekLogs.count > 0 { // if data exists for this week
                         
@@ -147,6 +148,8 @@ struct WeekView: View {
                             {
                                 AxisValueLabel(format: .dateTime.weekday().day()) // TODO: it somehow doesn't show the last date, looks like I need to crate chartXAxis values manually
                                     .foregroundStyle(Color("Sec"))
+                                    .font(.system(10))
+
                                 
                                 AxisGridLine()
                                     .foregroundStyle(Color("Sec"))
@@ -185,8 +188,6 @@ struct WeekView: View {
             }// ScrollView
             .foregroundStyle(Color("Sec"))
             .font(.system(18))
-            .toolbarBackground(Color("Prim"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
             
         }//ZStack
         
@@ -238,7 +239,7 @@ struct MonthView: View {
             
             ScrollView {
                 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 350))]) {
                     
                     if thisMonthLogs.count > 0 { // if data exists for this week
                         
@@ -283,6 +284,8 @@ struct MonthView: View {
                                 {
                                     AxisValueLabel(format: .dateTime.day().month())
                                         .foregroundStyle(Color("Sec"))
+                                        .font(.system(10))
+
                                     
                                     AxisGridLine()
                                         .foregroundStyle(Color("Sec"))
@@ -318,8 +321,6 @@ struct MonthView: View {
             }// ScrollView
             .foregroundStyle(Color("Sec"))
             .font(.system(18))
-            .toolbarBackground(Color("Prim"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
             
         }//ZStack
         
@@ -509,23 +510,25 @@ struct TimeSpanPicker: View {
         HStack {
             
             Text("Week")
-                .padding()
+                .padding(7)
+                .frame(maxWidth: .infinity)
                 .background(page == "week" ? Color("Tint") : Color("Prim"))
-                .foregroundColor(page == "week" ? Color("Sec") : Color("Sec"))
+                .foregroundColor(Color("Sec"))
                 .clipShape(.rect(cornerRadius:5)) // ios 13.0+
                 .onTapGesture {
                     page = "week"
                 }
             
             Text("Month")
-                .padding()
+                .padding(7)
+                .frame(maxWidth: .infinity)
                 .background(page == "month" ? Color("Tint") : Color("Prim"))
-                .foregroundColor(page == "month" ? Color("Sec") : Color("Sec"))
+                .foregroundColor(Color("Sec"))
                 .clipShape(.rect(cornerRadius:5))
                 .onTapGesture {
                     page = "month"
                 }
         }
-        .font(.system(17))
+        .font(.system(15))
     }
 }

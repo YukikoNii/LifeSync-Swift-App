@@ -44,92 +44,105 @@ struct ChartView: View {
     }
     
     var body: some View {
-        Chart {
-            ForEach(summaryLogs, id: \.self) { data in
-                PointMark(
-                    x: .value("Date", data.avgStress),
-                    y: .value("Stress", data[metric])
-                )
-                .symbol(.square)
+        HStack(alignment: .center) {
+            
+            Text("\(metric)")
+                .font(.system(11))
                 .foregroundStyle(Color("Sec"))
-            } // ForEach
+                .rotationEffect(.degrees(-90))
             
-            LineMark(
-                x: .value("Stress", bestFitLineCoordinates["MinX"]! ), //unwrap Double?
-                y: .value("Metric", bestFitLineCoordinates["MinY"]! )
-            )
-            .lineStyle(.init(lineWidth: 1))
-            .annotation(position: .top) {
-                   Text("R² = \(bestFitLineCoordinates["R-Squared"]!)")
-            }
-
-            
-            LineMark(
-                x: .value("Stress", bestFitLineCoordinates["MaxX"]!),
-                y: .value("Metric", bestFitLineCoordinates["MaxY"]!)
-            )
-            .lineStyle(.init(lineWidth: 1))
-  
-
-        } // Chart
-        .chartXAxisLabel("Average Stress")
-        .chartYAxisLabel("\(metric)")
-        .chartXAxis {
-            
-            AxisMarks(
-                values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            )
-            {
-                
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Sec")) // change the color for  readability
-            }
-            
-            AxisMarks(
-                values: [0, 10]
-            )
-            {
-                
-                AxisGridLine()
+            Chart {
+                ForEach(summaryLogs, id: \.self) { data in
+                    PointMark(
+                        x: .value("Date", data.avgStress),
+                        y: .value("Stress", data[metric])
+                    )
+                    .symbol(.square)
                     .foregroundStyle(Color("Sec"))
+                } // ForEach
                 
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Sec")) // change the color for  readability
+                LineMark(
+                    x: .value("Stress", bestFitLineCoordinates["MinX"]! ), //unwrap Double?
+                    y: .value("Metric", bestFitLineCoordinates["MinY"]! )
+                )
+                .lineStyle(.init(lineWidth: 1))
+                .annotation(position: .top) {
+                    Text("R² = \(bestFitLineCoordinates["R-Squared"]!)")
+                }
+                
+                
+                LineMark(
+                    x: .value("Stress", bestFitLineCoordinates["MaxX"]!),
+                    y: .value("Metric", bestFitLineCoordinates["MaxY"]!)
+                )
+                .lineStyle(.init(lineWidth: 1))
+                
+                
+            } // Chart
+            .chartXAxisLabel(alignment: .center) {
+                Text("Average Stress")
+                    .font(.system(11))
+                    .foregroundStyle(Color("Sec"))
             }
-            
-            
-        }
-        .chartYAxis {
-            
-            AxisMarks(preset: .aligned, position: .leading,
-                      values: [ 1, 2, 3, 4, 5, 6, 7, 8, 9], content: {
+            .chartXAxis {
                 
-                AxisValueLabel()
-                    .font(.system(10))
-                    .foregroundStyle(Color("Sec")) // change the color for  readability
+                AxisMarks(preset: .aligned,
+                          values: [1, 2, 3, 4, 5, 6, 7, 8, 9], content:
+                            {
+                    
+                    AxisValueLabel()
+                        .font(.system(10))
+                        .foregroundStyle(Color("Sec")) // change the color for  readability
+                })
                 
-                
-            })
-            
-            AxisMarks(
-                preset: .aligned, position: .leading,
-                values: [0, 10], content:
-                    {
+                AxisMarks(
+                    preset: .aligned,
+                    values: [0, 10], content:
                         
-                        AxisGridLine()
-                            .foregroundStyle(Color("Sec"))
-                        
-                        AxisValueLabel()
-                            .font(.system(10))
-                            .foregroundStyle(Color("Sec")) // change the color for  readability
-                    })
+                        {
+                            
+                            AxisGridLine()
+                                .foregroundStyle(Color("Sec"))
+                            
+                            AxisValueLabel()
+                                .font(.system(10))
+                                .foregroundStyle(Color("Sec")) // change the color for  readability
+                        })
+                
+                
+            }
+            .chartYAxis {
+                
+                AxisMarks(preset: .aligned, position: .leading,
+                          values: [ 1, 2, 3, 4, 5, 6, 7, 8, 9], content: {
+                    
+                    AxisValueLabel()
+                        .font(.system(10))
+                        .foregroundStyle(Color("Sec")) // change the color for  readability
+                    
+                    
+                })
+                
+                AxisMarks(
+                    preset: .aligned, position: .leading,
+                    values: [0, 10], content:
+                        {
+                            
+                            AxisGridLine()
+                                .foregroundStyle(Color("Sec"))
+                            
+                            AxisValueLabel()
+                                .font(.system(10))
+                                .foregroundStyle(Color("Sec")) // change the color for  readability
+                        })
+                
+            } //Chart
             
-        }
+            
+        } // Hstack
         .font(.system(10))
         .foregroundStyle(Color("Sec"))
-        .padding(30)
+        .padding(20)
         .background(Color("Tint"))
         .clipShape(.rect(cornerRadius: 20))
         .frame(width:350, height:350)

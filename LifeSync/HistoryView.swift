@@ -9,7 +9,7 @@ struct HistoryView: View {
     
     @Query(sort: \metricsLog.logDate) var metricsLogs: [metricsLog]
     @State var page = 0
-
+    
     var body: some View {
         
         ZStack {
@@ -19,16 +19,39 @@ struct HistoryView: View {
             
             VStack {
                 
+                TabTitleView(text: "History")
+
+                
                 LogTypePickerView(page: $page)
                 
                 TabView(selection: $page) {
                     StressHistoryView(viewModel: viewModel)
                         .tag(0)
-
+                    
+                    
                     metricsHistoryView(viewModel: viewModel)
                         .tag(1)
-
+                    
+                    
                 } // TabView
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never)) // This hides the TabBar by making it behave like a paged view src: https://yosshiblog.jp/swiftui_tabview/
+                
+                /*
+                 .onChange(of: scenePhase) {
+                 if scenePhase == .active {
+                 print("active")
+                 }
+                 else if scenePhase == .inactive {
+                 print("inactive")
+                 } else if scenePhase == .background {
+                 print("background")
+                 }
+                 }
+                 */
+                
+                
+                
+                
             } // VStack
         }//ZStack
     } // body
@@ -38,37 +61,39 @@ struct HistoryView: View {
 
 struct StressHistoryView: View {
     @ObservedObject var viewModel: JournalViewModel
-
+    
     @Environment(\.modelContext) private var context
-
+    
     @Query(sort: \stressLog.logDate) var stressLogs: [stressLog]
     
     @Query var allMetricsLogs: [metricsLog]
     @Query var allStressLogs: [stressLog]
     @Query var allSummaryLogs: [summaryLog]
-
-
+    
+    
     var body: some View {
         List {
+            
             ForEach(stressLogs) { log in
-                VStack (alignment: .leading){
-                    HStack {
+                
+                HStack {
+                    VStack (alignment: .leading){
                         
-                        NavigationLink {
-                        } label: {
-                            Text("\(log.logDate.formatted(date:.complete, time:.shortened))")
-                                .foregroundStyle(Color("Sec"))
+                        Text("\(log.logDate.formatted(date:.complete, time:.shortened))")
+                            .foregroundStyle(Color("Sec"))
+                            .font(.systemSemiBold(17))
+                        
+                        VStack(alignment: .leading) {
+                            Text("Stress Level: \(String(format: "%.2f", log.stressLevel))") // round to 2dp
+                            Text("\(String(log.notes))")
+                            
                         }
+                        .foregroundStyle(Color("Sec"))
                     }
-                    VStack(alignment: .leading) {
-                        Text("Stress Level: \(String(format: "%.2f", log.stressLevel))") // round to 2dp
-                        Text("\(String(log.notes))")
-                        
-                    }
-                    .foregroundStyle(Color("Sec"))
-                }
-                .swipeActions(edge: .trailing) {
-                    Button("Delete", role: .destructive) {
+                    
+                    Spacer()
+                    
+                    Button {
                         context.delete(log)
                         
                         let remainingLogsForDay = stressLogs.filter {
@@ -91,59 +116,67 @@ struct StressHistoryView: View {
                             }
                             
                         }
-                                                
+                        
+                    } label: {
+                        Image(systemName:"minus.circle.fill")
+                        
                     }
                     .tint(Color("Delete"))
+                    .buttonStyle(.bordered)
+
+                    
                 }
                 .listRowBackground(Color("Tint"))
+                .font(.system(17))
             }
             
         }
         .scrollContentBackground(.hidden)
         .background(Color("Prim"))
-        .foregroundStyle(.white)
-        .toolbarBackground(Color("Prim"), for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
     }
 }
 
 struct metricsHistoryView: View {
     @ObservedObject var viewModel: JournalViewModel
-
+    
     @Environment(\.modelContext) private var context
-
+    
     @Query(sort: \metricsLog.logDate) var metricsLogs: [metricsLog]
     
     @Query var allSummaryLogs: [summaryLog]
-
+    
     var body: some View {
         List {
             ForEach(metricsLogs, id: \.self) { log in
-                VStack (alignment: .leading){
-                    HStack {
+                
+                HStack {
+                    
+                    
+                    VStack (alignment: .leading){
                         
-                        NavigationLink {
-                        } label: {
-                            Text("\(log.logDate.formatted(date:.complete, time:.shortened))")
-                                .foregroundStyle(Color("Sec"))
+                        
+                        Text("\(log.logDate.formatted(date:.complete, time:.omitted))")
+                            .foregroundStyle(Color("Sec"))
+                            .font(.systemSemiBold(17))
+                        
+                        VStack(alignment: .leading) {
+                            Text("Sleep: \(String(format: "%.2f", log.sleep))") // round to 2dp
+                            
+                            Text("Activity: \(String(format: "%.2f", log.activity))")
+                            
+                            Text("Diet: \(String(format: "%.2f", log.diet))")
+                            
+                            Text("Work: \(String(format: "%.2f", log.work))")
+                            
+                            Text("\(String(log.journal))")
+                            
                         }
+                        .foregroundStyle(Color("Sec"))
                     }
-                    VStack(alignment: .leading) {
-                        Text("Sleep: \(String(format: "%.2f", log.sleep))") // round to 2dp 
-                        
-                        Text("Activity: \(String(format: "%.2f", log.activity))")
-                        
-                        Text("Diet: \(String(format: "%.2f", log.diet))")
-                        
-                        Text("Work: \(String(format: "%.2f", log.work))")
-                        
-                        Text("\(String(log.journal))")
-                        
-                    }
-                    .foregroundStyle(Color("Sec"))
-                }
-                .swipeActions(edge: .trailing) {
-                    Button("Delete", role: .destructive) {
+                    
+                    Spacer() // to align the button
+                    
+                    Button() {
                         context.delete(log)
                         
                         let summaryLogToBeDeleted: [summaryLog] = allSummaryLogs.filter { Calendar.current.startOfDay(for: log.logDate) <= $0.logDate && $0.logDate <  Calendar.current.startOfDay(for: log.logDate.addingTimeInterval(86400))
@@ -153,18 +186,24 @@ struct metricsHistoryView: View {
                             context.delete(summaryLogToBeDeleted[0])
                             
                         }
-
+                        
+                    } label: {
+                        Image(systemName:"minus.circle.fill")
+                        
                     }
                     .tint(Color("Delete"))
+                    .buttonStyle(.bordered)
+                    
                 }
                 .listRowBackground(Color("Tint"))
+                .font(.system(17))
             }
             
         }
         .scrollContentBackground(.hidden)
         .background(Color("Prim"))
-        .foregroundStyle(.white)
-        .toolbarBackground(Color("Prim"), for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
+        
     }
 }
+
+

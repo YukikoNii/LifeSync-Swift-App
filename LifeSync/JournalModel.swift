@@ -147,7 +147,7 @@ class metricsLog {
         self.diet = diet
         self.work = work
         self.journal = journal
-        self.logDate = logDate
+        self.logDate = Calendar.current.startOfDay(for: logDate)
     }
     
     subscript(key: String) -> Double {

@@ -8,8 +8,9 @@
 import SwiftUI
 import SwiftData
 
-struct JournalView: View {
+struct MainTabBarView: View {
     @ObservedObject var viewModel: JournalViewModel
+    
     
     @State var selection = 1
     
@@ -45,15 +46,6 @@ struct JournalView: View {
         .tint(Color("Sec"))
         .onAppear {
 
-            let tabBarAppearance = UITabBarAppearance() // create UITabBarAppearance Object
-                tabBarAppearance.configureWithDefaultBackground() // set default color
-                tabBarAppearance.backgroundColor = UIColor(light: .lightPrim, dark: .darkPrim) // customize the color
-                UITabBar.appearance().standardAppearance = tabBarAppearance // standard appearance applies when scrolling
-            
-            // src: https://blog.personal-factory.com/2021/12/29/ios15-transparent-navigationbar-and-tabbar-by-default/
-             
-            tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor(light: .lightShade, dark: .darkTint) // src: https://qiita.com/maeken_0216/items/8e098c669ff9f84b569e
-
             let navBarAppearance = UINavigationBarAppearance()
             navBarAppearance.configureWithDefaultBackground()
             navBarAppearance.backgroundColor = UIColor(light: .lightPrim, dark: .darkPrim) // customize the color
@@ -65,7 +57,7 @@ struct JournalView: View {
 }
 
 #Preview {
-    JournalView(viewModel: JournalViewModel())
+    MainTabBarView(viewModel: JournalViewModel())
         .modelContainer(for: [stressLog.self, summaryLog.self, metricsLog.self], inMemory:true)
     // Someone suggested that if the problem is only within Preview, inMemory: true works.
     // https://www.hackingwithswift.com/forums/100-days-of-swiftui/day-54-crash-in-preview-of-swiftdata/26510

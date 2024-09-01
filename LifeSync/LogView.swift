@@ -4,32 +4,37 @@ import SwiftData
 import Foundation
 
 struct LogView: View {
-
+    
     @ObservedObject var viewModel: JournalViewModel
     @State var page = 0
-
+    
     var body: some View {
-        
+
         ZStack {
+
             
             Color("Prim")
                 .ignoresSafeArea()
             
             VStack {
                 
+                TabTitleView(text: "Log")
+                
                 LogTypePickerView(page: $page)
                 
-                TabView(selection:$page) {
+                TabView(selection: $page) {
                     
                     // Stress Tracker which you can log as many times as you want each day.
-                    StressTrackerView(viewModel: viewModel)
+                    stressLoggerView(viewModel: viewModel)
                         .tag(0)
                     
+                    
                     // Daily log
-                    DailyLogView()
+                    metricsLoggerView()
                         .tag(1)
                     
                 }// TabView
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 
             } // VStack
         } // ZStack
@@ -37,7 +42,7 @@ struct LogView: View {
 }
 
 
-struct StressTrackerView: View {
+struct stressLoggerView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     @State private var stressLevel : Double = 5
@@ -47,7 +52,7 @@ struct StressTrackerView: View {
     
     @Query var allMetricsLogs: [metricsLog]
     @Query var allStressLogs: [stressLog]
-
+    
     
     var body: some View {
         
@@ -90,14 +95,15 @@ struct StressTrackerView: View {
                         .padding()
                         .foregroundStyle(Color("Sec"))
                         .font(.system(16))
-                        .keyboardType(.default) 
-                
+                        .keyboardType(.default)
+                    
                     
                     Button("Log") {
                         let newLog = stressLog(logDate: stressDate, stressLevel: stressLevel, notes: notes, id: UUID().uuidString)
                         
                         context.insert(newLog)
                         stressLevel = 5
+                        notes = ""
                         
                         createSummaryLog(metricsLogs: allMetricsLogs, stressLogs: allStressLogs, context: context)
                         
@@ -116,24 +122,21 @@ struct StressTrackerView: View {
                 .padding(20)
                 
             }//ScrollView
-            .toolbarBackground(Color("Prim"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
             
         }
         
     }
 }
 
-struct DailyLogView: View {
+struct metricsLoggerView: View {
     @Environment(\.modelContext) var context
     
-    @State private var sleep : Double = 0
-    @State private var activity : Double = 0
-    @State private var work : Double = 0
-    @State private var diet : Double = 0
+    @State private var sleep : Double = 5
+    @State private var activity : Double = 5
+    @State private var work : Double = 5
+    @State private var diet : Double = 5
     @State private var metricsLogDate = Date()
     @State private var journal = ""
-    
     
     @Query var allMetricsLogs: [metricsLog]
     @Query var allStressLogs: [stressLog]
@@ -150,9 +153,20 @@ struct DailyLogView: View {
                 
                 VStack {
                     
-                    DatePicker("", selection: $metricsLogDate, displayedComponents: [.date])
-                        .labelsHidden()
+                    HStack {
+                        
+                        Button {
+                            metricsLogDate = Date()
+                        } label: {
+                            Image(systemName: "arrow.circlepath")
+                        }
                         .padding()
+                        
+                        DatePicker("", selection: $metricsLogDate, displayedComponents: [.date])
+                            .labelsHidden()
+                            .padding()
+                        
+                    }
                     
                     //https://zenn.dev/joo_hashi/books/ccb8a3799ce7ba/viewer/8ae4e2
                     
@@ -199,13 +213,21 @@ struct DailyLogView: View {
                         .padding()
                         .foregroundStyle(Color("Sec"))
                     
-
+                    
                     Button("Log") {
                         let log = metricsLog(sleep: sleep, activity: activity, diet: diet, work: work, journal: journal, logDate: metricsLogDate)
+                        
+                        
                         
                         context.insert(log)
                         
                         createSummaryLog(metricsLogs: allMetricsLogs, stressLogs: allStressLogs, context: context)
+                        
+                        sleep = 5
+                        activity = 5
+                        work = 5
+                        diet = 5
+                        journal = ""
                         
                     } // Button
                     .padding()
@@ -221,8 +243,6 @@ struct DailyLogView: View {
                 .padding(20)
                 
             }//scrollview
-            .toolbarBackground(Color("Prim"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
         }
     }
 }
@@ -234,9 +254,11 @@ struct LogTypePickerView: View {
     @Binding var page: Int
     
     var body: some View {
-        HStack { 
+        
+        HStack {
             Text("Stress Log")
-                .padding()
+                .padding(7)
+                .frame(maxWidth: .infinity)
                 .background(page == 0 ? Color("Tint") : Color("Prim"))
                 .foregroundColor(page == 0 ? Color("Sec") : Color("Sec"))
                 .clipShape(.rect(cornerRadius:5))
@@ -245,7 +267,8 @@ struct LogTypePickerView: View {
                 }
             
             Text("Metrics Log")
-                .padding()
+                .padding(7)
+                .frame(maxWidth: .infinity)
                 .background(page == 1 ? Color("Tint") : Color("Prim"))
                 .foregroundColor(page == 1 ? Color("Sec") : Color("Sec"))
                 .clipShape(.rect(cornerRadius:5))
@@ -253,6 +276,7 @@ struct LogTypePickerView: View {
                     page = 1
                 }
         }
-        .font(.system(17))
+        .font(.system(15))
+        
     }
 }

@@ -25,7 +25,8 @@ struct StressDatePickerView: View {
             VStack {
                 HStack {
                     Text("Day")
-                        .padding()
+                        .padding(7)
+                        .frame(maxWidth: .infinity)
                         .background(page == "day" ? Color("Tint") : Color("Prim"))
                         .foregroundColor(page == "day" ? Color("Sec") : Color("Sec"))
                         .clipShape(.rect(cornerRadius:5))
@@ -34,7 +35,8 @@ struct StressDatePickerView: View {
                         }
                     
                     Text("Week")
-                        .padding()
+                        .padding(7)
+                        .frame(maxWidth: .infinity)
                         .background(page == "week" ? Color("Tint") : Color("Prim"))
                         .foregroundColor(page == "week" ? Color("Sec") : Color("Sec"))
                         .clipShape(.rect(cornerRadius:5))
@@ -43,7 +45,8 @@ struct StressDatePickerView: View {
                         }
                     
                     Text("Month")
-                        .padding()
+                        .padding(7)
+                        .frame(maxWidth: .infinity)
                         .background(page == "month" ? Color("Tint") : Color("Prim"))
                         .foregroundColor(page == "month" ? Color("Sec") : Color("Sec"))
                         .clipShape(.rect(cornerRadius:5))
@@ -52,7 +55,7 @@ struct StressDatePickerView: View {
                         }
                     
                 }
-                .font(.system(17))
+                .font(.system(15))
                 
                 HStack {
                     
@@ -70,7 +73,6 @@ struct StressDatePickerView: View {
                     
                     DatePicker("", selection: $selectedDay, displayedComponents: [.date])
                         .labelsHidden()
-                        .padding()
                     
                 } //Hstack
                 .foregroundStyle(Color("Sec"))
@@ -87,8 +89,9 @@ struct StressDatePickerView: View {
                     MonthStressView(startsOn: monthStartDate, endsOn: endDate)
                         .tag("month")
                     
-                    
                 }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                              
             } // VStack
         } //ZStack
     }
@@ -136,7 +139,7 @@ struct DayStressView: View {
             
             ScrollView {
                                 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: (viewModel.screenWidth/2) - 20))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 350))]) {
                     if dailyStressLog.count > 0 {
                         
                         Chart {
@@ -194,13 +197,14 @@ struct DayStressView: View {
                         .padding(30)
                         .background(Color("Tint"))
                         .clipShape(.rect(cornerRadius: 20))
-                        .frame(width:(viewModel.screenWidth/2) - 20, height: 350)   .chartXScale(range: .plotDimension(padding: 10))
+                        .frame(width:350, height: 350)
+                        .chartXScale(range: .plotDimension(padding: 10))
                         .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
                     } else {
                         
                         Text("No Data")
-                            .frame(width: 300)
+                            .frame(width: 350)
                     }
                     
                     // Data Analysis
@@ -213,7 +217,7 @@ struct DayStressView: View {
                     .padding(10)
                     .background(Color("Tint"))
                     .clipShape(.rect(cornerRadius: 15))
-                    .frame(width:(viewModel.screenWidth/2) - 20)
+                    .frame(width:350)
                     
                     // Average stress level by time of day
                     TimeOfDayBarChartView(data: allLogs)
@@ -224,8 +228,6 @@ struct DayStressView: View {
             } // scrollview
             .foregroundStyle(Color("Sec"))
             .font(.system(18))
-            .toolbarBackground(Color("Prim"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar) // https://sarunw.com/posts/swiftui-tabview-color/ this fixed the problem of blurry tabbar
             
         }//ZStack
         
@@ -271,7 +273,7 @@ struct WeekStressView: View {
             
             ScrollView {
                 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: (viewModel.screenWidth/2) - 20))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum:350))]) {
                     
                     if weeklyStressLog.count > 0 {
                         
@@ -294,6 +296,8 @@ struct WeekStressView: View {
                             ) {
                                 AxisValueLabel()
                                     .foregroundStyle(Color("Sec")) // change the color for  readability
+                                    .font(.system(10))
+
                             }
                             
                             AxisMarks(
@@ -302,6 +306,7 @@ struct WeekStressView: View {
                                 AxisGridLine()
                                     .foregroundStyle(Color("Sec"))
                             }
+
                         }
                         .chartXVisibleDomain(length: 86400*7) // https://stackoverflow.com/questions/77236097/swift-charts-chartxvisibledomain-hangs-or-crashes (measured in seconds)
                         .chartXAxis {
@@ -312,6 +317,8 @@ struct WeekStressView: View {
                                     {
                                         AxisValueLabel(format: .dateTime.weekday().day()) // TODO: it somehow doesn't show the last date, looks like I need to crate chartXAxis values manually
                                             .foregroundStyle(Color("Sec"))
+                                            .font(.system(10))
+
                                         
                                         AxisGridLine()
                                             .foregroundStyle(Color("Sec"))
@@ -321,7 +328,7 @@ struct WeekStressView: View {
                         .padding(30)
                         .background(Color("Tint"))
                         .clipShape(.rect(cornerRadius: 20))
-                        .frame(width:(viewModel.screenWidth/2) - 20, height:350)
+                        .frame(width: 350, height:350)
                         .chartXScale(range: .plotDimension(padding: 10))
                         .chartYScale(domain: 0 ... 10, range: .plotDimension(padding: 10))
                         
@@ -339,9 +346,7 @@ struct WeekStressView: View {
                     .padding(10)
                     .background(Color("Tint"))
                     .clipShape(.rect(cornerRadius: 15))
-                    .frame(width:(viewModel.screenWidth/2) - 20)
-                    
-                    
+                    .frame(width: 350)
                     
                     
                     // Average stress by day of the week
@@ -353,8 +358,6 @@ struct WeekStressView: View {
             } // ScrollView
             .font(.system(18))
             .foregroundStyle(Color("Sec"))
-            .toolbarBackground(Color("Prim"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
             
         }
         
@@ -396,7 +399,7 @@ struct MonthStressView: View {
             
             ScrollView {
                 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 350))]) {
                     
                     if thisMonthStressLog.count > 0 {
                         
@@ -419,6 +422,7 @@ struct MonthStressView: View {
                             ) {
                                 AxisValueLabel()
                                     .foregroundStyle(Color("Sec")) // change the color for  readability
+                                    .font(.system(10))
                             }
                             
                             AxisMarks(
@@ -435,6 +439,7 @@ struct MonthStressView: View {
                                 {
                                     AxisValueLabel(format: .dateTime.day().month())
                                         .foregroundStyle(Color("Sec"))
+                                        .font(.system(10))
                                     
                                     AxisGridLine()
                                         .foregroundStyle(Color("Sec"))
@@ -468,8 +473,6 @@ struct MonthStressView: View {
             } // ScrollView
             .font(.system(18))
             .foregroundStyle(Color("Sec"))
-            .toolbarBackground(Color("Prim"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
             
         }
         
@@ -496,7 +499,7 @@ struct AnalysisView : View {
             Text("Average: ")
                 .font(.system(18))
             
-            if !stressLog.getStressAvg(dayStressLogs: data).isNaN { // If data available for selected day
+            if data.count > 0 { // If data available for selected day
                 
                 let avgStressString = String(format: "%.2f", stressLog.getStressAvg(dayStressLogs: data)) // round to 2dp
                 
@@ -517,8 +520,8 @@ struct AnalysisView : View {
             Text("Trend:")
                 .font(.system(18))
             
-            if stressLog.getStressAvg(dayStressLogs: data) >= 0
-                && stressLog.getStressAvg(dayStressLogs: beforeData) >= 0 {  // If data available for both selected day and day before.
+            if data.count > 0
+                && beforeData.count > 0 {  // If data available for both selected day and day before.
                 
                 Text("\(stressLog.calculatePercentage(previous: stressLog.getStressAvg(dayStressLogs: data), current: stressLog.getStressAvg(dayStressLogs: beforeData))) from \(periodInPast[duration] ?? "yesterday")")
                 

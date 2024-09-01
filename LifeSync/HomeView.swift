@@ -31,7 +31,6 @@ struct HomeView: View {
                     HomeNavBarView(viewModel: viewModel)
                     
                     Divider()
-                        .overlay(Color("Sec"))
                     
                     //https://zenn.dev/usk2000/articles/68c4c1ec7944fe
                     
@@ -67,7 +66,7 @@ struct HomeView: View {
                         
                     } // VStack
                     .foregroundStyle(.white)
-                    .padding(15)
+                    .padding(5)
                     
                 } // VStack
             } // ZStack
@@ -79,7 +78,6 @@ struct HomeView: View {
             if isInserted == false {
                 
                 let testLogs = [
-                    stressLog(logDate: Date(), stressLevel: 5, notes: "", id: UUID().uuidString),
                     stressLog(logDate: Date().addingTimeInterval(-86400*1), stressLevel: 7, notes: "", id: UUID().uuidString),
                     stressLog(logDate: Date().addingTimeInterval(-86400*2), stressLevel: 3, notes: "", id: UUID().uuidString),
                     stressLog(logDate: Date().addingTimeInterval(-86400*3), stressLevel: 3, notes: "", id: UUID().uuidString),
@@ -118,8 +116,7 @@ struct HomeView: View {
             }
             
             isInserted = true
-
-            //
+            
         }
         
     } // body
@@ -132,19 +129,12 @@ struct HomeNavBarView: View {
     @ObservedObject var viewModel: JournalViewModel
     
     var body: some View {
-        HStack(spacing:0) { // https://programming-sansho.com/swift/swiftui-spacer/
-            
-            Spacer()
-            
-            Text("Hello, \(viewModel.name)")
-                .font(.systemSemiBold(24))
-                .foregroundStyle(Color("Sec"))
-            
-            Spacer()
-            
-            
-        } // HStack
-        .frame(maxWidth: .infinity)
+        
+        Text("Hello, \(viewModel.name)")
+            .font(.systemSemiBold(20))
+            .foregroundStyle(Color("Sec"))
+            .padding(5)
+        
     }
 }
 
@@ -166,11 +156,11 @@ struct StressTileView: View {
                     let avgStressString = String(format: "%.2f", stressLog.getStressAvg(dayStressLogs: todaysLogs))
                     
                     Text("\(avgStressString)")
-                        .font(.system(27))
+                        .font(.system(25))
                     
                 } else {
                     Text("No Data")
-                        .font(.system(27))
+                        .font(.system(25))
                 }
             }
         } // ZStack
@@ -193,7 +183,7 @@ struct metricsTileView: View {
             VStack {
                 Text("\(chosenmetric)")
                     .font(.systemSemiBold(20))
-
+                
                 Divider()
                     .overlay(Color("Prim"))
                 
@@ -204,11 +194,12 @@ struct metricsTileView: View {
                 } else {
                     
                     Text("No Data")
+                        .font(.system(25))
                     
                 }
                 
             }
-            .font(.system(27))
+            .font(.system(25))
             
         } // ZStack
         .padding(35)
@@ -228,12 +219,12 @@ struct CorrelationTileView: View {
             VStack {
                 Text("Correlation")
                     .font(.systemSemiBold(20))
-
+                
                 Divider()
                     .overlay(Color("Prim"))
                 
                 Text("Analysis")
-                    .font(.system(27))
+                    .font(.system(25))
                 
             }
         } // ZStack

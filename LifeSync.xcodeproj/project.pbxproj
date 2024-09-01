@@ -14,8 +14,8 @@
 		013A559B2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 013A559A2C6DD0EC00D4DE9B /* TitilliumWeb-SemiBold.ttf */; };
 		01995B2B2C6F40E40034DECB /* CorrelationAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01995B2A2C6F40E40034DECB /* CorrelationAnalysisView.swift */; };
 		01C8B2E62C58E0BD00465831 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8B2E52C58E0BD00465831 /* HistoryView.swift */; };
-		01F5C0372C4F69B00090C5F4 /* JournalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0362C4F69B00090C5F4 /* JournalApp.swift */; };
-		01F5C0392C4F69B00090C5F4 /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0382C4F69B00090C5F4 /* JournalView.swift */; };
+		01F5C0372C4F69B00090C5F4 /* LifeSyncApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0362C4F69B00090C5F4 /* LifeSyncApp.swift */; };
+		01F5C0392C4F69B00090C5F4 /* MainTabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0382C4F69B00090C5F4 /* MainTabBarView.swift */; };
 		01F5C03B2C4F69B20090C5F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */; };
 		01F5C03E2C4F69B20090C5F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01F5C03D2C4F69B20090C5F4 /* Preview Assets.xcassets */; };
 		01F5C0492C50C2120090C5F4 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5C0482C50C2120090C5F4 /* HomeView.swift */; };
@@ -38,8 +38,8 @@
 		01995B2A2C6F40E40034DECB /* CorrelationAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationAnalysisView.swift; sourceTree = "<group>"; };
 		01C8B2E52C58E0BD00465831 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		01F5C0332C4F69B00090C5F4 /* LifeSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		01F5C0362C4F69B00090C5F4 /* JournalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalApp.swift; sourceTree = "<group>"; };
-		01F5C0382C4F69B00090C5F4 /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
+		01F5C0362C4F69B00090C5F4 /* LifeSyncApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeSyncApp.swift; sourceTree = "<group>"; };
+		01F5C0382C4F69B00090C5F4 /* MainTabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarView.swift; sourceTree = "<group>"; };
 		01F5C03A2C4F69B20090C5F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		01F5C03D2C4F69B20090C5F4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		01F5C0482C50C2120090C5F4 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -89,8 +89,8 @@
 				01F5C0582C51E6420090C5F4 /* Info.plist */,
 				01F5C0562C51E3D10090C5F4 /* TitilliumWeb-Light.ttf */,
 				01F5C04C2C50C2EA0090C5F4 /* SettingsView.swift */,
-				01F5C0362C4F69B00090C5F4 /* JournalApp.swift */,
-				01F5C0382C4F69B00090C5F4 /* JournalView.swift */,
+				01F5C0362C4F69B00090C5F4 /* LifeSyncApp.swift */,
+				01F5C0382C4F69B00090C5F4 /* MainTabBarView.swift */,
 				01C8B2E52C58E0BD00465831 /* HistoryView.swift */,
 				01F5C0482C50C2120090C5F4 /* HomeView.swift */,
 				01F5C04A2C50C2C90090C5F4 /* LogView.swift */,
@@ -206,8 +206,8 @@
 				01C8B2E62C58E0BD00465831 /* HistoryView.swift in Sources */,
 				013A55932C5D171000D4DE9B /* StressView.swift in Sources */,
 				0102689E2C7F3247002E62DF /* Calendar Extension.swift in Sources */,
-				01F5C0392C4F69B00090C5F4 /* JournalView.swift in Sources */,
-				01F5C0372C4F69B00090C5F4 /* JournalApp.swift in Sources */,
+				01F5C0392C4F69B00090C5F4 /* MainTabBarView.swift in Sources */,
+				01F5C0372C4F69B00090C5F4 /* LifeSyncApp.swift in Sources */,
 				01F5C0492C50C2120090C5F4 /* HomeView.swift in Sources */,
 				01F5C0632C5258140090C5F4 /* File.swift in Sources */,
 				0102689C2C7F3228002E62DF /* Color Extension.swift in Sources */,
