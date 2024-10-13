@@ -1,4 +1,6 @@
 # LifeSync
+### Video Demo https://youtu.be/7lTZI40Ia2E
+
 ### OverView
 In short, LifeSync is an iOS app, created with Swift, that allows users to monitor their stress level, as well as their sleep, activity, work, and diet. There are two types of logs: "stress log" and "metrics log". Stress logs can be submitted multiple times a day so that the users can monitor how their stress level varies throughout the day. "metrics log", which encompasses sleep, activity, work, and diet, is only recorded once per day. The data is saved in Swift Data, and the app automatically produces charts and analyzes the relationships between stress and the four metrics.
 
